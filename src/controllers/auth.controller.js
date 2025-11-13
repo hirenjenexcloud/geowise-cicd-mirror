@@ -36,7 +36,7 @@ exports.signup = async (req, res) => {
       password: hashed
     });
 
-    const token = generateToken(user);
+    // const token = generateToken(user);
 
     return res.status(201).json({
       status: true,
@@ -44,8 +44,7 @@ exports.signup = async (req, res) => {
       data: {
         userId: user._id,
         name: user.name,
-        email: user.email,
-        token
+        email: user.email
       }
     });
   } catch (err) {

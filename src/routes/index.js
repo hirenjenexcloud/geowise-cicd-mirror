@@ -1,7 +1,7 @@
 const express = require('express');
 const AuthRouter = require('../routes/auth.routes')
 const DeviceRouter = require('../routes/device.routes')
-const SettingRouter = require('../routes/satellite.routes');
+const SettingRouter = require('./settings.routes');
 const router = express.Router();
 
 router.use('/auth',AuthRouter);

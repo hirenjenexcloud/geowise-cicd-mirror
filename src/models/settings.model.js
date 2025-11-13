@@ -35,7 +35,7 @@ const ResetTimeoutsSchema = new Schema({
 const SettingSchema = new Schema({
   settingId: { type: String, required: true, unique: true, trim: true },
   name: { type: String, required: true, trim: true },
-  breadcrumb: { type: String, trim: true, default: '' },
+  breadcrumb: { type: Number, default: '' },
   hbt: { type: Number, default: 0 },
   stop: { type: Number, default: 0 },
   sleep: { type: Number, default: 0 },
