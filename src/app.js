@@ -8,6 +8,8 @@ const cors = require('cors');
 
 const routes = require('./routes'); // all routes combined
 const errorHandler = require('./middlewares/errorHandler');
+const swaggerUi = require('swagger-ui-express');
+const swaggerFile = require('./swagger-output.json'); // generated file
 
 const app = express();
 
@@ -20,6 +22,9 @@ app.use(morgan('dev'));
 
 // Health check
 app.get('/', (req, res) => res.json({ status: 'ok', service: 'geotracker' }));
+
+// Swagger docs route
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerFile));
 
 // All routes
 app.use('/api', routes); // unified mount point
