@@ -4,7 +4,6 @@ const logger = require('../utils/logger');
 
 /**
  * Create a new setting file
- * Body: JSON matching the Setting model (settingId, name, etc.)
  */
 exports.createSetting = async (req, res) => {
   try {
@@ -19,11 +18,6 @@ exports.createSetting = async (req, res) => {
     }
 
     const created = new Setting(payload);
-    created.audit.push({
-      changedBy: (req.user && req.user.id) ? req.user.id : 'system',
-      changes: { created: payload }
-    });
-
     const saved = await created.save();
     return res.status(201).json({ status: true, message: 'Setting created successfully', data: saved });
   } catch (err) {
@@ -33,16 +27,11 @@ exports.createSetting = async (req, res) => {
 };
 
 /**
- * Get all settings (with optional query filters)
- * e.g. GET /api/v1/settings?group=...&settingId=...
+ * Get all settings
  */
 exports.getAllSettings = async (req, res) => {
   try {
-    const filter = {};
-    if (req.query.group) filter.group = req.query.group;
-    if (req.query.settingId) filter.settingId = req.query.settingId;
-
-    const list = await Setting.find(filter).sort({ createdAt: -1 }).lean();
+    const list = await Setting.find().sort({ createdAt: -1 }).lean();
     return res.status(200).json({ status: true, data: list });
   } catch (err) {
     logger.error('Get all settings error:', err);
@@ -68,7 +57,6 @@ exports.getSettingById = async (req, res) => {
 /**
  * Update a setting (partial or full)
  * PUT /api/v1/settings/:id
- * Body: fields to set (we perform shallow merge for nested groups)
  */
 exports.updateSetting = async (req, res) => {
   try {
@@ -78,28 +66,23 @@ exports.updateSetting = async (req, res) => {
     const existing = await Setting.findById(id);
     if (!existing) return res.status(404).json({ status: false, message: 'Setting not found' });
 
-    // compute shallow changes (for audit)
-    const changes = {};
+    // compute shallow changes and apply
     const keys = ['settingId','name','breadcrumb','hbt','stop','sleep','moveTrigger','qualityFilter','resetTimeouts','dashboardServer','flag','group','extra'];
+    let mutated = false;
     for (const k of keys) {
       if (typeof payload[k] !== 'undefined') {
         const from = existing.get(k);
         const to = payload[k];
         if (JSON.stringify(from) !== JSON.stringify(to)) {
-          changes[k] = { from, to };
           existing.set(k, to);
+          mutated = true;
         }
       }
     }
 
-    if (Object.keys(changes).length === 0) {
+    if (!mutated) {
       return res.status(200).json({ status: true, message: 'No changes detected', data: existing });
     }
-
-    existing.audit.push({
-      changedBy: (req.user && req.user.id) ? req.user.id : 'system',
-      changes
-    });
 
     const saved = await existing.save();
     return res.status(200).json({ status: true, message: 'Setting updated', data: saved });

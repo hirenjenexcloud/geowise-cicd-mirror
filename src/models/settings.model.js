@@ -1,12 +1,6 @@
-// models/setting.model.js
+// models/settings.model.js
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
-
-const AuditSchema = new Schema({
-  changedBy: { type: String },
-  changedAt: { type: Date, default: Date.now },
-  changes: { type: Schema.Types.Mixed }
-}, { _id: false });
 
 const DashboardServerSchema = new Schema({
   ip: { type: String, default: '' },
@@ -35,18 +29,19 @@ const ResetTimeoutsSchema = new Schema({
 const SettingSchema = new Schema({
   settingId: { type: String, required: true, unique: true, trim: true },
   name: { type: String, required: true, trim: true },
-  breadcrumb: { type: Number, default: '' },
+  breadcrumb: { type: Number, default: 0 },
+
   hbt: { type: Number, default: 0 },
   stop: { type: Number, default: 0 },
   sleep: { type: Number, default: 0 },
+
   moveTrigger: { type: MoveTriggerSchema, default: () => ({}) },
   qualityFilter: { type: QualityFilterSchema, default: () => ({}) },
   resetTimeouts: { type: ResetTimeoutsSchema, default: () => ({}) },
   dashboardServer: { type: DashboardServerSchema, default: () => ({}) },
 
+  group: { type: Schema.Types.ObjectId, ref: 'Group' },
   flag: { type: Boolean, default: false },
-
-  audit: { type: [AuditSchema], default: [] },
 
   extra: { type: Schema.Types.Mixed, default: {} }
 }, { timestamps: true });
