@@ -1,7 +1,7 @@
 const Group = require('../models/group.model');
 const logger = require('../utils/logger');
 
-// ✅ Create new group
+// Create new group
 exports.createGroup = async (req, res) => {
   try {
     const group = await Group.create(req.body);
@@ -12,7 +12,7 @@ exports.createGroup = async (req, res) => {
   }
 };
 
-// ✅ Get all groups
+// Get all groups
 exports.getAllGroups = async (req, res) => {
   try {
     const groups = await Group.find();
@@ -23,7 +23,7 @@ exports.getAllGroups = async (req, res) => {
   }
 };
 
-// ✅ Get group by ID
+// Get group by ID
 exports.getGroupById = async (req, res) => {
   try {
     const group = await Group.findById(req.params.id);
@@ -35,7 +35,7 @@ exports.getGroupById = async (req, res) => {
   }
 };
 
-// ✅ Update group
+// Update group
 exports.updateGroup = async (req, res) => {
   try {
     const group = await Group.findByIdAndUpdate(req.params.id, req.body, { new: true });
@@ -47,7 +47,7 @@ exports.updateGroup = async (req, res) => {
   }
 };
 
-// ✅ Delete group
+// Delete group
 exports.deleteGroup = async (req, res) => {
   try {
     const group = await Group.findByIdAndDelete(req.params.id);

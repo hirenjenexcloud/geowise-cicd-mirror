@@ -6,7 +6,7 @@ const helmet = require('helmet');
 const morgan = require('morgan');
 const cors = require('cors');
 
-const routes = require('./routes'); // ✅ all routes combined
+const routes = require('./routes'); // all routes combined
 const errorHandler = require('./middlewares/errorHandler');
 
 const app = express();
@@ -22,7 +22,7 @@ app.use(morgan('dev'));
 app.get('/', (req, res) => res.json({ status: 'ok', service: 'geotracker' }));
 
 // All routes
-app.use('/api', routes); // ✅ unified mount point
+app.use('/api', routes); // unified mount point
 
 // 404 fallback
 app.use((req, res) => res.status(404).json({ message: 'Not Found' }));
