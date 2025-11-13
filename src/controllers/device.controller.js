@@ -100,7 +100,8 @@ exports.getDeviceByIMEI = async (req, res) => {
 
 
 exports.deleteDevice = async (req, res) => {
-  const { imei } = req.params;
+  const imei  = req.query.imei;
+ 
 
   try {
     
