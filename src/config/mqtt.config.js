@@ -3,6 +3,8 @@ const mqtt = require('mqtt');
 const MQTT_HOST = process.env.MQTT_HOST || '0.0.0.0';
 const MQTT_PORT = parseInt(process.env.MQTT_PORT || '1883', 10);
 const mosca = require('mosca');
+const { startOtaRequestService } = require('../middlewares/otaPacketRequest');
+
 
 
 // ---- Mosca MQTT Broker Setup ----
@@ -22,7 +24,7 @@ server.on('ready', () => {
 
 server.on('published', (packet, client) => {
   if (!packet.topic.startsWith('$SYS')) {
-    logger.info(`Message published via mosca: ${packet.topic} -> ${packet.payload.toString()}`);
+    // logger.info(`Message published via mosca: ${packet.topic} -> ${packet.payload.toString()}`);
   }
 });
 
@@ -49,6 +51,8 @@ const client = mqtt.connect(connectUrl, {
 
 client.on('connect', () => {
   logger.info('MQTT connected');
+
+  startOtaRequestService(client);
 
   client.subscribe('geotracker/test', (err) => {
     if (err) {
@@ -77,8 +81,9 @@ client.on('error', (err) => {
 
 client.on('message', (topic, message) => {
   console.log("MQTT Message received");
-  logger.info(`Message received: ${topic} -> ${message.toString()}`);
+  // logger.info(`Message received: ${topic} -> ${message.toString()}`);
 });
 
 
+module.exports = {client};
 
