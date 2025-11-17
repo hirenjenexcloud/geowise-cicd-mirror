@@ -1,52 +1,74 @@
 // models/settings.model.js
 const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
 
-const DashboardServerSchema = new Schema({
-  ip: { type: String, default: '' },
-  port: { type: Number, default: 0 }
-}, { _id: false });
+const MoveTriggerSchema = new mongoose.Schema(
+  {
+    minSpeedKph: { type: Number, min: [0, "Speed cannot be negative"], default: 0 },
+    speedCount: { type: Number, min: [0, "Speed Count cannot be negative"], default: 0 },
+    minDistanceM: { type: Number, min: [0, "Distance cannot be negative"], default: 0 }
+  },
+  { _id: false }
+);
 
-const MoveTriggerSchema = new Schema({
-  minSpeedKph: { type: Number, default: 0 },
-  speedCount: { type: Number, default: 0 },
-  minDistanceM: { type: Number, default: 0 }
-}, { _id: false });
+const ResetTimeoutsSchema = new mongoose.Schema(
+  {
+    deviceTimeout: { type: Number, min: 0, default: 0 },
+    gpsTimeout: { type: Number, min: 0, default: 0 },
+    cellularTimeout: { type: Number, min: 0, default: 0 },
+  },
+  { _id: false }
+);
 
-const QualityFilterSchema = new Schema({
-  minSatellite: { type: Number, default: 0 },
-  stopHAC: { type: Number, default: 0 },
-  moveHAC: { type: Number, default: 0 },
-  gsmRssi: { type: Number, default: 0 }
-}, { _id: false });
+const DashboardServerSchema = new mongoose.Schema(
+  {
+    ip: { type: String, trim: true, default: '' },
+    port: { type: Number, min: 0, max: 65535, default: 0 }
+  },
+  { _id: false }
+);
 
-const ResetTimeoutsSchema = new Schema({
-  deviceSecs: { type: Number, default: 0 },
-  gpsSecs: { type: Number, default: 0 },
-  cellularSecs: { type: Number, default: 0 }
-}, { _id: false });
+const SettingSchema = new mongoose.Schema(
+  {
+    is_deleted: {
+      type: Boolean,
+      default: false
+    },
 
-const SettingSchema = new Schema({
-  settingId: { type: String, required: true, unique: true, trim: true },
-  name: { type: String, required: true, trim: true },
-  breadcrumb: { type: Number, default: 0 },
+    settingId: {
+      type: Number,
+      required: true,
+      unique: true,
+      index: true
+    },
 
-  hbt: { type: Number, default: 0 },
-  stop: { type: Number, default: 0 },
-  sleep: { type: Number, default: 0 },
+    name: {
+      type: String,
+      required: [true, "Name is required"],
+      trim: true
+    },
 
-  moveTrigger: { type: MoveTriggerSchema, default: () => ({}) },
-  qualityFilter: { type: QualityFilterSchema, default: () => ({}) },
-  resetTimeouts: { type: ResetTimeoutsSchema, default: () => ({}) },
-  dashboardServer: { type: DashboardServerSchema, default: () => ({}) },
+    breadcrumb: {
+      type: String,
+      trim: true
+    },
 
-  group: { type: Schema.Types.ObjectId, ref: 'Group' },
-  flag: { type: Boolean, default: false },
+    hbt: { type: Number, min: 0, default: 0 },
+    stop: { type: Number, min: 0, default: 0 },
+    sleep: { type: Number, min: 0, default: 0 },
 
-  extra: { type: Schema.Types.Mixed, default: {} }
-}, { timestamps: true });
+    moveTrigger: { type: MoveTriggerSchema, default: () => ({}) },
+    resetTimeouts: { type: ResetTimeoutsSchema, default: () => ({}) },
+    dashboardServer: { type: DashboardServerSchema, default: () => ({}) },
 
-SettingSchema.index({ settingId: 1 }, { unique: true });
-SettingSchema.index({ 'dashboardServer.ip': 1 });
+    // link to Group (if assigned). If present => cannot delete.
+    group: { type: mongoose.Schema.Types.ObjectId, ref: 'Group', default: null },
+    atCommands: { type: [String], default: [] }
+  },
 
-module.exports = mongoose.model('Setting', SettingSchema);
+  {
+    timestamps: true,
+    versionKey: false
+  }
+);
+
+module.exports = mongoose.model("Setting", SettingSchema, "settings");

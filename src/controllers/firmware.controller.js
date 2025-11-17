@@ -4,7 +4,7 @@ const path = require('path');
 const logger = require('../utils/logger');
 
 const UPLOADS_ROOT = path.join(__dirname, '../uploads');
-const PACKET_SIZE = 2048; // 2KB
+const PACKET_SIZE = 2048;
 
 if (!fs.existsSync(UPLOADS_ROOT)) fs.mkdirSync(UPLOADS_ROOT, { recursive: true });
 async function getNextFolderId() {

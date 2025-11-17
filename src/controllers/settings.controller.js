@@ -1,108 +1,107 @@
 // controllers/setting.controller.js
-const Setting = require('../models/settings.model');
-const logger = require('../utils/logger');
+const Setting = require("../models/settings.model");
+const Counter = require("../models/counter.model");
+const { success, fail } = require("../utils/apiResponse");
 
 /**
- * Create a new setting file
+ * Get next sequence value for a named counter (atomic)
  */
+async function getNextSequence(name) {
+  // findOneAndUpdate with upsert ensures counter exists and increments safely
+  const updated = await Counter.findOneAndUpdate(
+    { _id: name },
+    { $inc: { seq: 1 } },
+    { new: true, upsert: true, setDefaultsOnInsert: true }
+  ).lean();
+  return updated.seq;
+}
+
 exports.createSetting = async (req, res) => {
   try {
-    const payload = req.body;
-    if (!payload.settingId || !payload.name) {
-      return res.status(400).json({ status: false, message: 'settingId and name are required' });
-    }
+    const payload = { ...req.body };
+    
+    // Generate next settingId
+    const nextId = await getNextSequence('settingId');
+    payload.settingId = nextId;
 
-    const exists = await Setting.findOne({ settingId: payload.settingId });
-    if (exists) {
-      return res.status(409).json({ status: false, message: 'settingId already exists' });
-    }
+    // minimal required validation via Mongoose will run on save
+    const doc = new Setting(payload);
+    const saved = await doc.save();
 
-    const created = new Setting(payload);
-    const saved = await created.save();
-    return res.status(201).json({ status: true, message: 'Setting created successfully', data: saved });
+    return success(res, 'CREATED', 'Setting created');
   } catch (err) {
-    logger.error('Create setting error:', err);
-    return res.status(500).json({ status: false, message: 'Server error' });
+    // handle duplicate key unexpectedly
+    if (err.name === 'MongoServerError' && err.code === 11000) {
+      return fail(res, 'INVALIDSYNTAX', 'Duplicate key error', err.message);
+    }
+    return fail(res, 'INTERNALSERVERERROR', err.message);
   }
 };
 
-/**
- * Get all settings
- */
 exports.getAllSettings = async (req, res) => {
   try {
-    const list = await Setting.find().sort({ createdAt: -1 }).lean();
-    return res.status(200).json({ status: true, data: list });
+    const list = await Setting.find({ is_deleted: false }).sort({ createdAt: -1 }).lean();
+    return success(res, 'OK');
   } catch (err) {
-    logger.error('Get all settings error:', err);
-    return res.status(500).json({ status: false, message: 'Server error' });
+    return fail(res, 'INTERNALSERVERERROR', err.message);
   }
 };
 
-/**
- * Get single setting by Mongo _id
- */
 exports.getSettingById = async (req, res) => {
   try {
     const id = req.params.id;
+    if (!id) return fail(res, 'INVALIDSYNTAX', 'Missing id param');
     const doc = await Setting.findById(id).lean();
-    if (!doc) return res.status(404).json({ status: false, message: 'Setting not found' });
-    return res.status(200).json({ status: true, data: doc });
+    if (!doc) return fail(res, 'NOTFOUND', 'Setting not found');
+    return success(res, 'OK');
   } catch (err) {
-    logger.error('Get setting by id error:', err);
-    return res.status(500).json({ status: false, message: 'Server error' });
+    return fail(res, 'INTERNALSERVERERROR', err.message);
   }
 };
 
-/**
- * Update a setting (partial or full)
- * PUT /api/v1/settings/:id
- */
 exports.updateSetting = async (req, res) => {
   try {
     const id = req.params.id;
-    const payload = req.body;
+    if (!id) return fail(res, 'INVALIDSYNTAX', 'Missing id param');
 
-    const existing = await Setting.findById(id);
-    if (!existing) return res.status(404).json({ status: false, message: 'Setting not found' });
+    // Do not allow client to change settingId — remove if present
+    if (req.body.settingId) delete req.body.settingId;
 
-    // compute shallow changes and apply
-    const keys = ['settingId','name','breadcrumb','hbt','stop','sleep','moveTrigger','qualityFilter','resetTimeouts','dashboardServer','flag','group','extra'];
-    let mutated = false;
-    for (const k of keys) {
-      if (typeof payload[k] !== 'undefined') {
-        const from = existing.get(k);
-        const to = payload[k];
-        if (JSON.stringify(from) !== JSON.stringify(to)) {
-          existing.set(k, to);
-          mutated = true;
-        }
-      }
-    }
+    const updated = await Setting.findByIdAndUpdate(
+      id,
+      { $set: req.body },
+      { new: true, runValidators: true }
+    );
 
-    if (!mutated) {
-      return res.status(200).json({ status: true, message: 'No changes detected', data: existing });
-    }
-
-    const saved = await existing.save();
-    return res.status(200).json({ status: true, message: 'Setting updated', data: saved });
+    if (!updated) return fail(res, 'NOTFOUND', 'Setting not found');
+    return success(res, 'OK', 'Updated successfully');
   } catch (err) {
-    logger.error('Update setting error:', err);
-    return res.status(500).json({ status: false, message: 'Server error' });
+    // validation errors
+    if (err.name === 'ValidationError') {
+      return fail(res, 'INVALIDSYNTAX', 'Validation failed', err.message);
+    }
+    return fail(res, 'INTERNALSERVERERROR', err.message);
   }
 };
 
-/**
- * Delete a setting
- */
 exports.deleteSetting = async (req, res) => {
   try {
     const id = req.params.id;
-    const deleted = await Setting.findByIdAndDelete(id);
-    if (!deleted) return res.status(404).json({ status: false, message: 'Setting not found' });
-    return res.status(200).json({ status: true, message: 'Setting deleted' });
+    if (!id) return fail(res, 'INVALIDSYNTAX', 'Id not found');
+
+    const existing = await Setting.findById(id);
+    if (!existing) return fail(res, 'NOTFOUND', 'Setting not found');
+
+    // BLOCK delete if assigned to a group
+    if (existing.group) {
+      return fail(res, 'INVALIDSYNTAX', 'Cannot delete setting file assigned to a group');
+    }
+
+    existing.is_deleted = true;
+    await existing.save();
+
+    return success(res, 'OK', 'Deleted');
   } catch (err) {
-    logger.error('Delete setting error:', err);
-    return res.status(500).json({ status: false, message: 'Server error' });
+    return fail(res, 'INTERNALSERVERERROR', err.message);
   }
 };
