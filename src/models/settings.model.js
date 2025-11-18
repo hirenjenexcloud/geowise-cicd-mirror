@@ -48,7 +48,7 @@ const SettingSchema = new mongoose.Schema(
     },
 
     breadcrumb: {
-      type: String,
+      type: Number,
       trim: true
     },
 

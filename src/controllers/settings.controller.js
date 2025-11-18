@@ -4,10 +4,9 @@ const Counter = require("../models/counter.model");
 const { success, fail } = require("../utils/apiResponse");
 
 /**
- * Get next sequence value for a named counter (atomic)
+ * getNextSequence - atomic increment for named counter
  */
 async function getNextSequence(name) {
-  // findOneAndUpdate with upsert ensures counter exists and increments safely
   const updated = await Counter.findOneAndUpdate(
     { _id: name },
     { $inc: { seq: 1 } },
@@ -16,55 +15,76 @@ async function getNextSequence(name) {
   return updated.seq;
 }
 
+/**
+ * Create a new setting
+ * Server assigns numeric settingId using counter
+ */
 exports.createSetting = async (req, res) => {
   try {
     const payload = { ...req.body };
-    
-    // Generate next settingId
-    const nextId = await getNextSequence('settingId');
+
+    // Generate next settingId (server-side)
+    const nextId = await getNextSequence("settingId");
     payload.settingId = nextId;
 
-    // minimal required validation via Mongoose will run on save
+    // Create and save (Mongoose validators will run)
     const doc = new Setting(payload);
     const saved = await doc.save();
 
-    return success(res, 'CREATED', 'Setting created');
+    return success(res, "CREATED", "Setting created");
   } catch (err) {
-    // handle duplicate key unexpectedly
-    if (err.name === 'MongoServerError' && err.code === 11000) {
-      return fail(res, 'INVALIDSYNTAX', 'Duplicate key error', err.message);
+    // Duplicate key (unique index) handling
+    if (err.name === "MongoServerError" && err.code === 11000) {
+      return fail(res, "INVALIDSYNTAX", "Duplicate key error", err.message);
     }
-    return fail(res, 'INTERNALSERVERERROR', err.message);
+
+    // Validation error (Mongoose)
+    if (err.name === "ValidationError") {
+      return fail(res, "INVALIDSYNTAX", "Validation failed", err.message);
+    }
+
+    return fail(res, "INTERNALSERVERERROR", err.message);
   }
 };
 
+/**
+ * Get all settings (non-deleted)
+ */
 exports.getAllSettings = async (req, res) => {
   try {
     const list = await Setting.find({ is_deleted: false }).sort({ createdAt: -1 }).lean();
-    return success(res, 'OK');
+    return success(res, "OK", "Settings fetched", list);
   } catch (err) {
-    return fail(res, 'INTERNALSERVERERROR', err.message);
+    return fail(res, "INTERNALSERVERERROR", err.message);
   }
 };
 
+/**
+ * Get single setting by Mongo _id
+ */
 exports.getSettingById = async (req, res) => {
   try {
     const id = req.params.id;
-    if (!id) return fail(res, 'INVALIDSYNTAX', 'Missing id param');
+    if (!id) return fail(res, "INVALIDSYNTAX", "Missing id param");
+
     const doc = await Setting.findById(id).lean();
-    if (!doc) return fail(res, 'NOTFOUND', 'Setting not found');
-    return success(res, 'OK');
+    if (!doc) return fail(res, "NOTFOUND", "Setting not found");
+
+    return success(res, "OK", "Setting fetched", doc);
   } catch (err) {
-    return fail(res, 'INTERNALSERVERERROR', err.message);
+    return fail(res, "INTERNALSERVERERROR", err.message);
   }
 };
 
+/**
+ * Update a setting (partial)
+ */
 exports.updateSetting = async (req, res) => {
   try {
     const id = req.params.id;
-    if (!id) return fail(res, 'INVALIDSYNTAX', 'Missing id param');
+    if (!id) return fail(res, "INVALIDSYNTAX", "Missing id param");
 
-    // Do not allow client to change settingId — remove if present
+    // Do not allow client to change settingId
     if (req.body.settingId) delete req.body.settingId;
 
     const updated = await Setting.findByIdAndUpdate(
@@ -73,35 +93,39 @@ exports.updateSetting = async (req, res) => {
       { new: true, runValidators: true }
     );
 
-    if (!updated) return fail(res, 'NOTFOUND', 'Setting not found');
-    return success(res, 'OK', 'Updated successfully');
+    if (!updated) return fail(res, "NOTFOUND", "Setting not found");
+
+    return success(res, "OK", "Updated successfully", updated);
   } catch (err) {
-    // validation errors
-    if (err.name === 'ValidationError') {
-      return fail(res, 'INVALIDSYNTAX', 'Validation failed', err.message);
+    if (err.name === "ValidationError") {
+      return fail(res, "INVALIDSYNTAX", "Validation failed", err.message);
     }
-    return fail(res, 'INTERNALSERVERERROR', err.message);
+    return fail(res, "INTERNALSERVERERROR", err.message);
   }
 };
 
+/**
+ * Delete (soft-delete) a setting
+ * Block deletion if assigned to a group
+ */
 exports.deleteSetting = async (req, res) => {
   try {
     const id = req.params.id;
-    if (!id) return fail(res, 'INVALIDSYNTAX', 'Id not found');
+    if (!id) return fail(res, "INVALIDSYNTAX", "Id not found");
 
     const existing = await Setting.findById(id);
-    if (!existing) return fail(res, 'NOTFOUND', 'Setting not found');
+    if (!existing) return fail(res, "NOTFOUND", "Setting not found");
 
-    // BLOCK delete if assigned to a group
+    // Block delete if assigned to a group
     if (existing.group) {
-      return fail(res, 'INVALIDSYNTAX', 'Cannot delete setting file assigned to a group');
+      return fail(res, "INVALIDSYNTAX", "Cannot delete setting file assigned to a group");
     }
 
     existing.is_deleted = true;
     await existing.save();
 
-    return success(res, 'OK', 'Deleted');
+    return success(res, "OK", "Deleted");
   } catch (err) {
-    return fail(res, 'INTERNALSERVERERROR', err.message);
+    return fail(res, "INTERNALSERVERERROR", err.message);
   }
 };
