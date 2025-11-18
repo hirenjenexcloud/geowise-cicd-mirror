@@ -60,14 +60,14 @@ exports.getAllSettings = async (req, res) => {
 };
 
 /**
- * Get single setting by Mongo _id
+ * Get single setting by Settings Id
  */
 exports.getSettingById = async (req, res) => {
   try {
     const id = req.params.id;
     if (!id) return fail(res, "INVALIDSYNTAX", "Missing id param");
 
-    const doc = await Setting.findById(id).lean();
+    const doc = await Setting.findOne({settingId : id}).lean();
     if (!doc) return fail(res, "NOTFOUND", "Setting not found");
 
     return success(res, "OK", "Setting fetched", doc);
@@ -95,7 +95,7 @@ exports.updateSetting = async (req, res) => {
 
     if (!updated) return fail(res, "NOTFOUND", "Setting not found");
 
-    return success(res, "OK", "Updated successfully", updated);
+    return success(res, "OK", "Updated successfully");
   } catch (err) {
     if (err.name === "ValidationError") {
       return fail(res, "INVALIDSYNTAX", "Validation failed", err.message);
