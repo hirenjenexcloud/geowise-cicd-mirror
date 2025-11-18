@@ -52,7 +52,7 @@ exports.createSetting = async (req, res) => {
  */
 exports.getAllSettings = async (req, res) => {
   try {
-    const list = await Setting.find({ is_deleted: false }).sort({ createdAt: -1 }).lean();
+    const list = await Setting.find().sort({ createdAt: -1 }).lean();
     return success(res, "OK", "Settings fetched", list);
   } catch (err) {
     return fail(res, "INTERNALSERVERERROR", err.message);
@@ -120,8 +120,6 @@ exports.deleteSetting = async (req, res) => {
     if (existing.group) {
       return fail(res, "INVALIDSYNTAX", "Cannot delete setting file assigned to a group");
     }
-
-    existing.is_deleted = true;
     await existing.save();
 
     return success(res, "OK", "Deleted");

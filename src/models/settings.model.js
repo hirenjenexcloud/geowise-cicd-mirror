@@ -29,11 +29,6 @@ const DashboardServerSchema = new mongoose.Schema(
 
 const SettingSchema = new mongoose.Schema(
   {
-    is_deleted: {
-      type: Boolean,
-      default: false
-    },
-
     settingId: {
       type: Number,
       required: true,
