@@ -1,129 +1,90 @@
-const status = require("../config/status.config");
 const Device = require("../models/device.model");
+const { success, fail } = require("../utils/apiResponse");
 
+// Add new device
 exports.addDevice = async (req, res) => {
-
-  const { imei, imsi, iccid, msisdn, Pid, carrier } = req.body;
-
+  const  payload = { ...req.body }
   try {
-    const existingDevice = await Device.findOne({ imei: imei }).lean().exec();
-
-    if (existingDevice) {
-      return res.json({ success: false,status: status.OK,msg: "Device with this IMEI already exists.",
-      });
-    }
-
-    let device = new Device({
-                            imei: imei,
-                            imsi: imsi,
-                            iccid: iccid,
-                            msisdn: msisdn,
-                            Pid: Pid,
-                            carrier: carrier,
-    });
-
+    let device = new Device(payload);
     let result = await device.save();
-
-    return res.json({
-      success: true,status: status.CREATED,msg: "Device added successfully.",data: result});
-
+    return success(res,"CREATED", "Device added successfully");
   } catch (err) {
-    console.log("error .............", err);
-    return res.json({
-      success: false,status: status.INVALIDSYNTAX,msg: "Failed to add device.",
-    });
+    if (err.name === "MongoServerError" && err.code === 11000) {
+      return fail(res,"INVALIDSYNTAX", "Duplicate key error", err.message);
+    }
+    if (err.name === "ValidationError") {
+      return fail(res,"INVALIDSYNTAX", "Validation failed", err.message);
+    }
+    return fail(res,"INTERNALSERVERERROR", err.message);
   }
 };
 
-
+// Update device
 exports.updateDevice = async (req, res) => {
-  const { imei, imsi, iccid, msisdn, Pid, carrier } = req.body;
-
+  const { imei, imsi, iccid, msisdn, carrier,swVersion,hwVersion } = req.body;
+  const id  = req.params.id;
   try {
-
-     const existingDevice = await Device.findOne({ imei: imei, is_deleted: false }).lean().exec();
-
-    if (!existingDevice) {
-      return res.json({ success: false,status: status.NOTFOUND,msg: "Device not found with this IMEI.",
-      });
-    }
-
-    const updatedDevice = await Device.findOneAndUpdate({ imei: imei },
-      { imsi, iccid, msisdn, Pid, carrier },
+    const existingDevice = await Device.findById({ _id: id}).lean().exec();
+    if (!existingDevice)  return success(res, "NOTFOUND", "Device not found with this ID.");
+    const updatedDevice = await Device.findByIdAndUpdate({ _id: id },
+      {imei, imsi, iccid, msisdn,carrier,swVersion,hwVersion },
       { new: true } 
     ).lean().exec();
-
-    return res.json({ success: true,status: status.OK,msg: "Device updated successfully.",data: updatedDevice,
-    });
-
+    return success(res, "OK", "Device updated successfully.")
   } catch (err) {
     console.error("Error updating device:", err);
-    return res.json({ success: false,status: status.INVALIDSYNTAX,msg: "Failed to update device.",
-    });
+    return fail(res, "INTERNALSERVERERROR", err.message);
   }
 };
 
-
+// Get all devices with pagination
 exports.getAllDevices = async (req, res) => {
   try {
-    const devices = await Device.find({is_deleted: false }).lean().exec();
-
-    return res.json({ success: true, status: status.OK, msg: "All devices fetched successfully.",data: devices,
-    });
+    let { page = 1, limit = 10 } = req.query;
+    page = parseInt(page);
+    limit = parseInt(limit);
+    const totalDevices = await Device.countDocuments().lean().exec();
+    const totalPages = Math.ceil(totalDevices / limit);
+    const devices = await Device.find().skip((page - 1) * limit).limit(limit).sort({ createdAt: -1 }).lean().exec();
+    let data =  {
+        totalRecords: totalDevices,
+        totalPages: totalPages,
+        currentPage: page,
+        pageSize: limit,
+        devices: devices
+      }
+    return success(res,"OK","Fetch devices successfully", data)
+   
   } catch (err) {
     console.error("Error fetching devices:", err);
-    return res.json({ success: false,status: status.INTERNALSERVERERROR,msg: "Failed to fetch devices.",
-    });
+    return fail(res, "INTERNALSERVERERROR", err.message);
   }
 };
 
-exports.getDeviceByIMEI = async (req, res) => {
-  const { imei } = req.params;
-
+// Get device by ID
+exports.getDeviceByID = async (req, res) => {
   try {
-    const device = await Device.findOne({ imei: imei, is_deleted: false }).lean().exec();
-
-    if (!device) {
-      return res.json({ success: false,status: status.NOTFOUND,msg: "Device not found with this IMEI.",
-      });
-    }
-
-    return res.json({ success: true,status: status.OK,msg: "Device fetched successfully.",data: device,
-    });
+    const device = await Device.findById(req.params.id).lean().exec()
+    if (!device) return fail(res, "NOTFOUND", "Device not found with this ID.");
+    return success(res, "OK", "Fetch Device Successfully", device);
   } catch (err) {
     console.error("Error fetching device:", err);
-    return res.json({success: false,status: status.INTERNALSERVERERROR,msg: "Failed to fetch device.",
-    });
+    return fail(res, "INTERNALSERVERERROR", err.message)
+    
   }
 };
 
-
-
+// Delete device by ID
 exports.deleteDevice = async (req, res) => {
-  const imei  = req.query.imei;
- 
-
+  const id  = req.params.id;
   try {
-    
-    const device = await Device.findOne({ imei: imei,is_deleted:false }).exec();
-
-    if (!device) {
-      return res.json({
-        success: false,
-        status: status.NOTFOUND,
-        msg: "Device not found with this IMEI.",
-      });
-    }
-
-    device.is_deleted = true;
-    await device.save();
-
-    return res.json({ success: true,status: status.OK,msg: "Device deleted successfully.",data: device,
-    });
+    const device = await Device.findById({ _id: id }).lean().exec();
+    if (!device) return fail(res, "NOTFOUND", "Device not found with this ID.");
+    let result =  await Device.deleteOne({ _id: id }).lean().exec();
+    if(result) return success(res, 'OK', "Device deleted successfully.");
   } catch (err) {
     console.error("Error deleting device:", err);
-    return res.json({ success: false,status: status.INTERNALSERVERERROR,msg: "Failed to delete device.",
-    });
+    return fail(res, "INTERNALSERVERERROR", err.message);
   }
 };
 
