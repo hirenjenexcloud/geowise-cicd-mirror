@@ -67,7 +67,7 @@ exports.getSettingById = async (req, res) => {
     const id = req.params.id;
     if (!id) return fail(res, "INVALIDSYNTAX", "Missing id param");
 
-    const doc = await Setting.findOne({settingId : id}).lean();
+    const doc = await Setting.findById(id).lean();
     if (!doc) return fail(res, "NOTFOUND", "Setting not found");
 
     return success(res, "OK", "Setting fetched", doc);
