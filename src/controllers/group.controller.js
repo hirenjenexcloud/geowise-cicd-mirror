@@ -8,10 +8,10 @@ const mongoose = require("mongoose");
 // Create new group
 exports.createGroup = async (req, res) => {
   try {
-    const { grpName, product, fwVersion, settings, hwVersion } = req.body;
+    const { grpName, product, fwId, settings, hwVersion } = req.body;
 
     //  Validate required fields
-    if (!grpName || !product || !fwVersion || !settings || !hwVersion) {
+    if (!grpName || !product || !fwId || !settings || !hwVersion) {
       return fail(res, "INVALIDSYNTAX", "Missing required fields");
     }
 

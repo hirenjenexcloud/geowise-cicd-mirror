@@ -4,6 +4,7 @@ const MQTT_HOST = process.env.MQTT_HOST || '0.0.0.0';
 const MQTT_PORT = parseInt(process.env.MQTT_PORT || '1883', 10);
 const mosca = require('mosca');
 const { startOtaRequestService } = require('../middlewares/otaPacketRequest');
+const DeviceInitReq = require('../controllers/deviceInitReq');
 
 
 
@@ -15,19 +16,15 @@ const moscaSettings = {
 
 const server = new mosca.Server(moscaSettings);
 const connectUrl1 = `mqtt://${MQTT_HOST}:${MQTT_PORT}`
-
 logger.info("MOSCA connectUrl :-------", connectUrl1);
-
 server.on('ready', () => {
     logger.info('Mosca MQTT broker is up and running');
 });
-
 server.on('published', (packet, client) => {
   if (!packet.topic.startsWith('$SYS')) {
-    // logger.info(`Message published via mosca: ${packet.topic} -> ${packet.payload.toString()}`);
+  logger.info("Mosca Published :");
   }
 });
-
 server.on('error', (err) => {
   logger.error('Mosca error:', err);
 });
@@ -49,18 +46,27 @@ const client = mqtt.connect(connectUrl, {
 
 // ---- Event Handlers ----
 
+const topics = {
+                'devicereq':{qos:2},
+                'hbt': {qos:2},
+                'moving': {qos:2},
+                'carcan': {qos:2},
+                'devicereboot': {qos:2}
+              } 
+                
 client.on('connect', () => {
   logger.info('MQTT connected');
 
   startOtaRequestService(client);
+  DeviceInitReq(client);
 
-  client.subscribe('geotracker/test', (err) => {
+   client.subscribe(topics, (err, granted) => {
     if (err) {
-      logger.error('MQTT subscribe error:', err);
+      console.error(' MQTT Subscribe error:', err);
     } else {
-      logger.info('Subscribed to topic: geotracker/test');
+      console.log('Subscribed with QoS 2:', granted.map(g => g.topic));
     }
-  });
+  });  
 });
 
 client.on('reconnect', () => {
@@ -79,11 +85,7 @@ client.on('error', (err) => {
   logger.error('MQTT error:', err.message);
 });
 
-client.on('message', (topic, message) => {
-  console.log("MQTT Message received");
-  // logger.info(`Message received: ${topic} -> ${message.toString()}`);
-});
 
 
-module.exports = {client};
+module.exports = client;
 
