@@ -16,6 +16,8 @@ services:
       - MONGO_URI=mongodb://host.docker.internal:27017/geotracker
       - MQTT_HOST=0.0.0.0 # Mosca will listen on all interfaces
       - SERVER_IP=127.0.0.1 # your host system IP (for devices)
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     command: sh -c "npm install && npm run dev"
     networks:
       - geotracker-net
