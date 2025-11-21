@@ -3,8 +3,7 @@ const mqtt = require('mqtt');
 const MQTT_HOST = process.env.MQTT_HOST || '0.0.0.0';
 const MQTT_PORT = parseInt(process.env.MQTT_PORT || '1883', 10);
 const mosca = require('mosca');
-const { startOtaRequestService } = require('../middlewares/otaPacketRequest');
-const DeviceInitReq = require('../controllers/deviceInitReq');
+const deviceCommutionHandler = require('../controllers/deviceCommunication');
 
 
 
@@ -48,17 +47,16 @@ const client = mqtt.connect(connectUrl, {
 
 const topics = {
                 'devicereq':{qos:2},
-                'hbt': {qos:2},
-                'moving': {qos:2},
+                'carinfo': {qos:2},
+                'tracking': {qos:2},
                 'carcan': {qos:2},
-                'devicereboot': {qos:2}
+                'deviceboot': {qos:2}
               } 
                 
 client.on('connect', () => {
   logger.info('MQTT connected');
 
-  startOtaRequestService(client);
-  DeviceInitReq(client);
+  deviceCommutionHandler(client);
 
    client.subscribe(topics, (err, granted) => {
     if (err) {

@@ -153,4 +153,4 @@ function startOtaRequestService(client) {
   });
 }
 
-module.exports = { startOtaRequestService };
+module.exports = startOtaRequestService;
