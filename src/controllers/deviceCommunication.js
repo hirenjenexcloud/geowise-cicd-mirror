@@ -5,6 +5,7 @@ const Firmware = require('../models/firmware.model');
 const Setting = require('../models/settings.model');
 const startOtaRequestService = require('../middlewares/otaPacketRequest');
 const allPacketsDef = require('../utils/packetDef');
+const devicePackets = require('../models/devicePackets.model');
 
 function deviceCommutionHandler(client) {
   startOtaRequestService(client);
@@ -125,11 +126,54 @@ function parsePacket(client) {
           .slice(offset, offset + bytes)
           .toString("hex");
 
-        parsed[field] = def.parser(rawHex); // use new parser function
+        parsed[field] = def.parser(rawHex);
         offset += bytes;
       }
 
-      logger.info(`Parsed Packet Data: ${JSON.stringify(parsed)}`);
+      // logger.info(`Parsed Packet Data: ${JSON.stringify(parsed)}`);
+
+      const devicePacket = {
+        packetInfo: {
+          checksum: parsed.checksum,
+          imei: parsed.imei,
+          packetSize: parsed.packetSize,
+          eType: parsed.eType,
+          seqNo: parsed.seqNumber,
+          packet: packetHex.toString()
+        },
+
+        location: {
+          lat: parsed.lat,
+          long: parsed.lon,
+          hac: parsed.hac,
+          satellites: parsed.totalSat,
+          rssi: parsed.rssi
+        },
+
+        power: {
+          main: parsed.mainPower,
+          battery: parsed.batteryPower
+        },
+
+        engine: {
+          spdKmph: parsed.speed,
+          rpm: parsed.rpm,
+          odoMeter: parsed.odometer
+        },
+
+        fuel: {
+          type: parsed.fuelType,
+          level: parsed.fuelLevel
+        },
+
+        temperature: {
+          oil: parsed.oilTemp
+        }
+      };
+
+      await devicePackets.create(devicePacket);
+      logger.info("Car data saved successfully!", devicePacket);
+      
     } catch (err) {
       logger.error("Error parsing packet:", err);
     }

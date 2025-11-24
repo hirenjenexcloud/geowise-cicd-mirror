@@ -56,7 +56,7 @@ class AllPacketsDef {
 
         hac: {
             size: 2,
-            parser: hex => parseInt(hex, 16)
+            parser: hex => parseInt(hex, 16) / 100
         },
 
         totalSat: {
