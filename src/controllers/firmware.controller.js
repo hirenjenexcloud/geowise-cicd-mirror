@@ -3,6 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const logger = require('../utils/logger');
 const Firmware = require('../models/firmware.model');
+const Group = require('../models/group.model');
 const { success, fail } = require("../utils/apiResponse");
 
 const UPLOADS_ROOT = path.join(__dirname, '../uploads');
@@ -289,6 +290,12 @@ exports.deleteFirmwares = async (req, res) => {
     const id = req.params.id;
     if (!id) {
       return fail(res, "INVALIDSYNTAX", "Missing id param");
+    }
+
+    // Prevent deletion if firmware is still assigned to a group
+    const group = await Group.findOne({ fwId: id });
+    if (group) {
+      return fail(res, "NOTFOUND", "Cannot delete firmware assigned to a group");
     }
 
     // ---------------------------------------------------------

@@ -38,11 +38,11 @@ const fuelSchema = new mongoose.Schema(
  
 const devicePacketsSchema = new mongoose.Schema(
   {
+    imei: { type: Number, required: true, index: true },
+    eType: { type: Number, required: true },
     packetInfo: {
       checksum: { type: Number, required: true },
-      imei: { type: Number, required: true, index: true },
       packetSize: { type: Number, required: true },
-      eType: { type: Number, required: true },
       seqNo: { type: Number, required: true },
       packet: { type: String, required: true }
     },
@@ -57,7 +57,8 @@ const devicePacketsSchema = new mongoose.Schema(
     },
   },
   {
-    timestamps: { createdAt: true, updatedAt: false }
+    timestamps: { createdAt: true, updatedAt: false },
+    versionKey: false,
   }
 );
  

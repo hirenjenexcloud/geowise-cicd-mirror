@@ -132,44 +132,7 @@ function parsePacket(client) {
 
       // logger.info(`Parsed Packet Data: ${JSON.stringify(parsed)}`);
 
-      const devicePacket = {
-        packetInfo: {
-          checksum: parsed.checksum,
-          imei: parsed.imei,
-          packetSize: parsed.packetSize,
-          eType: parsed.eType,
-          seqNo: parsed.seqNumber,
-          packet: packetHex.toString()
-        },
-
-        location: {
-          lat: parsed.lat,
-          long: parsed.lon,
-          hac: parsed.hac,
-          satellites: parsed.totalSat,
-          rssi: parsed.rssi
-        },
-
-        power: {
-          main: parsed.mainPower,
-          battery: parsed.batteryPower
-        },
-
-        engine: {
-          spdKmph: parsed.speed,
-          rpm: parsed.rpm,
-          odoMeter: parsed.odometer
-        },
-
-        fuel: {
-          type: parsed.fuelType,
-          level: parsed.fuelLevel
-        },
-
-        temperature: {
-          oil: parsed.oilTemp
-        }
-      };
+      const devicePacket = buildDevicePacket(parsed, packetHex);
 
       await devicePackets.create(devicePacket);
       logger.info("Car data saved successfully!", devicePacket);
@@ -188,5 +151,42 @@ function hexToBytes(hex) {
   }
   return bytes;
 }
+
+function buildDevicePacket(parsed, packetHex) {
+  return {
+    imei: parsed.imei,
+    eType: parsed.eType,
+    packetInfo: {
+      checksum: parsed.checksum,
+      packetSize: parsed.packetSize,
+      seqNo: parsed.seqNumber,
+      packet: packetHex.toString()
+    },
+    location: {
+      lat: parsed.lat,
+      long: parsed.lon,
+      hac: parsed.hac,
+      satellites: parsed.totalSat,
+      rssi: parsed.rssi
+    },
+    power: {
+      main: parsed.mainPower,
+      battery: parsed.batteryPower
+    },
+    engine: {
+      spdKmph: parsed.speed,
+      rpm: parsed.rpm,
+      odoMeter: parsed.odometer
+    },
+    fuel: {
+      type: parsed.fuelType,
+      level: parsed.fuelLevel
+    },
+    temperature: {
+      oil: parsed.oilTemp
+    }
+  };
+}
+
 
 module.exports = deviceCommutionHandler;
