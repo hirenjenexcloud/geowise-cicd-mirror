@@ -38,7 +38,7 @@ const fuelSchema = new mongoose.Schema(
  
 const devicePacketsSchema = new mongoose.Schema(
   {
-    imei: { type: Number, required: true, index: true },
+    imei: { type: String, required: true, index: true },
     eType: { type: Number, required: true },
     packetInfo: {
       checksum: { type: Number, required: true },

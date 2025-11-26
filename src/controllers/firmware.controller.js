@@ -20,14 +20,6 @@ async function getNextFolderId() {
   return String(max + 1);
 }
 
-function checksum16_from_stream_buffer(buf) {
-  let sum = 0;
-  for (let i = 0; i < buf.length; i++) {
-    sum = (sum + buf[i]) & 0xffff;
-  }
-  return sum;
-}
-
 async function compute_file_checksum_and_size(filePath) {
   return new Promise((resolve, reject) => {
     let size = 0;
@@ -179,7 +171,7 @@ exports.createFirmwares = async (req, res) => {
     // ---------------------------------------------------------
     await new Firmware({
       firmName: req.body.firmName,
-      firmId: folderId,
+      fwId: folderId,
       swVersion: req.body.swVersion,
     }).save();
 
@@ -307,9 +299,9 @@ exports.deleteFirmwares = async (req, res) => {
     }
 
     // ---------------------------------------------------------
-    // 2) DELETE THE UPLOAD FOLDER (firmId == folderId)
+    // 2) DELETE THE UPLOAD FOLDER (fwId == folderId)
     // ---------------------------------------------------------
-    const folderId = deleted.firmId;
+    const folderId = deleted.fwId;
     const folderPath = path.join(UPLOADS_ROOT, String(folderId));
 
     try {
