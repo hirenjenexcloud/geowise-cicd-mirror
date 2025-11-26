@@ -21,6 +21,11 @@ services:
     command: sh -c "npm install && npm run dev"
     networks:
       - geotracker-net
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
 
   
 volumes:

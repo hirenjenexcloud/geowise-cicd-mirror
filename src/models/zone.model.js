@@ -1,3 +1,4 @@
+const { required } = require("joi");
 const mongoose = require("mongoose");
 
 const latLngSchema = new mongoose.Schema({
@@ -6,6 +7,7 @@ const latLngSchema = new mongoose.Schema({
 }, { _id: false });
 
 const zoneSchema = new mongoose.Schema({
+  imei: {type: String, required: true, trim: true},
   name: { type: String, required: true, trim: true },
   type: { type: String, required: true, trim: true },
   notes: { type: String, default: "", trim: true },

@@ -5,13 +5,15 @@ const mongoose = require("mongoose");
 
 exports.createZone = async (req, res) => {
   try {
-    const { name, type, notes, latLongArr } = req.body;
+    const {imei, name, type, notes, latLongArr } = req.body;
 
     // ---------- validation ----------
+    if (!imei) {
+      return fail(res, "INVALIDSYNTAX", "imei is required");
+    }
     if (!name || !type) {
       return fail(res, "INVALIDSYNTAX", "name and type are required");
     }
-
     if (!latLongArr || !Array.isArray(latLongArr) || latLongArr.length < 3) {
       return fail(res, "INVALIDSYNTAX", "latLongArr must contain at least 3 locations");
     }
@@ -22,7 +24,12 @@ exports.createZone = async (req, res) => {
       }
     }
 
-    const zone = await Zone.create({ name, type, notes, latLongArr });
+    const existingZone = await Zone.findOne({ imei });
+    if (existingZone) {
+      return fail(res, "INVALIDSYNTAX", "Zone for this IMEI already exists");
+    }
+
+    const zone = await Zone.create({ imei,name, type, notes, latLongArr });
 
     return success(res, "CREATED", "Zone created successfully");
 
@@ -48,15 +55,15 @@ exports.getAllZones = async (req, res) => {
   }
 };
 
-exports.getZoneById = async (req, res) => {
+exports.getZoneByImei = async (req, res) => {
   try {
-    const { id } = req.params;
+    const { imei } = req.params;
 
-    if (!mongoose.isValidObjectId(id)) {
-      return fail(res, "INVALIDSYNTAX", "Valid zone ID required");
+    if (!imei) {
+      return fail(res, "INVALIDSYNTAX", "IMEI is required");
     }
 
-    const zone = await Zone.findById(id);
+    const zone = await Zone.findOne({ imei });
 
     if (!zone) {
       return fail(res, "NOTFOUND", "Zone not found");
@@ -65,26 +72,36 @@ exports.getZoneById = async (req, res) => {
     return success(res, "OK", "Zone fetched successfully", zone);
 
   } catch (err) {
-    logger.error('Fetch zone error:', err);
+    logger.error("Fetch zone error:", err);
     return fail(res, "INTERNALSERVERERROR", "Server error", err.message);
   }
 };
 
 
+
 exports.updateZone = async (req, res) => {
   try {
-    const { id } = req.params;
-    const { name, type, notes, latLongArr } = req.body;
+    const { imei } = req.params;
 
-    if (!mongoose.isValidObjectId(id)) {
-      return fail(res, "INVALIDSYNTAX", "Valid zone ID required");
+    if (!imei) {
+      return fail(res, "INVALIDSYNTAX", "IMEI is required");
     }
 
-    if (latLongArr && latLongArr.length < 3) {
+    // Prevent IMEI update (IMEI must remain unique)
+    if (req.body.imei !== undefined) {
+      delete req.body.imei;
+    }
+
+    // Validate latLongArr if provided
+    if (req.body.latLongArr && req.body.latLongArr.length < 3) {
       return fail(res, "INVALIDSYNTAX", "latLongArr must contain at least 3 locations");
     }
 
-    const zone = await Zone.findByIdAndUpdate(id, req.body, { new: true });
+    const zone = await Zone.findOneAndUpdate(
+      { imei },
+      req.body,
+      { new: true }
+    );
 
     if (!zone) {
       return fail(res, "NOTFOUND", "Zone not found");
@@ -93,20 +110,21 @@ exports.updateZone = async (req, res) => {
     return success(res, "OK", "Zone updated successfully");
 
   } catch (err) {
-    logger.error('Update zone error:', err);
+    logger.error("Update zone error:", err);
     return fail(res, "INTERNALSERVERERROR", "Server error", err.message);
   }
 };
 
+
 exports.deleteZone = async (req, res) => {
   try {
-    const { id } = req.params;
+    const { imei } = req.params;
 
-    if (!mongoose.isValidObjectId(id)) {
-      return fail(res, "INVALIDSYNTAX", "Valid zone ID required");
+    if (!imei) {
+      return fail(res, "INVALIDSYNTAX", "IMEI is required");
     }
 
-    const zone = await Zone.findByIdAndDelete(id);
+    const zone = await Zone.findOneAndDelete({ imei });
 
     if (!zone) {
       return fail(res, "NOTFOUND", "Zone not found");
@@ -115,9 +133,10 @@ exports.deleteZone = async (req, res) => {
     return success(res, "OK", "Zone deleted successfully");
 
   } catch (err) {
-    logger.error('Delete zone error:', err);
+    logger.error("Delete zone error:", err);
     return fail(res, "INTERNALSERVERERROR", "Server error", err.message);
   }
 };
+
 
 

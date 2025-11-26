@@ -1,28 +1,52 @@
 const Group = require('../models/group.model');
 const Device =  require('../models/device.model');
+const Firmware =  require('../models/firmware.model');
+const Setting  = require('../models/settings.model');
 const logger = require('../utils/logger');
 const { success, fail } = require("../utils/apiResponse");
 const mongoose = require("mongoose");
 
-
+var mqttClient ;
 // Create new group
 exports.createGroup = async (req, res) => {
   try {
-    const { grpName, product, fwId, settings, hwVersion } = req.body;
+    const { grpName,fwId, settingId, hwVersion,  } = req.body;
 
-    //  Validate required fields
-    if (!grpName || !product || !fwId || !settings || !hwVersion) {
+    // Validate required fields
+    if (!grpName || !fwId || !settingId || !hwVersion) {
       return fail(res, "INVALIDSYNTAX", "Missing required fields");
     }
 
-    //  Check duplicate grpName
+    // Check duplicate group name
     const existingGroup = await Group.findOne({ grpName: grpName.trim() });
     if (existingGroup) {
       return fail(res, "INVALIDSYNTAX", "Group name already exists");
     }
 
-    //  Create group
-    const group = await Group.create(req.body);
+    // Check firmware exists
+    const firmware = await Firmware.findOne({ fwId: fwId });
+    if (!firmware) {
+      return fail(res, "INVALIDSYNTAX", "Invalid firmware version");
+    }
+
+    // Check setting exists
+    const setting = await Setting.findOne({ settingId: settingId });
+    if (!setting) {
+      return fail(res, "INVALIDSYNTAX", "Invalid setting");
+    }
+
+    // Get swVersion from firmware table
+    const swVersion = firmware.swVersion;
+
+    // Create group with updated schema
+    await Group.create({
+      grpName: grpName.trim(),
+      fwId,
+      settingId,
+      hwVersion,
+      swVersion,
+      desc: req.body.desc || ""
+    });
 
     return success(res, "CREATED", "Group created successfully");
 
@@ -31,6 +55,7 @@ exports.createGroup = async (req, res) => {
     return fail(res, "INTERNALSERVERERROR", "Server error", err.message);
   }
 };
+
 
 
 // Get all groups
@@ -64,26 +89,96 @@ exports.getGroupById = async (req, res) => {
 // Update group
 exports.updateGroup = async (req, res) => {
   try {
-    const group = await Group.findByIdAndUpdate(req.params.id, req.body, { new: true });
-    if (!group) return fail(res,"NOTFOUND" ,'Group not found');
-    return success(res,"OK",'Group updated successfully');
+    const { fwId, settingId } = req.body;
+
+    let updateData = { ...req.body };
+
+    const oldGroup = await Group.findById(req.params.id);
+    if (!oldGroup) {
+      return fail(res, "NOTFOUND", "Group not found");
+    }
+
+    const oldFwId = oldGroup.fwId;
+
+    // Do NOT allow updating hwVersion
+    if (updateData.hwVersion !== undefined) {
+      delete updateData.hwVersion;
+    }
+
+    // If firmware ID is provided in update, validate it
+    if (fwId !== undefined) {
+      const firmware = await Firmware.findOne({ fwId });
+      if (!firmware) {
+        return fail(res, "INVALIDSYNTAX", "Invalid firmware version");
+      }
+
+      // Inject swVersion from firmware
+      updateData.swVersion = firmware.swVersion;
+    }
+
+    // If setting ID is provided in update, validate it
+    if (settingId !== undefined) {
+      const setting = await Setting.findOne({ settingId });
+      if (!setting) {
+        return fail(res, "INVALIDSYNTAX", "Invalid setting");
+      }
+    }
+
+    // Clean trimmed grpName if updated
+    if (updateData.grpName) {
+      updateData.grpName = updateData.grpName.trim();
+    }
+
+    const group = await Group.findByIdAndUpdate(
+      req.params.id,
+      updateData,
+      { new: true }
+    );
+
+    if (!group) {
+      return fail(res, "NOTFOUND", "Group not found");
+    }
+    if (fwId !== undefined && fwId !== oldFwId) {
+      console.log("Firmware ID changed!!");
+      sendReboot(mqttClient,req.params.id)
+ 
+    }
+    return success(res, "OK", "Group updated successfully");
+
   } catch (err) {
-    logger.error('Update group error:', err);
-    return fail(res,"INTERNALSERVERERROR",'Server error');
+    logger.error("Update group error:", err);
+    return fail(res, "INTERNALSERVERERROR", "Server error", err.message);
   }
 };
+
 
 // Delete group
 exports.deleteGroup = async (req, res) => {
   try {
-    const group = await Group.findByIdAndDelete(req.params.id);
-    if (!group) return fail(res,"NOTFOUND" ,'Group not found');
-    return success(res,"OK",'Group deleted successfully');
+    const groupId = req.params.id;
+
+    // Check if any device is using this group
+    const deviceUsingGroup = await Device.findOne({ grpId: groupId });
+
+    if (deviceUsingGroup) {
+      return fail(res, "INVALIDSYNTAX", "Group cannot be deleted because it is assigned to a device");
+    }
+
+    // Now safe to delete
+    const group = await Group.findByIdAndDelete(groupId);
+
+    if (!group) {
+      return fail(res, "NOTFOUND", "Group not found");
+    }
+
+    return success(res, "OK", "Group deleted successfully");
+
   } catch (err) {
-    logger.error('Delete group error:', err);
-    return fail(res,"INTERNALSERVERERROR",'Server error');
+    logger.error("Delete group error:", err);
+    return fail(res, "INTERNALSERVERERROR", "Server error", err.message);
   }
 };
+
 
 exports.importDevices = async (req, res) => {
   try {
@@ -168,4 +263,37 @@ exports.getDevicesByGroup = async (req, res) => {
     return fail(res, "INTERNALSERVERERROR", "Server error", err.message);
   }
 };
+
+exports.setmqttClient = (client) =>{
+   mqttClient = client;
+}
+ 
+async function sendReboot(mqttClient,grpId) {
+ 
+  try {
+    if (!grpId) return;
+    if (!mqttClient) { console.log("MQTT client not ready");
+      return;
+    }
+    console.log("Finding devices for group:", grpId);
+    const devices = await Device.find({ grpId:grpId }).lean().exec();
+    if (!devices || devices.length === 0) {
+      console.log("No devices found for group:", grpId);
+      return;
+    }
+    console.log(`Rebooting ${devices.length} devices...`);
+    devices.forEach(device => {
+      const IMEI = String(device.imei);         
+      const payload = "reboot";
+ 
+      mqttClient.publish(IMEI, payload, { qos: 2 }, (err) => {
+        if (err) console.log("Publish reboot error:", err);
+        else console.log(`Reboot sent → IMEI=${device.imei}`);
+      });
+    });
+ 
+  } catch (err) {
+    console.log("sendReboot error:", err);
+  }
+}
  

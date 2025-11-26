@@ -6,11 +6,13 @@ const Setting = require('../models/settings.model');
 const startOtaRequestService = require('../middlewares/otaPacketRequest');
 const allPacketsDef = require('../utils/packetDef');
 const DevicePackets = require('../models/devicePackets.model');
+const group = require('../controllers/group.controller');
 
 function deviceCommutionHandler(client) {
   startOtaRequestService(client);
   DeviceInitReq(client);
   parsePacket(client);
+  group.setmqttClient(client);
 }
 
 function DeviceInitReq(client) {

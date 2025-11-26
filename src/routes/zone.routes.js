@@ -4,8 +4,8 @@ const zoneController = require("../controllers/zone.controller");
 
 router.post("/", zoneController.createZone);
 router.get("/", zoneController.getAllZones);
-router.get("/:id", zoneController.getZoneById);
-router.put("/:id", zoneController.updateZone);
-router.delete("/:id", zoneController.deleteZone);
+router.get("/:imei", zoneController.getZoneByImei);
+router.put("/:imei", zoneController.updateZone);
+router.delete("/:imei", zoneController.deleteZone);
 
 module.exports = router;
