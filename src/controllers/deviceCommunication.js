@@ -6,7 +6,6 @@ const Setting = require('../models/settings.model');
 const startOtaRequestService = require('../middlewares/otaPacketRequest');
 const allPacketsDef = require('../utils/packetDef');
 const DevicePackets = require('../models/devicePackets.model');
-const DeviceData = require('../models/device.model');
 
 function deviceCommutionHandler(client) {
   startOtaRequestService(client);
@@ -140,7 +139,7 @@ function parsePacket(client) {
       logger.info("Car data saved successfully!", devicePacket);
       
       // find by imei and update device data if exists, else not register device
-      const exists = await DeviceData.findOneAndUpdate(
+      const exists = await Device.findOneAndUpdate(
         { imei: devicePacket.imei },
         { $set: deviceData }
       ).exec();
