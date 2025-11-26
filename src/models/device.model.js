@@ -1,5 +1,40 @@
 const mongoose = require('mongoose');
 
+const locationSchema = new mongoose.Schema(
+  {
+    lat: { type: Number },
+    long: { type: Number },
+    hac: { type: Number },
+    satellites: { type: Number },
+    rssi: { type: Number }
+  },
+  { _id: false }
+);
+ 
+const powerSchema = new mongoose.Schema(
+  {
+    main: { type: Number },
+    battery: { type: Number }
+  },
+  { _id: false }
+);
+ 
+const engineSchema = new mongoose.Schema(
+  {
+    spdKmph: { type: Number },
+    rpm: { type: Number },
+    odoMeter: { type: Number }
+  },
+  { _id: false }
+);
+ 
+const fuelSchema = new mongoose.Schema(
+  {
+    type: { type: Number },
+    level: { type: Number }
+  },
+  { _id: false }
+);
 
 const DeviceSchema = new mongoose.Schema(
   {
@@ -37,6 +72,12 @@ const DeviceSchema = new mongoose.Schema(
     grpId:{type: mongoose.Schema.Types.ObjectId},
     swVersion: {type: String, default: ''},
     hwVersion: {type: String, default: ''},
+    eType: { type: Number},
+    location: { type: locationSchema},
+    power: { type: powerSchema},
+    engine: { type: engineSchema},
+    fuel: { type: fuelSchema},
+    temperature: {oil: { type: Number}},
   },
   {
     timestamps: true, 

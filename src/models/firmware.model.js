@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const FirmwareSchema = new mongoose.Schema({
 
-    firmId: {
+    fwId: {
       type: Number,
       required: true,
       unique: true,

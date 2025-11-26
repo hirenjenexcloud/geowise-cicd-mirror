@@ -5,7 +5,8 @@ const Firmware = require('../models/firmware.model');
 const Setting = require('../models/settings.model');
 const startOtaRequestService = require('../middlewares/otaPacketRequest');
 const allPacketsDef = require('../utils/packetDef');
-const devicePackets = require('../models/devicePackets.model');
+const DevicePackets = require('../models/devicePackets.model');
+const DeviceData = require('../models/device.model');
 
 function deviceCommutionHandler(client) {
   startOtaRequestService(client);
@@ -90,7 +91,7 @@ function parsePacket(client) {
       const packetBuffer = Buffer.from(packetHex, "hex");
 
       // ------------ CHECKSUM LOGIC ------------
-      const middleHex = packetHex.slice(20, -4);         // exclude imei(8B)=16 hex + packetSize(2B)=4 hex
+      const middleHex = packetHex.substring(20, packetHex.length - 4);         // exclude imei(8B)=16 hex + packetSize(2B)=4 hex
       const middleBytes = Buffer.from(middleHex, "hex");
 
       // Sum all middle bytes
@@ -99,7 +100,7 @@ function parsePacket(client) {
       checksumSum &= 0xffff;
 
       const computedHex = checksumSum.toString(16).padStart(4, "0");
-      const checksumPacketHex = packetHex.slice(-4);
+      const checksumPacketHex = packetHex.substring(packetHex.length - 4);
 
       if (computedHex !== checksumPacketHex) {
         logger.warn(
@@ -123,7 +124,7 @@ function parsePacket(client) {
         }
 
         const rawHex = packetBuffer
-          .slice(offset, offset + bytes)
+          .subarray(offset, offset + bytes)
           .toString("hex");
 
         parsed[field] = def.parser(rawHex);
@@ -132,11 +133,22 @@ function parsePacket(client) {
 
       // logger.info(`Parsed Packet Data: ${JSON.stringify(parsed)}`);
 
-      const devicePacket = buildDevicePacket(parsed, packetHex);
+      const devicePacket = buildDevicePacket(parsed, packetHex, true);
+      const deviceData = buildDevicePacket(parsed, packetHex, false);
 
-      await devicePackets.create(devicePacket);
+      await DevicePackets.create(devicePacket);
       logger.info("Car data saved successfully!", devicePacket);
       
+      // find by imei and update device data if exists, else not register device
+      const exists = await DeviceData.findOneAndUpdate(
+        { imei: devicePacket.imei },
+        { $set: deviceData }
+      ).exec();
+      if (!exists) {
+        logger.warn(`Device with IMEI ${devicePacket.imei} not registered in DeviceData collection.`);
+      }
+       
+
     } catch (err) {
       logger.error("Error parsing packet:", err);
     }
@@ -144,24 +156,12 @@ function parsePacket(client) {
 }
 
 
-function hexToBytes(hex) {
-  const bytes = [];
-  for (let i = 0; i < hex.length; i += 2) {
-    bytes.push(parseInt(hex.substr(i, 2), 16));
-  }
-  return bytes;
-}
 
-function buildDevicePacket(parsed, packetHex) {
-  return {
+
+function buildDevicePacket(parsed, packetHex, includePacketInfo) {
+  const packet = {
     imei: parsed.imei,
     eType: parsed.eType,
-    packetInfo: {
-      checksum: parsed.checksum,
-      packetSize: parsed.packetSize,
-      seqNo: parsed.seqNumber,
-      packet: packetHex.toString()
-    },
     location: {
       lat: parsed.lat,
       long: parsed.lon,
@@ -186,6 +186,17 @@ function buildDevicePacket(parsed, packetHex) {
       oil: parsed.oilTemp
     }
   };
+
+  if (includePacketInfo) {
+    packet.packetInfo = {
+      checksum: parsed.checksum,
+      packetSize: parsed.packetSize,
+      seqNo: parsed.seqNumber,
+      packet: packetHex.toString()
+    };
+  }
+
+  return packet;
 }
 
 
