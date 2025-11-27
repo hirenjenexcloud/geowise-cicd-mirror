@@ -159,7 +159,10 @@ function parsePacket(client) {
 function buildDevicePacket(parsed, packetHex, includePacketInfo) {
   const packet = {
     imei: parsed.imei,
-    eType: parsed.eType,
+    event: {
+      eType: parsed.eType,
+      eName: allPacketsDef.eType[parsed.eType] || "Unknown",
+    },
     location: {
       lat: parsed.lat,
       long: parsed.lon,

@@ -3,6 +3,7 @@ const router = express.Router();
 const DeviceController = require('../controllers/device.controller');
 const authManager = require('../middlewares/authJWT');
 
+router.route('/history').get(authManager.authenticate,DeviceController.deviceHistory);
 router.route('/').post(authManager.authenticate,DeviceController.addDevice)
                  .put(authManager.authenticate,DeviceController.updateDevice)
                  .get(authManager.authenticate,DeviceController.getAllDevices);

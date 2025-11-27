@@ -1,3 +1,4 @@
+const { required } = require('joi');
 const mongoose = require('mongoose');
 
 const locationSchema = new mongoose.Schema(
@@ -10,7 +11,7 @@ const locationSchema = new mongoose.Schema(
   },
   { _id: false }
 );
- 
+
 const powerSchema = new mongoose.Schema(
   {
     main: { type: Number },
@@ -18,7 +19,7 @@ const powerSchema = new mongoose.Schema(
   },
   { _id: false }
 );
- 
+
 const engineSchema = new mongoose.Schema(
   {
     spdKmph: { type: Number },
@@ -27,7 +28,7 @@ const engineSchema = new mongoose.Schema(
   },
   { _id: false }
 );
- 
+
 const fuelSchema = new mongoose.Schema(
   {
     type: { type: Number },
@@ -36,21 +37,21 @@ const fuelSchema = new mongoose.Schema(
   { _id: false }
 );
 
-const DeviceSchema = new mongoose.Schema(
+const eventSchema = new mongoose.Schema(
   {
-  
-    imei: {
-      type: String,
-      required: [true, 'IMEI is required'],
-      trim: true,
-      unique: true,
-      minlength: [15, 'IMEI must be at least 15 characters'],
-    },
+    eType: { type: Number },
+    eName: { type: String }
+  },
+  { _id: false }
+);
+
+const deviceInfoSchema = new mongoose.Schema(
+  {
     imsi: {
       type: String,
       required: [true, 'IMSI is required'],
       trim: true,
-      
+
     },
     iccid: {
       type: String,
@@ -67,22 +68,40 @@ const DeviceSchema = new mongoose.Schema(
       type: String,
       required: [true, 'Carrier is required'],
       trim: true
+    }
+  },
+  { _id: false }
+);
+
+const DeviceSchema = new mongoose.Schema(
+  {
+
+    imei: {
+      type: String,
+      required: [true, 'IMEI is required'],
+      trim: true,
+      unique: true,
+      minlength: [15, 'IMEI must be at least 15 characters'],
     },
-    grpId:{type: mongoose.Schema.Types.ObjectId},
-    swVersion: {type: String, default: ''},
-    hwVersion: {type: String, default: ''},
-    eType: { type: Number},
-    location: { type: locationSchema},
-    power: { type: powerSchema},
-    engine: { type: engineSchema},
-    fuel: { type: fuelSchema},
-    temperature: {oil: { type: Number}},
+    grpId: { type: mongoose.Schema.Types.ObjectId },
+    swVersion: { type: String, default: '' },
+    hwVersion: { type: String, default: '' },
+    deviceInfo: { type: deviceInfoSchema, required: true },
+
+    deviceData: {
+      event: { type: eventSchema },
+      location: { type: locationSchema },
+      power: { type: powerSchema },
+      engine: { type: engineSchema },
+      fuel: { type: fuelSchema },
+      temperature: { oil: { type: Number } },
+    }
   },
   {
-    timestamps: true, 
+    timestamps: true,
     versionKey: false,
   }
 );
 DeviceSchema.index({ imei: 1 });
 
-module.exports = mongoose.model('DeviceData', DeviceSchema,'device_data');
+module.exports = mongoose.model('DeviceData', DeviceSchema, 'device_data');
