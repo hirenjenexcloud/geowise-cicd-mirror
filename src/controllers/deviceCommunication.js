@@ -140,10 +140,13 @@ function parsePacket(client) {
       // find by imei and update device data if exists, else not register device
       const exists = await Device.findOneAndUpdate(
         { imei: devicePacket.imei },
-        { $set: deviceData }
+        { $set: {deviceData : deviceData} },
+        { new: true }
       ).exec();
       if (!exists) {
         logger.warn(`Device with IMEI ${devicePacket.imei} not registered in DeviceData collection.`);
+      } else {
+        logger.info(`Device data for IMEI ${devicePacket.imei} updated successfully.`);
       }
        
 
