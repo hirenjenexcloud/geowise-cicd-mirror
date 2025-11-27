@@ -7,6 +7,10 @@ const { success, fail } = require("../utils/apiResponse");
 const mongoose = require("mongoose");
 
 var mqttClient ;
+
+exports.setmqttClient = (client) =>{
+   mqttClient = client;
+} 
 // Create new group
 exports.createGroup = async (req, res) => {
   try {
@@ -198,12 +202,15 @@ exports.importDevices = async (req, res) => {
 
     // Ensure group exists
     const group = await Group.findById(grpId);
+    const swVersion = group.swVersion;
+    const hwVersion = group.hwVersion;
+
     if (!group) {
       return fail(res, "NOTFOUND", "Group not found");
     }
 
     // Find existing devices that match provided IMEIs
-    const foundDevices = await Device.find({ imei: { $in: imeis } }).select("imei _id grpId");
+    const foundDevices = await Device.find({ imei: { $in: imeis } }).select("imei _id grpId swVersion hwVersion");
 
     // If no devices matched, return 200 with empty result (handled gracefully)
     if (!foundDevices || foundDevices.length === 0) {
@@ -217,9 +224,30 @@ exports.importDevices = async (req, res) => {
     // Update matched devices to set grpId
     const updateResult = await Device.updateMany(
       { imei: { $in: imeis } },
-      { $set: { grpId} }
+      { $set: { grpId ,hwVersion,swVersion} }
     );
 
+    for (const device of foundDevices) {
+      const oldSw = device.swVersion;
+      const oldHw = device.hwVersion;
+
+      const isSwChanged = oldSw !== swVersion;
+      const isHwChanged = oldHw !== hwVersion;
+
+      if (isSwChanged || isHwChanged) {
+        console.log(`Firmware mismatch → reboot required for IMEI: ${device.imei}`);
+
+        mqttClient.publish(String(device.imei), "reboot", { qos: 2 }, (err) => {
+          if (err) {
+            console.log(`Failed to send reboot to IMEI: ${device.imei}`, err);
+          } else {
+            console.log(`Reboot sent → IMEI=${device.imei}`);
+          }
+        });
+        
+       
+      }
+    }
     // Compute which IMEIs were not found
     const foundImeisSet = new Set(foundDevices.map(d => String(d.imei)));
     const notFoundImeis = imeis.filter(i => !foundImeisSet.has(String(i)));
@@ -264,9 +292,7 @@ exports.getDevicesByGroup = async (req, res) => {
   }
 };
 
-exports.setmqttClient = (client) =>{
-   mqttClient = client;
-}
+
  
 async function sendReboot(mqttClient,grpId) {
  

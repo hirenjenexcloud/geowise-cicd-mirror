@@ -49,7 +49,6 @@ const DeviceSchema = new mongoose.Schema(
     imsi: {
       type: String,
       required: [true, 'IMSI is required'],
-      unique: true,
       trim: true,
       
     },

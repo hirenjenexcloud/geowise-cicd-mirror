@@ -1,9 +1,17 @@
 const Device = require("../models/device.model");
+const Group =  require("../models/group.model");
 const { success, fail } = require("../utils/apiResponse");
 
 // Add new device
 exports.addDevice = async (req, res) => {
   const  payload = { ...req.body }
+  console.log("Payload in addDevice:", payload);
+  let group = await Group.findById({ _id: payload.grpId }).lean().exec();
+  if (!group) return fail(res, "NOTFOUND", "Group not found with this Name");
+  if (!group.swVersion) return fail(res, "NOTFOUND", "Group has no Firmware assigned");
+  
+  payload.swVersion = group.swVersion;
+  payload.hwVersion = group.hwVersion; 
   try {
     let device = new Device(payload);
     let result = await device.save();
@@ -19,15 +27,15 @@ exports.addDevice = async (req, res) => {
   }
 };
 
-// Update device
+// Update device By IMEI
 exports.updateDevice = async (req, res) => {
-  const { imei, imsi, iccid, msisdn, carrier,swVersion,hwVersion } = req.body;
-  const id  = req.params.id;
+  const { imei, imsi, iccid, msisdn, carrier } = req.body;
+  // const id  = req.params.id;
   try {
-    const existingDevice = await Device.findById({ _id: id}).lean().exec();
-    if (!existingDevice)  return success(res, "NOTFOUND", "Device not found with this ID.");
-    const updatedDevice = await Device.findByIdAndUpdate({ _id: id },
-      {imei, imsi, iccid, msisdn,carrier,swVersion,hwVersion },
+    const existingDevice = await Device.findOne({ imei: imei}).lean().exec();
+    if (!existingDevice)  return success(res, "NOTFOUND", "Device not found.");
+    const updatedDevice = await Device.findOneAndUpdate({ imei: imei },
+      {imei, imsi, iccid, msisdn,carrier },
       { new: true } 
     ).lean().exec();
     return success(res, "OK", "Device updated successfully.")
@@ -61,11 +69,12 @@ exports.getAllDevices = async (req, res) => {
   }
 };
 
-// Get device by ID
-exports.getDeviceByID = async (req, res) => {
+// Get device by IMEI
+exports.getDeviceByImei = async (req, res) => {
+  const imei  = req.params.imei;
   try {
-    const device = await Device.findById(req.params.id).lean().exec()
-    if (!device) return fail(res, "NOTFOUND", "Device not found with this ID.");
+    const device = await Device.findOne({imei:imei}).lean().exec()
+    if (!device) return fail(res, "NOTFOUND", "Device not found.");
     return success(res, "OK", "Fetch Device Successfully", device);
   } catch (err) {
     console.error("Error fetching device:", err);
@@ -74,13 +83,13 @@ exports.getDeviceByID = async (req, res) => {
   }
 };
 
-// Delete device by ID
-exports.deleteDevice = async (req, res) => {
-  const id  = req.params.id;
+// Delete device by IMEI
+exports.deleteDeviceByImei = async (req, res) => {
+  const imei  = req.params.imei;
   try {
-    const device = await Device.findById({ _id: id }).lean().exec();
+    const device = await Device.findOne({imei:imei}).lean().exec();
     if (!device) return fail(res, "NOTFOUND", "Device not found with this ID.");
-    let result =  await Device.deleteOne({ _id: id }).lean().exec();
+    let result =  await Device.deleteOne({ imei: imei }).lean().exec();
     if(result) return success(res, 'OK', "Device deleted successfully.");
   } catch (err) {
     console.error("Error deleting device:", err);
