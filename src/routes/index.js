@@ -5,6 +5,7 @@ const GroupsRouter = require('../routes/group.routes')
 const SettingRouter = require('./settings.routes');
 const FirmwareRouter = require('./firmware.routes');
 const ZoneRouter = require('./zone.routes');
+const AlertRouter = require('./alert.routes');
 const router = express.Router();
 
 router.use('/auth',AuthRouter);
@@ -13,6 +14,7 @@ router.use('/groups', GroupsRouter);
 router.use('/settings', SettingRouter);
 router.use('/firmware', FirmwareRouter);
 router.use('/zone', ZoneRouter);
+router.use('/alert',AlertRouter);
 
 
 module.exports = router;
