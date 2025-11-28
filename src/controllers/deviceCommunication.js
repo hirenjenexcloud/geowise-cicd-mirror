@@ -7,6 +7,7 @@ const startOtaRequestService = require('../middlewares/otaPacketRequest');
 const allPacketsDef = require('../utils/packetDef');
 const DevicePackets = require('../models/devicePackets.model');
 const group = require('../controllers/group.controller');
+const { getDeviceConfig } = require('../config/deviceCache');
 
 function deviceCommutionHandler(client) {
   startOtaRequestService(client);
@@ -133,6 +134,9 @@ function parsePacket(client) {
 
       const devicePacket = buildDevicePacket(parsed, packetHex, true);
       const deviceData = buildDevicePacket(parsed, packetHex, false);
+
+      const config = await getDeviceConfig(devicePacket.imei);
+      logger.info("car data config", config);
 
       await DevicePackets.create(devicePacket);
       logger.info("Car data saved successfully!", devicePacket);
