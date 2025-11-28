@@ -50,7 +50,8 @@ const topics = {
                 'carinfo': {qos:2},
                 'tracking': {qos:2},
                 'carcan': {qos:2},
-                'deviceboot': {qos:2}
+                'deviceboot': {qos:2},
+                'otaupdate': {qos:2}
               } 
                 
 client.on('connect', () => {

@@ -50,6 +50,7 @@ exports.updateDevice = async (req, res) => {
 
 // Get all devices with pagination
 exports.getAllDevices = async (req, res) => {
+  console.log("Fetching all devices with query:", req.query);
   try {
     let { page = 1, limit = 10 } = req.query;
     page = parseInt(page) || 1;
