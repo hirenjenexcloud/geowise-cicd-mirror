@@ -46,7 +46,7 @@ const eventSchema = new mongoose.Schema(
 
 const packetInfoSchema = new mongoose.Schema(
   {
-    checksum: { type: Number },
+    checksum: { type: String },
     packetSize: { type: Number },
     seqNo: { type: Number },
     packet: { type: String }

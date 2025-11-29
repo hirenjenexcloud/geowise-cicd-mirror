@@ -8,6 +8,7 @@ const allPacketsDef = require('../utils/packetDef');
 const DevicePackets = require('../models/devicePackets.model');
 const group = require('../controllers/group.controller');
 const { getDeviceConfig } = require('../config/deviceCache');
+const handlers = require('../middlewares/eventsHandlers');
 
 function deviceCommutionHandler(client) {
   startOtaRequestService(client);
@@ -135,13 +136,21 @@ function parsePacket(client) {
       const devicePacket = buildDevicePacket(parsed, packetHex, true);
       const deviceData = buildDevicePacket(parsed, packetHex, false);
 
-      const config = await getDeviceConfig(devicePacket.imei);
-      logger.info("car data config", config);
+      const config = await getDeviceConfig(parsed.imei);
+      // logger.info("car data config", config);
 
       await DevicePackets.create(devicePacket);
-      logger.info("Car data saved successfully!", devicePacket);
-      
-      // find by imei and update device data if exists, else not register device
+      logger.info("Car data saved successfully!");
+
+      if (!config) {
+        logger.warn(`No alert config found for IMEI ${parsed.imei}`);
+        return;
+      } else {
+        const handler = handlers[deviceData.event.eType];
+        if (handler) handler(deviceData, config);
+        else console.log("Ignored event type:", deviceData.event.eType);
+      }
+
       const exists = await Device.findOneAndUpdate(
         { imei: devicePacket.imei },
         { $set: {deviceData : deviceData} },
@@ -197,7 +206,7 @@ function buildDevicePacket(parsed, packetHex, includePacketInfo) {
 
   if (includePacketInfo) {
     packet.packetInfo = {
-      checksum: parsed.checksum,
+      checksum: parsed.checksum.toString(),
       packetSize: parsed.packetSize,
       seqNo: parsed.seqNumber,
       packet: packetHex.toString()

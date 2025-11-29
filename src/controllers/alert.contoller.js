@@ -2,6 +2,8 @@ const mongoose = require("mongoose");
 const Alert = require("../models/alert.model");
 const Device = require("../models/device.model"); // for IMEI validation
 const { success, fail } = require("../utils/apiResponse");
+const { updateDeviceConfigInCache } = require("../config/deviceCache");
+const logger = require("../utils/logger");
 
 exports.createAlert = async (req, res) => {
   try {
@@ -246,6 +248,12 @@ exports.updateAlert = async (req, res) => {
       { new: true }
     );
 
+    if (updated) {
+      // Update cache
+      logger.info(`Updating alert cache for IMEI ${updated}`);
+      updateDeviceConfigInCache(updated);
+    }
+
     return success(res, "OK", "Alert updated successfully");
 
   } catch (err) {
@@ -270,5 +278,101 @@ exports.deleteAlert = async (req, res) => {
 };
 
 
+exports.checkSpeed = async function (packet, config) {
+  console.log("------ checkSpeed executed ------");
+
+  if (!config.alerts.speed) return;
+
+  const limit = config.speedConfig.maxSpeed;
+  const packetSpeed = packet.engine.spdKmph;
+  const key = packet.imei;
+
+  const sent = config.alertFlags.speedAlertSent || false;
+
+  if (packetSpeed > limit && !sent ) {
+    console.log(`🚨 Speed Alert IMEI ${packet.imei}: ${packetSpeed}/${limit}`);
+    sendSpeedEmail(packet);
+    updateAlertFlags(config, true, "speedAlertSent");
+  }
+      // reset
+    if (packetSpeed < limit && sent) {
+        updateAlertFlags(config, false, "speedAlertSent" );
+    }
+
+};
 
 
+exports.checkBattery = async function (packet, config) {
+  console.log("------ checkBattery executed ------");
+
+  if (!config.alerts.battery) return;
+ 
+    const level = packet.power.battery;
+    const thr = config.batteryConfig.minVoltage;
+    const key = packet.imei;
+
+    // console.log(`Battery level for IMEI ${key}: ${level} V (Threshold: ${thr} V)`);
+ 
+    const sent = config.alertFlags.batteryAlertSent || false;
+ 
+    if (level < thr && !sent) {
+        console.log(`⚠️ Battery Low IMEI ${key}: ${level} < ${thr}`);
+        sendBatteryAlert(packet);
+        updateAlertFlags(config, true, "batteryAlertSent");
+    }
+ 
+    // reset
+    if (level >= thr && sent) {
+        updateAlertFlags(config, false, "batteryAlertSent");
+    }
+
+};
+
+exports.handlePowerConnect = async function (packet, config) {
+  console.log("------ handlePowerConnect executed ------");
+  if (!config.alerts.powerConnected) {
+    logger.warn(`No alert config found for IMEI ${packet.imei} in handlePowerConnect`);
+    return;
+  } else {
+    // Implement power connect alert logic here
+  }
+};
+
+exports.handlePowerDisconnect = async function (packet, config) {
+  console.log("------ handlePowerDisconnect executed ------");
+  if (!config.alerts.powerDisconnected) {
+    logger.warn(`No alert config found for IMEI ${packet.imei} in handlePowerDisconnect`);
+    return;
+  } else {
+    // Implement power disconnect alert logic here
+  }
+};
+
+function sendBatteryAlert(packet) {
+    console.log(`📧 Battery Email Sent → ${packet.imei}`);
+}
+
+function sendSpeedEmail(packet) {
+    console.log(`📧 Speed Email Sent → ${packet.imei}`);
+}
+
+function updateAlertFlags(config, flag, flagType) {
+
+  console.log(`Updating alert flag ${flagType} to ${flag} for IMEI ${config}`);
+
+  let common = {};
+  if ("speedAlertSent" === flagType) {
+    common = { "alertFlags.speedAlertSent": flag };
+    config.alertFlags.speedAlertSent = flag;
+  } else {
+    common = { "alertFlags.batteryAlertSent": flag };
+    config.alertFlags.batteryAlertSent = flag;
+  }
+  
+  updateDeviceConfigInCache(config);
+
+  return Alert.findOneAndUpdate(
+    { imei: config.imei },
+    { $set: common },
+  ).exec();
+}
