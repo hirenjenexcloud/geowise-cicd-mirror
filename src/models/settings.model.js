@@ -108,8 +108,7 @@ const SettingSchema = new mongoose.Schema(
 
     // link to Group (if assigned). If present => cannot delete.
     group: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Group",
+      type: String,
       default: null,
     },
     atCommands: { type: [String], default: [] },

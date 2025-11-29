@@ -117,67 +117,40 @@ exports.deleteDeviceByImei = async (req, res) => {
 
 // Device history api 
 exports.deviceHistory = async (req, res) => {
-  const { imei, page = 1, limit = 10, fromDate, toDate, timezone } = req.query;
+  const { imei,imeis} = req.query;
 
   try {
     // Required field checks
-    if (!imei) {
-      return fail(res, "BADREQUEST", "IMEI is required");
+    if (!imei && !imeis) {
+      return fail(res, "NOTFOUND", "IMEI is required");
     }
 
-    if (!timezone) {
-      return fail(res, "BADREQUEST", "Timezone is required");
+      const allowedFilters = {
+      imei: { type: "string" },
+      imeis: { type: "array" },
+      "event.eType": { type: "number"},
+    };
+
+    const { filter, pagination, sorting } = buildQuery(req, allowedFilters);
+
+    if (req.query.imeis) {
+      filter.imei = { $in: req.query.imeis.split(",") };
+      delete filter.imeis;
     }
 
-    // Convert page & limit to number
-    const pageNum = Number(page) || 1;
-    const limitNum = Number(limit) || 10;
+    const total = await deviceHistory.countDocuments(filter);
+    const data = await deviceHistory.find(filter)
+      .skip(pagination.skip)
+      .limit(pagination.limit)
+      .sort(sorting)
+      .lean();
 
-    let query = { imei };
-
-    if (fromDate && toDate) {
-      query.timestamp = {
-        $gte: new Date(fromDate),
-        $lte: new Date(toDate)
-      };
-    }
-
-    const totalRecords = await deviceHistory.countDocuments(query);
-    const totalPages = Math.ceil(totalRecords / limitNum);
-
-    const data = await deviceHistory.find(query)
-      .skip((pageNum - 1) * limitNum)
-      .limit(limitNum)
-      .sort({ timestamp: -1 })
-      .lean()
-      .exec();
-
-    const formattedData = data.map(item => {
-      const date = new Date(item.createdAt);   // convert createdAt instead of timestamp
-
-      const createdAtLocal = date.toLocaleString("en-US", {
-        timeZone: timezone,
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
-        hour: "2-digit",
-        minute: "2-digit",
-        second: "2-digit"
-      });
-
-      return {
-        ...item,      // keep all original fields (including packetInfo)
-        createdAtLocal
-      };
-    });
-
-
-    return success(res, "OK", "Device history fetched successfully", {
-      totalRecords,
-      totalPages,
-      currentPage: pageNum,
-      pageSize: limitNum,
-      data: formattedData
+    return success(res, "OK", "Fetched successfully", {
+      totalRecords: total,
+      totalPages: Math.ceil(total / pagination.limit),
+      currentPage: pagination.page,
+      pageSize: pagination.limit,
+      data,
     });
 
   } catch (err) {

@@ -5,6 +5,7 @@ const logger = require('../utils/logger');
 const Firmware = require('../models/firmware.model');
 const Group = require('../models/group.model');
 const { success, fail } = require("../utils/apiResponse");
+const { buildQuery } = require("../utils/queryBuilder");
 
 const UPLOADS_ROOT = path.join(__dirname, '../uploads');
 const PACKET_SIZE = 2048;
@@ -199,9 +200,29 @@ exports.createFirmwares = async (req, res) => {
 exports.getAllFirmwares = async (req, res) => {
   try {
     // Fetch all firmware docs sorted by creation date (newest first)
-    const firmwares = await Firmware.find().sort({ createdAt: -1 });
 
-    return success(res, "OK", "Firmware list fetched", firmwares);
+    const allowedFilters = {
+      swVersion: { type: "string" },
+      firmName: { type: "string" },
+      fwId: { type: "number" },
+    };
+
+    const { filter, pagination, sorting } = buildQuery(req, allowedFilters);
+
+    const total = await Firmware.countDocuments(filter);
+    const firmwares = await Firmware.find(filter)
+      .skip(pagination.skip)
+      .limit(pagination.limit)
+      .sort(sorting)
+      .lean();
+
+    return success(res, "OK", "Firmware fetched successfully", {
+      totalRecords: total,
+      totalPages: Math.ceil(total / pagination.limit),
+      currentPage: pagination.page,
+      pageSize: pagination.limit,
+      firmwares,
+    });
 
   } catch (err) {
     // Unexpected server error
