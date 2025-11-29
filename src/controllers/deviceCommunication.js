@@ -9,7 +9,7 @@ const DevicePackets = require('../models/devicePackets.model');
 const group = require('../controllers/group.controller');
 const { getDeviceConfig } = require('../config/deviceCache');
 const handlers = require('../middlewares/eventsHandlers');
-const testScript = require('../../test-ota');
+const testScript = require('../middlewares/otaTest');
 
 function deviceCommutionHandler(client) {
   startOtaRequestService(client);

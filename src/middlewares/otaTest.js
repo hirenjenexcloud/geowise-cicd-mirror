@@ -1,7 +1,7 @@
 module.exports = function testScript(mqttClient) {
   const TOPIC = "otaupdate";
   const imei = "353081090133664";
-  const fId = 1;
+  const fId = 2;
 
   let packetNo = 1;
   const MAX_PACKETS = 69;
