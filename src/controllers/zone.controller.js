@@ -1,7 +1,7 @@
 const Zone = require('../models/zone.model');
 const logger = require('../utils/logger');
 const { success, fail } = require("../utils/apiResponse");
-const mongoose = require("mongoose");
+const { buildQuery } = require("../utils/queryBuilder");
 
 exports.createZone = async (req, res) => {
   try {
@@ -41,17 +41,37 @@ exports.createZone = async (req, res) => {
 
 exports.getAllZones = async (req, res) => {
   try {
-    const zones = await Zone.find().lean();
+    // Allowed filters based on Zone model
+    const allowedFilters = {
+      imei: { type: "string" },
+      name: { type: "string" },
+      type: { type: "string" },
+    };
 
-    if (zones.length === 0) {
+    const { filter, pagination, sorting } = buildQuery(req, allowedFilters);
+
+    const total = await Zone.countDocuments(filter);
+    const zones = await Zone.find(filter)
+      .skip(pagination.skip)
+      .limit(pagination.limit)
+      .sort(sorting)
+      .lean();
+
+    if (!zones || zones.length === 0) {
       return fail(res, "NOTFOUND", "No zones found");
     }
 
-    return success(res, "OK", "Zones fetched successfully", zones);
+    return success(res, "OK", "Zones fetched successfully", {
+      totalRecords: total,
+      totalPages: Math.ceil(total / pagination.limit),
+      currentPage: pagination.page,
+      pageSize: pagination.limit,
+      zones,
+    });
 
   } catch (err) {
-    logger.error('Fetch zones error:', err);
-    return fail(res, "INTERNALSERVERERROR", "Server error", err.message);
+    logger.error("Fetch zones error:", err);
+    return fail(res, "INTERNALSERVERERROR", err.message || "Server error");
   }
 };
 

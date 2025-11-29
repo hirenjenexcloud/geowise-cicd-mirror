@@ -4,6 +4,7 @@ const Firmware =  require('../models/firmware.model');
 const Setting  = require('../models/settings.model');
 const logger = require('../utils/logger');
 const { success, fail } = require("../utils/apiResponse");
+const { buildQuery } = require("../utils/queryBuilder");
 const mongoose = require("mongoose");
 
 var mqttClient ;
@@ -63,18 +64,38 @@ exports.createGroup = async (req, res) => {
 
 
 // Get all groups
+
 exports.getAllGroups = async (req, res) => {
   try {
-    const groups = await Group.find();
+    // Allowed filters based on your Group model
+    const allowedFilters = {
+      grpName: { type: "string" },
+      fwId: { type: "number" },
+      settingId: { type: "number" },
+      hwVersion: { type: "string" },
+      swVersion: { type: "string" },
+    };
 
-     // If empty list
-    if (!groups || groups.length === 0) {
-      return fail(res, "NOTFOUND", "No groups found", []);
-    }
-    return success(res,"OK",'Groups fetched successfully',groups);
+    const { filter, pagination, sorting } = buildQuery(req, allowedFilters);
+
+    const total = await Group.countDocuments(filter);
+    const groups = await Group.find(filter)
+      .skip(pagination.skip)
+      .limit(pagination.limit)
+      .sort(sorting)
+      .lean();
+
+    return success(res, "OK", "Groups fetched successfully", {
+      totalRecords: total,
+      totalPages: Math.ceil(total / pagination.limit),
+      currentPage: pagination.page,
+      pageSize: pagination.limit,
+      groups,
+    });
+
   } catch (err) {
-    logger.error('Fetch groups error:', err);
-    return fail(res,"INTERNALSERVERERROR",'Server error');
+    logger.error("Fetch groups error:", err);
+    return fail(res, "INTERNALSERVERERROR", err.message || "Server error");
   }
 };
 
