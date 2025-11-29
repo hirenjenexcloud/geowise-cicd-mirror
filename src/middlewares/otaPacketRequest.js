@@ -46,16 +46,22 @@ module.exports = function startOtaRequestService(client) {
       client.publish(device_imei, data, { qos: 2 }, (err) => {
         if (err) {
           logger.error("Failed to publish OTA packet:", err);
-         logger.error(client, imei, `Publish failed for packet ${packet_no}`);
+        //  logger.error(client, imei, `Publish failed for packet ${packet_no}`);
           return;
         }
-        logger.info(
-          `OTA Packet sent → IMEI=${imei}, fId=${fId}, packet=${packet_no}, bytes=${data.length}`
-        );
       });
+       logger.info(
+          `OTA Packet sent to Device → IMEI=${imei}, fId=${fId}, packet=${packet_no}, bytes=${data.length}`
+        );
 
     } catch (err) {
+      if (err.code === 'ENOENT') {
+        logger.warn("Requested OTA packet not found:", err.path);
+       // publishError(client, imei, `Packet not found: ${err.path}`);
+      } else {
       logger.error("Error processing OTA update:", err);
+       // publishError(client, imei, `File read error: ${err.message}`);
+      }
     }
   });
 };

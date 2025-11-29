@@ -9,12 +9,14 @@ const DevicePackets = require('../models/devicePackets.model');
 const group = require('../controllers/group.controller');
 const { getDeviceConfig } = require('../config/deviceCache');
 const handlers = require('../middlewares/eventsHandlers');
+const testScript = require('../../test-ota');
 
 function deviceCommutionHandler(client) {
   startOtaRequestService(client);
   DeviceInitReq(client);
   parsePacket(client);
   group.setmqttClient(client);
+  testScript(client);
 }
 
 function DeviceInitReq(client) {
