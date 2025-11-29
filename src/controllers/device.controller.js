@@ -3,6 +3,7 @@ const Group = require("../models/group.model");
 const deviceHistory = require("../models/devicePackets.model");
 const { success, fail } = require("../utils/apiResponse");
 const logger = require('../utils/logger');
+const { buildQuery } = require("../utils/queryBuilder");
 
 // Add new device
 exports.addDevice = async (req, res) => {
@@ -50,25 +51,38 @@ exports.updateDevice = async (req, res) => {
 
 // Get all devices with pagination
 exports.getAllDevices = async (req, res) => {
-  console.log("Fetching all devices with query:", req.query);
   try {
-    let { page = 1, limit = 10 } = req.query;
-    page = parseInt(page) || 1;
-    limit = parseInt(limit) || 10;
-    const totalDevices = await Device.countDocuments().lean().exec();
-    const totalPages = Math.ceil(totalDevices / limit);
-    const devices = await Device.find().skip((page - 1) * limit).limit(limit).sort({ createdAt: -1 }).lean().exec();
-    let data = {
-      totalRecords: totalDevices,
-      totalPages: totalPages,
-      currentPage: page,
-      pageSize: limit,
-      devices: devices
+    const allowedFilters = {
+      imei: { type: "string" },
+      imeis: { type: "array" },
+      grpId: { type: "string" },
+      swVersion: { type: "string" },
+      hwVersion: { type: "string" },
+    };
+
+    const { filter, pagination, sorting } = buildQuery(req, allowedFilters);
+
+    if (req.query.imeis) {
+      filter.imei = { $in: req.query.imeis.split(",") };
+      delete filter.imeis;
     }
-    return success(res, "OK", "Fetch devices successfully", data)
+
+    const total = await Device.countDocuments(filter);
+    const devices = await Device.find(filter)
+      .skip(pagination.skip)
+      .limit(pagination.limit)
+      .sort(sorting)
+      .lean();
+
+    return success(res, "OK", "Fetched successfully", {
+      totalRecords: total,
+      totalPages: Math.ceil(total / pagination.limit),
+      currentPage: pagination.page,
+      pageSize: pagination.limit,
+      devices,
+    });
 
   } catch (err) {
-    console.error("Error fetching devices:", err);
     return fail(res, "INTERNALSERVERERROR", err.message);
   }
 };

@@ -2,6 +2,7 @@
 const Setting = require("../models/settings.model");
 const Counter = require("../models/counter.model");
 const { success, fail } = require("../utils/apiResponse");
+const { buildQuery } = require("../utils/queryBuilder");
 
 /**
  * getNextSequence - atomic increment for named counter
@@ -48,17 +49,36 @@ exports.createSetting = async (req, res) => {
 };
 
 /**
- * Get all settings (non-deleted)
+ * Get all settings
  */
 exports.getAllSettings = async (req, res) => {
   try {
-    const list = await Setting.find().sort({ createdAt: -1 }).lean();
-    return success(res, "OK", "Settings fetched", list);
+    const allowedFilters = {
+      settingId: { type: "number" },
+      group: { type: "string" },
+      name: { type: "string" },
+    };
+
+    const { filter, pagination, sorting } = buildQuery(req, allowedFilters);
+
+    const total = await Setting.countDocuments(filter);
+    const settings = await Setting.find(filter)
+      .skip(pagination.skip)
+      .limit(pagination.limit)
+      .sort(sorting)
+      .lean();
+
+    return success(res, "OK", "Settings fetched successfully", {
+      totalRecords: total,
+      totalPages: Math.ceil(total / pagination.limit),
+      currentPage: pagination.page,
+      pageSize: pagination.limit,
+      settings,
+    });
   } catch (err) {
     return fail(res, "INTERNALSERVERERROR", err.message);
   }
 };
-
 /**
  * Get single setting by Settings Id
  */
