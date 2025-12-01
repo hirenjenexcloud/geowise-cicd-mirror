@@ -5,7 +5,7 @@ const alertCtrl = require("../controllers/alert.contoller");
 const auth = require('../middlewares/authJWT');
 
 router.post("/", auth.authenticate, alertCtrl.createAlert);
-router.get("/", auth.authenticate, alertCtrl.getAllAlerts);
+router.get("/history", auth.authenticate, alertCtrl.getAlertsHistory);
 router.get("/:imei", auth.authenticate, alertCtrl.getAlertByImei);
 router.put("/:imei", auth.authenticate, alertCtrl.updateAlert);
 router.delete("/:imei", auth.authenticate, alertCtrl.deleteAlert);

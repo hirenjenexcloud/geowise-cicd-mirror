@@ -1,10 +1,10 @@
-const mongoose = require("mongoose");
 const Alert = require("../models/alert.model");
 const Device = require("../models/device.model"); // for IMEI validation
 const { success, fail } = require("../utils/apiResponse");
 const { updateDeviceConfigInCache } = require("../config/deviceCache");
 const logger = require("../utils/logger");
 const AlertHistory = require("../models/alertHistory.model");
+const { buildQuery } = require("../utils/queryBuilder");
 
 exports.createAlert = async (req, res) => {
   try {
@@ -85,21 +85,6 @@ exports.createAlert = async (req, res) => {
     });
 
     return success(res, "CREATED", "Alert created successfully");
-
-  } catch (err) {
-    return fail(res, "INTERNALSERVERERROR", "Server error", err.message);
-  }
-};
-
-exports.getAllAlerts = async (req, res) => {
-  try {
-    const alerts = await Alert.find().lean();
-
-    if (alerts.length === 0) {
-      return fail(res, "NOTFOUND", "No alerts found");
-    }
-
-    return success(res, "OK", "Alerts fetched successfully", alerts);
 
   } catch (err) {
     return fail(res, "INTERNALSERVERERROR", "Server error", err.message);
@@ -272,6 +257,49 @@ exports.deleteAlert = async (req, res) => {
     if (!alert) return fail(res, "NOTFOUND", "Alert config not found");
 
     return success(res, "OK", "Alert deleted successfully");
+
+  } catch (err) {
+    return fail(res, "INTERNALSERVERERROR", "Server error", err.message);
+  }
+};
+
+exports.getAlertsHistory = async (req, res) => {
+  try {
+    const { imei, imeis } = req.query;
+
+    if (!imei && !imeis) {
+      return fail(res, "NOTFOUND", "IMEI is required");
+    }
+
+    const allowedFilters = {
+      imei: { type: "string" },
+      imeis: { type: "array" },
+      alertType: { type: "string" },
+    };
+
+    const { filter, pagination, sorting } = buildQuery(req, allowedFilters);
+
+    if (req.query.imeis) {
+      filter.imei = { $in: req.query.imeis.split(",") };
+      delete filter.imeis;
+    }
+
+    const total = await AlertHistory.countDocuments(filter);
+    const data = await AlertHistory.find(filter)
+      .skip(pagination.skip)
+      .limit(pagination.limit)
+      .sort(sorting)
+      .lean();
+
+      logger.info(`Fetched ${data} alert history records (Total: ${total})`);
+
+    return success(res, "OK", "Fetched successfully", {
+      totalRecords: total,
+      totalPages: Math.ceil(total / pagination.limit),
+      currentPage: pagination.page,
+      pageSize: pagination.limit,
+      data,
+    });
 
   } catch (err) {
     return fail(res, "INTERNALSERVERERROR", "Server error", err.message);
