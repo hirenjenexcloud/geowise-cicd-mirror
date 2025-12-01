@@ -4,6 +4,7 @@ const Device = require("../models/device.model"); // for IMEI validation
 const { success, fail } = require("../utils/apiResponse");
 const { updateDeviceConfigInCache } = require("../config/deviceCache");
 const logger = require("../utils/logger");
+const AlertHistory = require("../models/alertHistory.model");
 
 exports.createAlert = async (req, res) => {
   try {
@@ -335,6 +336,7 @@ exports.handlePowerConnect = async function (packet, config) {
     return;
   } else {
     // Implement power connect alert logic here
+    createAlertHistoryRecord(packet, 'Power Connected');
   }
 };
 
@@ -345,20 +347,23 @@ exports.handlePowerDisconnect = async function (packet, config) {
     return;
   } else {
     // Implement power disconnect alert logic here
+    createAlertHistoryRecord(packet, 'Power Disconnected');
   }
 };
 
 function sendBatteryAlert(packet) {
     console.log(`📧 Battery Email Sent → ${packet.imei}`);
+    createAlertHistoryRecord(packet, 'Low Battery')
 }
 
 function sendSpeedEmail(packet) {
     console.log(`📧 Speed Email Sent → ${packet.imei}`);
+    createAlertHistoryRecord(packet, 'Speed')
 }
 
 function updateAlertFlags(config, flag, flagType) {
 
-  console.log(`Updating alert flag ${flagType} to ${flag} for IMEI ${config}`);
+  console.log(`Updating alert flag ${flagType} to ${flag} for IMEI ${config.imei}`);
 
   let common = {};
   if ("speedAlertSent" === flagType) {
@@ -375,4 +380,16 @@ function updateAlertFlags(config, flag, flagType) {
     { imei: config.imei },
     { $set: common },
   ).exec();
+}
+
+function createAlertHistoryRecord(packet, alertType) {
+
+  return AlertHistory.create({
+    imei: packet.imei,
+    alertType: alertType,
+    latitude: packet.location.lat,  
+    longitude: packet.location.long,
+    speed: packet.engine.spdKmph,
+    battery: packet.power.battery
+  });
 }

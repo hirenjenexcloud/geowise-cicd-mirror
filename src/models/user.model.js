@@ -11,7 +11,7 @@ const userSchema = new mongoose.Schema({
   // Password reset fields
   resetPasswordToken: { type: String },
   resetPasswordExpires: { type: Date }
-}, { timestamps: true });
+}, { timestamps: true , versionKey: false });
 
 // Optionally add indexes, virtuals, methods later
 

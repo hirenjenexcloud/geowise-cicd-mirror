@@ -7,6 +7,6 @@ const groupSchema = new mongoose.Schema({
   hwVersion: { type: String, required: [true,"Hardware version is required."] },
   swVersion: { type: String, required: [true,"Software version is required."] },
   desc: { type: String, trim: true },
-}, { timestamps: true });
+}, { timestamps: true , versionKey: false });
 
 module.exports = mongoose.model('Group', groupSchema);
