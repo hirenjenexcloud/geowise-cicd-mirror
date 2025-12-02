@@ -1,5 +1,13 @@
 const mongoose = require('mongoose');
 
+const location = new mongoose.Schema(
+  {
+    lat: { type: Number },
+    long: { type: Number }
+  },
+  { _id: false }
+);
+
 const AlertHistorySchema = new mongoose.Schema({
 
     imei: {
@@ -13,13 +21,7 @@ const AlertHistorySchema = new mongoose.Schema({
         trim: true
     },
 
-    latitude: {
-        type: Number
-    },
-
-    longitude: {
-        type: Number
-    },
+    location: { type : location},
 
     speed: {
         type: Number

@@ -415,8 +415,10 @@ function createAlertHistoryRecord(packet, alertType) {
   return AlertHistory.create({
     imei: packet.imei,
     alertType: alertType,
-    latitude: packet.location.lat,  
-    longitude: packet.location.long,
+    location: {
+      lat: packet.location.lat,
+      long: packet.location.long
+    },
     speed: packet.engine.spdKmph,
     battery: packet.power.battery
   });
