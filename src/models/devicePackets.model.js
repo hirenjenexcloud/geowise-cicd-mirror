@@ -1,3 +1,4 @@
+const { bool } = require('joi');
 const mongoose = require('mongoose');
 
 const locationSchema = new mongoose.Schema(
@@ -50,19 +51,39 @@ const packetInfoSchema = new mongoose.Schema(
     packetSize: { type: Number },
     seqNo: { type: Number },
     packet: { type: String }
-  }
+  },
+  { _id: false }
+)
+
+const canDataSchema = new mongoose.Schema(
+  {
+    code: { type: String },
+    info: { type: String },
+    power: { type: powerSchema },
+    rssi: { type: Number }
+  },
+  { _id: false }
+)
+
+const deviceDataSchema = new mongoose.Schema(
+  {
+    location: { type: locationSchema },
+    power: { type: powerSchema },
+    engine: { type: engineSchema },
+    fuel: { type: fuelSchema },
+    temperature: { oil: { type: Number } },
+  },
+  { _id: false }
 )
 
 const devicePacketsSchema = new mongoose.Schema(
   {
     imei: { type: String, index: true },
+    DTC : {type: Boolean, default : false},
     event: { type: eventSchema },
     packetInfo: { type: packetInfoSchema , select: false },
-    location: { type: locationSchema },
-    power: { type: powerSchema },
-    engine: { type: engineSchema },
-    fuel: { type: fuelSchema },
-    temperature: { oil: { type: Number } }
+    deviceData: { type: deviceDataSchema },
+    canData: { type: canDataSchema }
   },
   {
     timestamps: { createdAt: true, updatedAt: false },
@@ -71,6 +92,6 @@ const devicePacketsSchema = new mongoose.Schema(
 );
 
 devicePacketsSchema.index({ createdAt: 1 });
-devicePacketsSchema.index({ 'data.imei': 1, createdAt: -1 });
+devicePacketsSchema.index({ 'imei': 1, createdAt: -1 });
 
 module.exports = mongoose.model('devicePackets', devicePacketsSchema, 'device_packets');

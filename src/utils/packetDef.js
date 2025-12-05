@@ -1,4 +1,5 @@
 class AllPacketsDef {
+    
     static packetDef = {
         imei: {
             size: 8,
@@ -97,6 +98,46 @@ class AllPacketsDef {
         checksum: {
             size: 2,
             parser: hex => hex
+        }
+    };
+
+    static canPacketDef = {
+        imei: {
+            size: 8,
+            parser: hex => BigInt("0x" + hex).toString()
+        },
+
+        packetSize: {
+            size: 2,
+            parser: hex => parseInt(hex, 16)
+        },
+
+        eType: {
+            size: 1,
+            parser: hex => parseInt(hex, 16)
+        },
+
+        seqNumber: {
+            size: 1,
+            parser: hex => parseInt(hex, 16)
+        },
+
+        mainPower: {
+            size: 2,
+            parser: hex => parseInt(hex, 16) / 100 
+        },
+
+        batteryPower: {
+            size: 2,
+            parser: hex => parseInt(hex, 16) / 10 
+        },
+
+        rssi: {
+            size: 1,
+            parser: hex => {
+                let v = parseInt(hex, 16);
+                return v > 127 ? v - 256 : v;
+            }
         }
     };
 

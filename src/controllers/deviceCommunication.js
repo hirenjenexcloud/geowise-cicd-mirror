@@ -10,6 +10,7 @@ const group = require('../controllers/group.controller');
 const { getDeviceConfig } = require('../config/deviceCache');
 const handlers = require('../middlewares/eventsHandlers');
 const testScript = require('../middlewares/otaTest');
+const dtcCodes = require('../utils/dtcCode');
 
 function deviceCommutionHandler(client) {
   startOtaRequestService(client);
@@ -17,6 +18,7 @@ function deviceCommutionHandler(client) {
   parsePacket(client);
   group.setmqttClient(client);
   testScript(client);
+  canPacketParseing(client);
 }
 
 function DeviceInitReq(client) {
@@ -155,7 +157,7 @@ function parsePacket(client) {
 
       const exists = await Device.findOneAndUpdate(
         { imei: devicePacket.imei },
-        { $set: {deviceData : deviceData} },
+        { $set: deviceData },
         { new: true }
       ).exec();
       if (!exists) {
@@ -171,38 +173,101 @@ function parsePacket(client) {
   });
 }
 
+function canPacketParseing(client) {
+  client.on("message", async (topic, message) => {
+    if (!["carcan"].includes(topic)) return;
 
+    try {
+      logger.info(
+        `Packet Received: Topic - ${topic}\nPacket - ${message.toString()}`
+      );
+
+      const packetHex = message.toString().trim();
+      const packetBuffer = Buffer.from(packetHex, "hex");
+
+      // ------------ CHECKSUM LOGIC ------------
+      const middleHex = packetHex.substring(20, packetHex.length - 4);         // exclude imei(8B)=16 hex + packetSize(2B)=4 hex
+      const middleBytes = Buffer.from(middleHex, "hex");
+
+      // Sum all middle bytes
+      let checksumSum = 0;
+      for (const b of middleBytes) checksumSum += b;
+      checksumSum &= 0xffff;
+
+      const computedHex = checksumSum.toString(16).padStart(4, "0");
+      const checksumPacketHex = packetHex.substring(packetHex.length - 4);
+
+      if (computedHex !== checksumPacketHex) {
+        logger.warn(
+          ` Checksum mismatch: Expected ${computedHex}, Received ${checksumPacketHex}`
+        );
+        return; // stop parsing
+      }
+
+      logger.info(`Checksum valid: ${computedHex}`);
+
+      // ------------ PACKET PARSING USING packetDef ------------
+      let offset = 0;
+      const parsed = {};
+
+      for (const [field, def] of Object.entries(allPacketsDef.canPacketDef)) {
+        const bytes = def.size;
+
+        if (offset + bytes > packetBuffer.length) {
+          logger.warn(`Packet too short to extract ${field}`);
+          break;
+        }
+
+        const rawHex = packetBuffer
+          .subarray(offset, offset + bytes)
+          .toString("hex");
+
+        parsed[field] = def.parser(rawHex);
+        offset += bytes;
+      }
+
+      parsed["DTC"] = packetHex.substring(34 ,39);
+      // logger.info(`DTC Parsed Packet Data: ${JSON.stringify(parsed)}`);
+
+      const canPacket = buildCanDevicePacket(parsed, packetHex);
+
+      await DevicePackets.create(canPacket);
+      logger.info("Car data saved successfully!");
+
+    } catch (err) {
+      logger.error("Error parsing packet:", err);
+    }
+  });
+}
 
 
 function buildDevicePacket(parsed, packetHex, includePacketInfo) {
   const packet = {
     imei: parsed.imei,
-    event: {
-      eType: parsed.eType,
-      eName: allPacketsDef.eType[parsed.eType] || "Unknown",
-    },
-    location: {
-      lat: parsed.lat,
-      long: parsed.lon,
-      hac: parsed.hac,
-      satellites: parsed.totalSat,
-      rssi: parsed.rssi
-    },
-    power: {
-      main: parsed.mainPower,
-      battery: parsed.batteryPower
-    },
-    engine: {
-      spdKmph: parsed.speed,
-      rpm: parsed.rpm,
-      odoMeter: parsed.odometer
-    },
-    fuel: {
-      type: parsed.fuelType,
-      level: parsed.fuelLevel
-    },
-    temperature: {
-      oil: parsed.oilTemp
+    deviceData: {
+      location: {
+        lat: parsed.lat,
+        long: parsed.lon,
+        hac: parsed.hac,
+        satellites: parsed.totalSat,
+        rssi: parsed.rssi
+      },
+      power: {
+        main: parsed.mainPower,
+        battery: parsed.batteryPower
+      },
+      engine: {
+        spdKmph: parsed.speed,
+        rpm: parsed.rpm,
+        odoMeter: parsed.odometer
+      },
+      fuel: {
+        type: parsed.fuelType,
+        level: parsed.fuelLevel
+      },
+      temperature: {
+        oil: parsed.oilTemp
+      }
     }
   };
 
@@ -213,9 +278,44 @@ function buildDevicePacket(parsed, packetHex, includePacketInfo) {
       seqNo: parsed.seqNumber,
       packet: packetHex.toString()
     };
+    packet.event = {
+      eType: parsed.eType,
+      eName: allPacketsDef.eType[parsed.eType] || "Unknown",
+    };
+  } else {
+      packet.deviceData.event = {
+      eType: parsed.eType,
+      eName: allPacketsDef.eType[parsed.eType] || "Unknown",
+    };
   }
 
   return packet;
+}
+
+function buildCanDevicePacket(parsed, packetHex) {
+
+  return packet = {
+    imei: parsed.imei,
+    DTC: true,
+    event: {
+      eType: parsed.eType,
+      eName: allPacketsDef.eType[parsed.eType] || "Unknown",
+    },
+    packetInfo: {
+      packetSize: parsed.packetSize,
+      seqNo: parsed.seqNumber,
+      packet: packetHex.toString()
+    },
+    canData: {
+      code: parsed.DTC,
+      info: dtcCodes.dtcCodes[parsed.DTC] || "Unknown",
+      power: {
+        main: parsed.mainPower,
+        battery: parsed.batteryPower
+      },
+      rssi: parsed.rssi
+    }
+  };
 }
 
 
