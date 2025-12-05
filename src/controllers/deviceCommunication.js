@@ -16,7 +16,6 @@ function deviceCommutionHandler(client) {
   DeviceInitReq(client);
   parsePacket(client);
   group.setmqttClient(client);
-  testScript(client);
   canPacketParseing(client);
 }
 
