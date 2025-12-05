@@ -9,7 +9,6 @@ const DevicePackets = require('../models/devicePackets.model');
 const group = require('../controllers/group.controller');
 const { getDeviceConfig } = require('../config/deviceCache');
 const handlers = require('../middlewares/eventsHandlers');
-const testScript = require('../middlewares/otaTest');
 const dtcCodes = require('../utils/dtcCode');
 
 function deviceCommutionHandler(client) {
