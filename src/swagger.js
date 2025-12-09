@@ -7,7 +7,7 @@ const doc = {
     description: 'Automatically generated Swagger documentation for GeoWise backend',
     version: '1.0.0',
   },
-  host: 'localhost:4000',
+  // host: 'localhost:4000',
   basePath: '',
   schemes: ['http'],
   consumes: ['application/json'],

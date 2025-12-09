@@ -5,7 +5,7 @@
     "description": "Automatically generated Swagger documentation for GeoWise backend",
     "version": "1.0.0"
   },
-  "host": "localhost:4000",
+ 
   "basePath": "",
   "schemes": [
     "http"
@@ -144,27 +144,7 @@
         }
       }
     },
-    "/api/device/": {
-      "post": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          },
-          {
-            "name": "Authorization",
-            "in": "header",
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "default": {
-            "description": ""
-          }
-        }
-      },
+    "/api/device/history": {
       "get": {
         "description": "",
         "parameters": [
@@ -179,12 +159,12 @@
             "type": "string"
           },
           {
-            "name": "page",
+            "name": "imeis",
             "in": "query",
             "type": "string"
           },
           {
-            "name": "limit",
+            "name": "imei",
             "in": "query",
             "type": "string"
           }
@@ -196,16 +176,35 @@
         }
       }
     },
-    "/api/device/{id}": {
+    "/api/device/": {
       "get": {
         "description": "",
         "parameters": [
           {
-            "name": "id",
-            "in": "path",
-            "required": true,
+            "name": "authorization",
+            "in": "header",
             "type": "string"
           },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "imeis",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      },
+      "post": {
+        "description": "",
+        "parameters": [
           {
             "name": "authorization",
             "in": "header",
@@ -227,12 +226,6 @@
         "description": "",
         "parameters": [
           {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
             "name": "authorization",
             "in": "header",
             "type": "string"
@@ -251,26 +244,39 @@
                 "imei": {
                   "example": "any"
                 },
-                "imsi": {
-                  "example": "any"
-                },
-                "iccid": {
-                  "example": "any"
-                },
-                "msisdn": {
-                  "example": "any"
-                },
-                "carrier": {
-                  "example": "any"
-                },
-                "swVersion": {
-                  "example": "any"
-                },
-                "hwVersion": {
+                "deviceInfo": {
                   "example": "any"
                 }
               }
             }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/api/device/{imei}": {
+      "get": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "imei",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "type": "string"
           }
         ],
         "responses": {
@@ -283,7 +289,7 @@
         "description": "",
         "parameters": [
           {
-            "name": "id",
+            "name": "imei",
             "in": "path",
             "required": true,
             "type": "string"
@@ -326,16 +332,16 @@
             "schema": {
               "type": "object",
               "properties": {
-                "grpName": {
+                "desc": {
                   "example": "any"
                 },
-                "product": {
+                "grpName": {
                   "example": "any"
                 },
                 "fwId": {
                   "example": "any"
                 },
-                "settings": {
+                "settingId": {
                   "example": "any"
                 },
                 "hwVersion": {
@@ -417,6 +423,21 @@
             "name": "Authorization",
             "in": "header",
             "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "fwId": {
+                  "example": "any"
+                },
+                "settingId": {
+                  "example": "any"
+                }
+              }
+            }
           }
         ],
         "responses": {
@@ -799,11 +820,24 @@
         "description": "",
         "parameters": [
           {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
             "name": "body",
             "in": "body",
             "schema": {
               "type": "object",
               "properties": {
+                "imei": {
+                  "example": "any"
+                },
                 "name": {
                   "example": "any"
                 },
@@ -828,6 +862,18 @@
       },
       "get": {
         "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
         "responses": {
           "default": {
             "description": ""
@@ -835,14 +881,24 @@
         }
       }
     },
-    "/api/zone/{id}": {
+    "/api/zone/{imei}": {
       "get": {
         "description": "",
         "parameters": [
           {
-            "name": "id",
+            "name": "imei",
             "in": "path",
             "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
             "type": "string"
           }
         ],
@@ -856,9 +912,19 @@
         "description": "",
         "parameters": [
           {
-            "name": "id",
+            "name": "imei",
             "in": "path",
             "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
             "type": "string"
           },
           {
@@ -867,13 +933,7 @@
             "schema": {
               "type": "object",
               "properties": {
-                "name": {
-                  "example": "any"
-                },
-                "type": {
-                  "example": "any"
-                },
-                "notes": {
+                "imei": {
                   "example": "any"
                 },
                 "latLongArr": {
@@ -893,9 +953,186 @@
         "description": "",
         "parameters": [
           {
-            "name": "id",
+            "name": "imei",
             "in": "path",
             "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/api/alert/": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "alertName": {
+                  "example": "any"
+                },
+                "imei": {
+                  "example": "any"
+                },
+                "alerts": {
+                  "example": "any"
+                },
+                "speedThreshold": {
+                  "example": "any"
+                },
+                "batteryThreshold": {
+                  "example": "any"
+                },
+                "emails": {
+                  "example": "any"
+                },
+                "mobiles": {
+                  "example": "any"
+                },
+                "notes": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/api/alert/history": {
+      "get": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "imeis",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "imei",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/api/alert/{imei}": {
+      "get": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "imei",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      },
+      "put": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "imei",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      },
+      "delete": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "imei",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
             "type": "string"
           }
         ],
