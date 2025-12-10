@@ -19,7 +19,7 @@ const createTransporter = () => {
   logger.info(`Configuring custom SMTP: ${process.env.SMTP_HOST}:${process.env.SMTP_PORT}`);
   return nodemailer.createTransport({
     host: process.env.SMTP_HOST,
-    port: Number(process.env.SMTP_PORT || 465),
+    port: Number(process.env.SMTP_PORT || 587),
     secure: process.env.SMTP_SECURE === 'true',
     auth: {
       user: process.env.SMTP_USER,

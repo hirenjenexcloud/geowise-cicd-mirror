@@ -5,6 +5,8 @@ const { updateDeviceConfigInCache } = require("../config/deviceCache");
 const logger = require("../utils/logger");
 const AlertHistory = require("../models/alertHistory.model");
 const { buildQuery } = require("../utils/queryBuilder");
+const { SendMsg } = require("../utils/msgSend");
+const SendMail = require('../utils/EmailSend');
 
 exports.createAlert = async (req, res) => {
   try {
@@ -313,14 +315,14 @@ exports.checkSpeed = async function (packet, config) {
   if (!config.alerts.speed) return;
 
   const limit = config.speedConfig.maxSpeed;
-  const packetSpeed = packet.engine.spdKmph;
+  const packetSpeed = packet.deviceData.engine.spdKmph;
   const key = packet.imei;
 
   const sent = config.alertFlags.speedAlertSent || false;
 
   if (packetSpeed > limit && !sent ) {
-    console.log(`🚨 Speed Alert IMEI ${packet.imei}: ${packetSpeed}/${limit}`);
-    sendSpeedEmail(packet);
+    console.log(`Speed Alert IMEI ${packet.imei}: ${packetSpeed}/${limit}`);
+    sendSpeedAlert(packet, config);
     updateAlertFlags(config, true, "speedAlertSent");
   }
       // reset
@@ -336,7 +338,7 @@ exports.checkBattery = async function (packet, config) {
 
   if (!config.alerts.battery) return;
  
-    const level = packet.power.battery;
+    const level = packet.deviceData.power.battery;
     const thr = config.batteryConfig.minVoltage;
     const key = packet.imei;
 
@@ -345,8 +347,8 @@ exports.checkBattery = async function (packet, config) {
     const sent = config.alertFlags.batteryAlertSent || false;
  
     if (level < thr && !sent) {
-        console.log(`⚠️ Battery Low IMEI ${key}: ${level} < ${thr}`);
-        sendBatteryAlert(packet);
+        console.log(`Battery Low IMEI ${key}: ${level} < ${thr}`);
+        sendBatteryAlert(packet, config);
         updateAlertFlags(config, true, "batteryAlertSent");
     }
  
@@ -363,8 +365,11 @@ exports.handlePowerConnect = async function (packet, config) {
     logger.warn(`No alert config found for IMEI ${packet.imei} in handlePowerConnect`);
     return;
   } else {
-    // Implement power connect alert logic here
     createAlertHistoryRecord(packet, 'Power Connected');
+    const subject = 'Power Connected';
+    const message = `Power was connected to your device ${packet.imei}.`;
+    sendMsg(config, message);
+    sendEmail(config, subject, message);
   }
 };
 
@@ -374,19 +379,30 @@ exports.handlePowerDisconnect = async function (packet, config) {
     logger.warn(`No alert config found for IMEI ${packet.imei} in handlePowerDisconnect`);
     return;
   } else {
-    // Implement power disconnect alert logic here
     createAlertHistoryRecord(packet, 'Power Disconnected');
+    const message = `Power was disconnected to your device ${packet.imei}.`;
+    const subject = 'Power Disconnected';
+    sendMsg(config, message);
+    sendEmail(config, subject, message);
   }
 };
 
-function sendBatteryAlert(packet) {
-    console.log(`📧 Battery Email Sent → ${packet.imei}`);
-    createAlertHistoryRecord(packet, 'Low Battery')
+function sendBatteryAlert(packet, config) {
+  console.log(`Battery Email Sent → ${packet.imei}`);
+  createAlertHistoryRecord(packet, 'Low Battery');
+  const message = `Your vehicle ${packet.imei} battery is low.`;
+  const subject = 'Battery Alert generated';
+  sendMsg(config, message);
+  sendEmail(config, subject, message);
 }
 
-function sendSpeedEmail(packet) {
-    console.log(`📧 Speed Email Sent → ${packet.imei}`);
-    createAlertHistoryRecord(packet, 'Speed')
+function sendSpeedAlert(packet, config) {
+  console.log(`Speed Email Sent → ${packet.imei}`);
+  createAlertHistoryRecord(packet, 'Speed');
+  const message = `Your vehicle ${packet.imei} exceeded the set speed limit at Lat: ${packet.deviceData.location.lat}, Lng: ${packet.deviceData.location.long}.`;
+  const subject = 'Speed Alert generated';
+  sendMsg(config, message);
+  sendEmail(config, subject, message);
 }
 
 function updateAlertFlags(config, flag, flagType) {
@@ -416,10 +432,32 @@ function createAlertHistoryRecord(packet, alertType) {
     imei: packet.imei,
     alertType: alertType,
     location: {
-      lat: packet.location.lat,
-      long: packet.location.long
+      lat: packet.deviceData.location.lat,
+      long: packet.deviceData.location.long
     },
-    speed: packet.engine.spdKmph,
-    battery: packet.power.battery
+    speed: packet.deviceData.engine.spdKmph,
+    battery: packet.deviceData.power.battery
   });
+}
+
+function sendEmail(config, subject, message) {
+
+  if (config.emails.length != 0) {
+    for (let index = 0; index < config.emails.length; index++) {
+      const element = config.emails[index];
+      console.log(index, ") element is a :----> ", element);
+      SendMail({ to: element, subject, text: message });
+    }
+  }
+}
+
+function sendMsg(config, message) {
+
+  if(config.mobiles.length != 0){
+    for (let index = 0; index < config.mobiles.length; index++) {
+      const element = config.mobiles[index];
+      console.log(index,") element is a :----> ",element);
+      SendMsg(message, element);
+    }
+  }
 }

@@ -148,9 +148,9 @@ function parsePacket(client) {
         logger.warn(`No alert config found for IMEI ${parsed.imei}`);
         return;
       } else {
-        const handler = handlers[deviceData.event.eType];
+        const handler = handlers[devicePacket.event.eType];
         if (handler) handler(deviceData, config);
-        else console.log("Ignored event type:", deviceData.event.eType);
+        else console.log("Ignored event type:", devicePacket.event.eType);
       }
 
       const exists = await Device.findOneAndUpdate(
@@ -230,7 +230,7 @@ function canPacketParseing(client) {
       const canPacket = buildCanDevicePacket(parsed, packetHex);
 
       await DevicePackets.create(canPacket);
-      logger.info("Car data saved successfully!");
+      logger.info("Can data saved successfully!");
 
     } catch (err) {
       logger.error("Error parsing packet:", err);
