@@ -34,11 +34,6 @@ exports.createSetting = async (req, res) => {
 
     return success(res, "CREATED", "Setting created");
   } catch (err) {
-    // Duplicate key (unique index) handling
-    if (err.name === "MongoServerError" && err.code === 11000) {
-      return fail(res, "INVALIDSYNTAX", "Duplicate key error", err.message);
-    }
-
     // Validation error (Mongoose)
     if (err.name === "ValidationError") {
       return fail(res, "INVALIDSYNTAX", "Validation failed", err.message);
@@ -67,6 +62,8 @@ exports.getAllSettings = async (req, res) => {
       .limit(pagination.limit)
       .sort(sorting)
       .lean();
+
+    if (!settings) return fail(res, "NOTFOUND", "No Settings Found.");
 
     return success(res, "OK", "Settings fetched successfully", {
       totalRecords: total,
@@ -138,7 +135,11 @@ exports.deleteSetting = async (req, res) => {
 
     // Block delete if assigned to a group
     if (existing.group) {
-      return fail(res, "INVALIDSYNTAX", "Cannot delete setting file assigned to a group");
+      return fail(
+        res,
+        "INVALIDSYNTAX",
+        "Cannot delete setting file assigned to a group"
+      );
     }
     await existing.save();
 
