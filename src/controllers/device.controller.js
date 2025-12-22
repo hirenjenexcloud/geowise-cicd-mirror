@@ -117,9 +117,11 @@ exports.deleteDeviceByImei = async (req, res) => {
 
 // Device history api 
 exports.deviceHistory = async (req, res) => {
+  console.log("Query params in deviceHistory:", req.query);
   const { imei,imeis} = req.query;
 
   try {
+    console.log("Fetching device history with IMEI(s):", imei || imeis);
     // Required field checks
     if (!imei && !imeis) {
       return fail(res, "NOTFOUND", "IMEI is required");
@@ -131,7 +133,11 @@ exports.deviceHistory = async (req, res) => {
       "event.eType": { type: "number"},
     };
 
+    console.log("Building query with allowed filters:", allowedFilters);
+
     const { filter, pagination, sorting } = buildQuery(req, allowedFilters);
+
+    console.log("Constructed filter:", filter);
 
     if (req.query.imeis) {
       filter.imei = { $in: req.query.imeis.split(",") };
@@ -139,11 +145,14 @@ exports.deviceHistory = async (req, res) => {
     }
 
     const total = await deviceHistory.countDocuments(filter);
+    console.log("Total records found:", total);
     const data = await deviceHistory.find(filter)
       .skip(pagination.skip)
       .limit(pagination.limit)
       .sort(sorting)
       .lean();
+
+    console.log("Fetched data:", data);
 
     return success(res, "OK", "Fetched successfully", {
       totalRecords: total,
