@@ -141,7 +141,10 @@ exports.deleteSetting = async (req, res) => {
         "Cannot delete setting file assigned to a group"
       );
     }
-    await existing.save();
+    else{
+      await Setting.deleteOne({ _id: id });
+      console.log("Deleted setting:", id);
+    }
 
     return success(res, "OK", "Deleted");
   } catch (err) {

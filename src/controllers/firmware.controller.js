@@ -306,7 +306,12 @@ exports.deleteFirmwares = async (req, res) => {
     }
 
     // Prevent deletion if firmware is still assigned to a group
-    const group = await Group.findOne({ fwId: id });
+    const fw = await Firmware.findById(id);
+    if (!fw) {
+      return fail(res, "NOTFOUND", "Firmware not found");
+    }
+ 
+    const group = await Group.exists({ fwId: fw.fwId });
     if (group) {
       return fail(res, "NOTFOUND", "Cannot delete firmware assigned to a group");
     }
@@ -314,11 +319,8 @@ exports.deleteFirmwares = async (req, res) => {
     // ---------------------------------------------------------
     // 1) DELETE MONGO DOCUMENT
     // ---------------------------------------------------------
-    const deleted = await Firmware.findByIdAndDelete(id).lean();
-    if (!deleted) {
-      return fail(res, "NOTFOUND", "Firmware not found");
-    }
-
+     await Firmware.findByIdAndDelete(id);
+     console.log("Firmware document deleted:", id);
     // ---------------------------------------------------------
     // 2) DELETE THE UPLOAD FOLDER (fwId == folderId)
     // ---------------------------------------------------------
@@ -341,6 +343,6 @@ exports.deleteFirmwares = async (req, res) => {
 
   } catch (err) {
     logger.error("Delete firmware error:", err);
-    return fail(res, "SERVER_ERROR", "Server error", err.message);
+    return fail(res, "SERVER_ERROR", err.message);
   }
 };
