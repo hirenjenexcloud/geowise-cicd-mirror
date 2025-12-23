@@ -319,7 +319,7 @@ exports.deleteFirmwares = async (req, res) => {
     // ---------------------------------------------------------
     // 1) DELETE MONGO DOCUMENT
     // ---------------------------------------------------------
-     await Firmware.findByIdAndDelete(id);
+     const deleted = await Firmware.findByIdAndDelete(id);
      console.log("Firmware document deleted:", id);
     // ---------------------------------------------------------
     // 2) DELETE THE UPLOAD FOLDER (fwId == folderId)
