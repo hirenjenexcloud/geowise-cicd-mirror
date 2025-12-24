@@ -22,6 +22,39 @@ const MoveTriggerSchema = new mongoose.Schema(
   { _id: false }
 );
 
+const QualityFilterSchema = new mongoose.Schema(
+  {
+    minSatellite: {
+      type: Number,
+      min: [0, "Min Satellite cannot be negative"],
+      default: 7,
+      required: true,
+    },
+
+    stopHac: {
+      type: Number,
+      min: [0, "Stop HAC cannot be negative"],
+      default: 12,
+      required: true,
+    },
+
+    moveHac: {
+      type: Number,
+      min: [0, "Move HAC cannot be negative"],
+      default: 15,
+      required: true,
+    },
+
+    gsmRssi: {
+      type: Number,
+      min: [0, "GSM RSSI cannot be negative"],
+      default: 10,
+      required: true,
+    },
+  },
+  { _id: false }
+);
+
 const ResetTimeoutsSchema = new mongoose.Schema(
   {
     deviceTimeout: {
@@ -103,6 +136,7 @@ const SettingSchema = new mongoose.Schema(
     },
 
     moveTrigger: { type: MoveTriggerSchema, default: () => ({}) },
+    qualityFilter: { type: QualityFilterSchema, default: () => ({}) },
     resetTimeouts: { type: ResetTimeoutsSchema, default: () => ({}) },
     dashboardServer: { type: DashboardServerSchema, default: () => ({}) },
 

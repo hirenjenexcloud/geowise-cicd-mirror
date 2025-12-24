@@ -96,30 +96,49 @@ exports.getSettingById = async (req, res) => {
 /**
  * Update a setting (partial)
  */
+const ALLOWED_FIELDS = ["name"];
+
 exports.updateSetting = async (req, res) => {
+  // console.log("Update Setting called with body:", req.body);
   try {
-    const id = req.params.id;
-    if (!id) return fail(res, "INVALIDSYNTAX", "Missing id param");
+    const { id } = req.params;
+    if (!id) {
+      return fail(res, "INVALIDSYNTAX", "Missing id param");
+    }
 
-    // Do not allow client to change settingId
-    if (req.body.settingId) delete req.body.settingId;
+    const bodyKeys = Object.keys(req.body || {});
+    if (bodyKeys.length === 0) {
+      return fail(res, "INVALIDSYNTAX", "Nothing to update");
+    }
 
-    const updated = await Setting.findByIdAndUpdate(
-      id,
-      { $set: req.body },
-      { new: true, runValidators: true }
+    const invalidFields = bodyKeys.filter(
+      (key) => !ALLOWED_FIELDS.includes(key)
     );
 
-    if (!updated) return fail(res, "NOTFOUND", "Setting not found");
+    // console.log("Invalid fields:", invalidFields);
 
-    return success(res, "OK", "Updated successfully");
-  } catch (err) {
-    if (err.name === "ValidationError") {
-      return fail(res, "INVALIDSYNTAX", "Validation failed", err.message);
+    if (invalidFields.length > 0) {
+      return fail(
+        res,
+        "FORBIDDEN",
+        `Only 'name' field is editable. Invalid fields: ${invalidFields.join(", ")}`
+      );
     }
+
+    const setting = await Setting.findById(id);
+    if (!setting) {
+      return fail(res, "NOTFOUND", "Setting not found");
+    }
+
+    setting.name = req.body.name;
+    await setting.save();
+
+    return success(res, "OK", "Name updated successfully", setting);
+  } catch (err) {
     return fail(res, "INTERNALSERVERERROR", err.message);
   }
 };
+
 
 /**
  * Delete (soft-delete) a setting

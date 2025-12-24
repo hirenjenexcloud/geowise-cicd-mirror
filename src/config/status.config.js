@@ -5,7 +5,8 @@ const status= {
    "NOTFOUND": 404,
    "INVALIDSYNTAX": 400,
    "NOTMODIFIED": 304,
-   "INTERNALSERVERERROR":500
+   "INTERNALSERVERERROR":500,
+   "FORBIDDEN":403
 }
    
 module.exports = status;
