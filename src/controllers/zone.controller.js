@@ -44,7 +44,7 @@ exports.getAllZones = async (req, res) => {
     // Allowed filters based on Zone model
     const allowedFilters = {
       imei: { type: "string" },
-      name: { type: "string" },
+      // name: { type: "string" },
       type: { type: "string" },
     };
 

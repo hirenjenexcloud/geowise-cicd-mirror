@@ -69,7 +69,7 @@ exports.getAllGroups = async (req, res) => {
   try {
     // Allowed filters based on your Group model
     const allowedFilters = {
-      grpName: { type: "string" },
+      // grpName: { type: "string" },
       fwId: { type: "number" },
       settingId: { type: "number" },
       hwVersion: { type: "string" },

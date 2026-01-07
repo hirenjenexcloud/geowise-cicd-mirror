@@ -27,7 +27,7 @@ exports.createAlert = async (req, res) => {
 
     const exist = await Alert.findOne({ imei });
     if (exist) {
-      return fail(res, "ALREADYEXIST", "Alert already exists for this IMEI");
+      return fail(res, "OK", "Alert already exists for this IMEI");
     }
     // Validate IMEI exists in database
     const device = await Device.findOne({ imei });

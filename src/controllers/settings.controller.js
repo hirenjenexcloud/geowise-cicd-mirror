@@ -3,6 +3,7 @@ const Setting = require("../models/settings.model");
 const Counter = require("../models/counter.model");
 const { success, fail } = require("../utils/apiResponse");
 const { buildQuery } = require("../utils/queryBuilder");
+const Group = require("../models/group.model");
 
 /**
  * getNextSequence - atomic increment for named counter
@@ -50,7 +51,6 @@ exports.getAllSettings = async (req, res) => {
   try {
     const allowedFilters = {
       settingId: { type: "number" },
-      group: { type: "string" },
       name: { type: "string" },
     };
 
@@ -141,7 +141,7 @@ exports.updateSetting = async (req, res) => {
 
 
 /**
- * Delete (soft-delete) a setting
+ * 
  * Block deletion if assigned to a group
  */
 exports.deleteSetting = async (req, res) => {
@@ -150,10 +150,12 @@ exports.deleteSetting = async (req, res) => {
     if (!id) return fail(res, "INVALIDSYNTAX", "Id not found");
 
     const existing = await Setting.findById(id);
+    const group = await Group.exists({ settingId: existing.settingId });
+    console.log("Group exists:", group);
     if (!existing) return fail(res, "NOTFOUND", "Setting not found");
 
     // Block delete if assigned to a group
-    if (existing.group) {
+    if (group) {
       return fail(
         res,
         "INVALIDSYNTAX",

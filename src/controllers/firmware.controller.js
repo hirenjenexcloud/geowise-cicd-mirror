@@ -203,7 +203,7 @@ exports.getAllFirmwares = async (req, res) => {
 
     const allowedFilters = {
       swVersion: { type: "string" },
-      firmName: { type: "string" },
+      // firmName: { type: "string" },
       fwId: { type: "number" },
     };
 

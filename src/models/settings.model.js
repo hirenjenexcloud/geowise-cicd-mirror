@@ -141,10 +141,7 @@ const SettingSchema = new mongoose.Schema(
     dashboardServer: { type: DashboardServerSchema, default: () => ({}) },
 
     // link to Group (if assigned). If present => cannot delete.
-    group: {
-      type: String,
-      default: null,
-    },
+   
     atCommands: { type: [String], default: [] },
   },
 

@@ -127,8 +127,9 @@ exports.passwordUpdate = async (req, res) => {
 
     // send email (may throw)
     await sendEmail({ to: user.email, subject, html });
+    var data = { resetToken: token };
 
-    return success(res, 'OK', 'Password reset link sent to your email');
+    return success(res, 'OK', 'Password reset link sent to your email', data);
   } catch (err) {
     logger.error('passwordUpdate error:', err);
     return fail(res, 'INTERNALSERVERERROR', 'Server error', process.env.NODE_ENV === 'development' ? err.message : undefined);
