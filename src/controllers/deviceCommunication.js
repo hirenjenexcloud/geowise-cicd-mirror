@@ -137,11 +137,13 @@ function parsePacket(client) {
 
       const devicePacket = buildDevicePacket(parsed, packetHex, true);
       const deviceData = buildDevicePacket(parsed, packetHex, false);
-
+      logger.info("Event Type Name :-", allPacketsDef.eType[parsed.eType] || "Unknown");
+      logger.info("Event Type :-", parsed.eType);
       const config = await getDeviceConfig(parsed.imei);
       // logger.info("car data config", config);
 
-      await DevicePackets.create(devicePacket);
+      const result  = await DevicePackets.create(devicePacket);
+      console.log("Device Packet data:", result);
       logger.info("Car data saved successfully!");
 
       if (!config) {
@@ -228,7 +230,8 @@ function canPacketParseing(client) {
       // logger.info(`DTC Parsed Packet Data: ${JSON.stringify(parsed)}`);
 
       const canPacket = buildCanDevicePacket(parsed, packetHex);
-
+      console.log("Event Type :-", parsed.eType);
+      console.log("Event Type Name :-", allPacketsDef.eType[parsed.eType] || "Unknown");
       await DevicePackets.create(canPacket);
       logger.info("Can data saved successfully!");
 
