@@ -1,6 +1,9 @@
 const Device = require("../models/device.model");
 const Group = require("../models/group.model");
 const deviceHistory = require("../models/devicePackets.model");
+const alertHistory = require("../models/alertHistory.model");
+const Alert = require("../models/alert.model");
+const Zone = require("../models/zone.model");
 const { success, fail } = require("../utils/apiResponse");
 const logger = require('../utils/logger');
 const { buildQuery } = require("../utils/queryBuilder");
@@ -107,8 +110,16 @@ exports.deleteDeviceByImei = async (req, res) => {
   try {
     const device = await Device.findOne({ imei: imei }).lean().exec();
     if (!device) return fail(res, "NOTFOUND", "Device not found with this ID.");
-    let result = await Device.deleteOne({ imei: imei }).lean().exec();
-    if (result) return success(res, 'OK', "Device deleted successfully.");
+
+    await Promise.all([
+      Device.deleteOne({ imei }),
+      deviceHistory.deleteMany({ imei }),
+      alertHistory.deleteMany({ imei }),
+      Alert.deleteMany({ imei }),
+      Zone.deleteMany({ imei })
+    ]);
+
+    return success(res, 'OK', "Device deleted successfully.");
   } catch (err) {
     console.error("Error deleting device:", err);
     return fail(res, "INTERNALSERVERERROR", err.message);
