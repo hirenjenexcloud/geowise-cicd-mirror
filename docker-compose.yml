@@ -1,35 +1,38 @@
+
 services:
-  app: 
+  app:
     container_name: geotracker-app
     build: .
     restart: unless-stopped
+
     env_file:
       - .env
+
     ports:
-      - "4000:4000" # your API port
-      - "1883:1883" # expose MQTT broker port
+      - "4000:4000"
+      - "1883:1883"
+
     volumes:
       - /opt/geotracker/uploads:/usr/src/app/uploads
       - /opt/geotracker/logs:/usr/src/app/logs
+
     environment:
       - NODE_ENV=production
       - MONGO_URI=mongodb://host.docker.internal:27017/geotracker
-      - MQTT_HOST=0.0.0.0 # Mosca will listen on all interfaces
-      - SERVER_IP=127.0.0.1 # your host system IP (for devices)
+      - MQTT_HOST=0.0.0.0
+      - SERVER_IP=127.0.0.1
+
     extra_hosts:
       - "host.docker.internal:host-gateway"
+
     networks:
       - geotracker-net
+
     logging:
-      driver: "json-file"
+      driver: json-file
       options:
         max-size: "10m"
         max-file: "5"
-
-  
-volumes:
-  mongo-data:
-  node_modules:
 
 networks:
   geotracker-net:
