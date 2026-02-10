@@ -21,9 +21,7 @@ const frontendPath = path.resolve(
   '../../dist/next-v8.1.2-lite'
 );
 
-console.log('✅ FRONTEND PATH:', frontendPath);
-
-/* ================= GLOBAL MIDDLEWARE ================= */
+console.log('FRONTEND PATH:', frontendPath);
 app.use(
   helmet({
     contentSecurityPolicy: false, // Disable CSP for development; configure properly for production
@@ -35,18 +33,13 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan('dev'));
 
-/* ================= SERVE ANGULAR FILES ================= */
 app.use(express.static(frontendPath));
 
-/* ================= SWAGGER ================= */
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerFile));
 
-/* ================= API ROUTES ================= */
+
 app.use('/api', routes);
 
-
-
-/* sirf HTML routes ke liye */
 app.get('*', (req, res, next) => {
   if (req.path.startsWith('/api')){
     app.use((req, res) => res.status(404).json({ message: 'Not Found' }));
