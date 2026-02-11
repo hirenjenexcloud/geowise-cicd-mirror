@@ -29,6 +29,8 @@ import { AnimationService } from 'css-animator';
 import { AddFirmwareComponent } from './theme/layout/firmware/add-firmware/add-firmware.component';
 import { AddGroupComponent } from './theme/layout/group/add-group/add-group.component';
 import { AddSettingComponent } from './theme/layout/setting/add-setting/add-setting.component';
+import { HttpClientModule } from '@angular/common/http'; // 👈 ADD THIS
+
 
 
 
@@ -63,7 +65,8 @@ import { AddSettingComponent } from './theme/layout/setting/add-setting/add-sett
     NgbDropdownModule,
     NgbTooltipModule,
     NgbButtonsModule,
-    NgbTabsetModule
+    NgbTabsetModule,
+    HttpClientModule
   ],
   providers: [NavigationItem,AnimationService],
   bootstrap: [AppComponent]

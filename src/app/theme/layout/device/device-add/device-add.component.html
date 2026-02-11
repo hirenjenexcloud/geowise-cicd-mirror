@@ -1,1 +1,102 @@
-<h1>Device Ragistration TEST</h1>
+<form
+  [formGroup]="DeviceForm"
+  (ngSubmit)="submit()"
+  class="card p-4"
+>
+
+  <h3 class="mb-4">Device Registration</h3>
+
+  <!-- Row 1 -->
+  <div class="row">
+    <div class="col-md-6 mb-3">
+      <label class="form-label">IMEI</label>
+      <input
+        type="text"
+        class="form-control"
+        formControlName="imei"
+        placeholder="Enter IMEI"
+      />
+    </div>
+
+    <div class="col-md-6 mb-3">
+      <label class="form-label">IMSI</label>
+      <input
+        type="text"
+        class="form-control"
+        formControlName="imsi"
+        placeholder="Enter IMSI"
+      />
+    </div>
+  </div>
+
+  <!-- Row 2 -->
+  <div class="row">
+    <div class="col-md-6 mb-3">
+      <label class="form-label">ICCID</label>
+      <input
+        type="text"
+        class="form-control"
+        formControlName="iccid"
+        placeholder="Enter ICCID"
+      />
+    </div>
+
+    <div class="col-md-6 mb-3">
+      <label class="form-label">MSISDN</label>
+      <input
+        type="text"
+        class="form-control"
+        formControlName="msisdn"
+        placeholder="Enter MSISDN"
+      />
+    </div>
+  </div>
+
+  <!-- Row 3 -->
+  <div class="row">
+    <div class="col-md-6 mb-3">
+      <label class="form-label">Carrier</label>
+      <select class="form-control" formControlName="carrier">
+        <option value="">Select Carrier</option>
+        <option *ngFor="let c of carriers" [value]="c">
+          {{ c }}
+        </option>
+      </select>
+    </div>
+
+    <div class="col-md-6 mb-3">
+      <label class="form-label">Client ID</label>
+      <select class="form-control" formControlName="clientId">
+        <option value="">Select Client</option>
+        <option *ngFor="let client of clients" [value]="client.clientId">
+          {{ client.name }} ({{ client.clientId }})
+        </option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Row 4 -->
+  <div class="row">
+    <div class="col-md-6 mb-3">
+      <label class="form-label">Group</label>
+      <select class="form-control" formControlName="grpId">
+        <option value="">Select Group</option>
+        <option *ngFor="let g of groups" [value]="g._id">
+          {{ g.grpName }}
+        </option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Submit -->
+  <div class="d-flex justify-content-end mt-4">
+    <button
+      type="submit"
+      class="btn btn-primary px-4"
+      [disabled]="DeviceForm.invalid"
+    >
+      Submit
+    </button>
+  </div>
+
+</form>

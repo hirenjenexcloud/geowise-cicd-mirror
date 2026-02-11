@@ -4,8 +4,8 @@ const groupController = require('../controllers/group.controller');
 const auth = require('../middlewares/authJWT'); // protect routes
 
 // Group CRUD endpoints
-router.post('/', auth.authenticate, groupController.createGroup);
-router.get('/', auth.authenticate, groupController.getAllGroups);
+router.post('/', groupController.createGroup);
+router.get('/', groupController.getAllGroups);
 router.get('/:id', auth.authenticate, groupController.getGroupById);
 router.put('/:id', auth.authenticate, groupController.updateGroup);
 router.delete('/:id', auth.authenticate, groupController.deleteGroup);
