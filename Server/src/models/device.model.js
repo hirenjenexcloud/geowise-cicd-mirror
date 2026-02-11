@@ -84,6 +84,7 @@ const DeviceSchema = new mongoose.Schema(
       minlength: [15, 'IMEI must be at least 15 characters'],
     },
     grpId: { type: mongoose.Schema.Types.ObjectId },
+    clientId: { type: String},
     swVersion: { type: String, default: '' },
     hwVersion: { type: String, default: '' },
     deviceInfo: { type: deviceInfoSchema, required: true },

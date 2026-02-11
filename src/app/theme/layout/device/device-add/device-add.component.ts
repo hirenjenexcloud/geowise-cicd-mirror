@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ApisService } from 'src/app/theme/shared/services/apis.service';
+import { ToastService } from 'src/app/theme/shared/services/toast.service';
 
 @Component({
   selector: 'app-device-add',
@@ -12,13 +13,10 @@ export class DeviceAddComponent implements OnInit {
   DeviceForm!: FormGroup;
 
   carriers = [
-  'Airtel',
-  'Jio',
-  'Vodafone',
-  'BSNL',
-  'Verizon',
-  'AT&T',
-  'T-Mobile'
+    'Telit',
+    'Verizon',
+    'AT&T',
+    'T-Mobile'
 ];
 clients = [
   { _id: '1', name: 'Client A', clientId: 'CA123' },
@@ -26,9 +24,40 @@ clients = [
   { _id: '3', name: 'Client C', clientId: 'CC789' }
 ];
 
+devices: any[] = [
+  {
+    imei: '353081090133666',
+    imsi: '404100123456789',
+    iccid: '8991101200003204512',
+    msisdn: '9876543210',
+    carrier: 'Airtel',
+    clientId: 'CL001',
+    grpId: 'Group-A'
+  },
+  {
+    imei: '353081090133667',
+    imsi: '404100987654321',
+    iccid: '8991101200003204513',
+    msisdn: '9123456780',
+    carrier: 'Jio',
+    clientId: 'CL002',
+    grpId: 'Group-B'
+  },
+  {
+    imei: '353081090133668',
+    imsi: '404100456789123',
+    iccid: '8991101200003204514',
+    msisdn: '9988776655',
+    carrier: 'VI',
+    clientId: 'CL003',
+    grpId: 'Group-C'
+  }
+];
+
+
 groups = [];
 
-  constructor(private fb: FormBuilder,private apiSvc: ApisService) { }
+  constructor(private fb: FormBuilder,private apiSvc: ApisService, private notification: ToastService) { }
 
   ngOnInit() {
     this.DeviceForm = this.fb.group({
@@ -47,6 +76,10 @@ groups = [];
 
      console.log("Groups:", this.groups);
    });
+
+  //    setTimeout(() => {
+  //   this.notification.success('Test Toast Working');
+  // }, 5000);
   }
 
    submit() {
@@ -70,9 +103,13 @@ groups = [];
       return;
     }
 
-    this.apiSvc.addDevice(data).subscribe((response) => {
-      console.log('Device added:', response);
-      // Handle the response after adding the device
+    this.apiSvc.addDevice(data).subscribe((res:any) => {
+      console.log('Device added:', res);
+      console.log('Device msg:', res.message);
+      console.log('Device status:', res.status);
+      this.DeviceForm.reset();
+      this.notification.success('Device added successfully');
+
     });
   }
 

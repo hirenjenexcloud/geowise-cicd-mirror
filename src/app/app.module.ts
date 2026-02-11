@@ -29,7 +29,8 @@ import { AnimationService } from 'css-animator';
 import { AddFirmwareComponent } from './theme/layout/firmware/add-firmware/add-firmware.component';
 import { AddGroupComponent } from './theme/layout/group/add-group/add-group.component';
 import { AddSettingComponent } from './theme/layout/setting/add-setting/add-setting.component';
-import { HttpClientModule } from '@angular/common/http'; // 👈 ADD THIS
+import { HttpClientModule } from '@angular/common/http'; 
+import { ToastrModule } from 'ngx-toastr';
 
 
 
@@ -66,7 +67,25 @@ import { HttpClientModule } from '@angular/common/http'; // 👈 ADD THIS
     NgbTooltipModule,
     NgbButtonsModule,
     NgbTabsetModule,
-    HttpClientModule
+    HttpClientModule,
+    ToastrModule.forRoot({
+    timeOut: 5000,                  
+    // extendedTimeOut: 1000,
+    positionClass: 'toast-top-right',
+    //  positionClass: 'toast-top-full-width',
+    closeButton: true,
+    // progressBar: true,
+    // preventDuplicates: true,
+    // newestOnTop: true,
+    tapToDismiss: true,            // Click pe close
+    // enableHtml: false  
+    iconClasses: {
+    error: 'toast-error',
+    info: 'toast-info',
+    success: 'toast-success',
+    warning: 'toast-warning'
+  }        
+  })
   ],
   providers: [NavigationItem,AnimationService],
   bootstrap: [AppComponent]

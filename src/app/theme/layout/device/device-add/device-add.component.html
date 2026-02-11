@@ -100,3 +100,43 @@
   </div>
 
 </form>
+
+<!-- Device List Table -->
+<div class="card mt-4 p-4">
+  <h4 class="mb-3">Registered Devices</h4>
+
+  <div class="table-responsive">
+    <table class="table table-bordered table-striped table-hover">
+      <thead style="background-color: #101b33; color: white;">
+        <tr>
+          <th>IMEI</th>
+          <th>IMSI</th>
+          <th>ICCID</th>
+          <th>MSISDN</th>
+          <th>Carrier</th>
+          <th>Client ID</th>
+          <th>Group</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr *ngFor="let device of devices; let i = index">
+          <td>{{ device.imei }}</td>
+          <td>{{ device.imsi }}</td>
+          <td>{{ device.iccid }}</td>
+          <td>{{ device.msisdn }}</td>
+          <td>{{ device.carrier }}</td>
+          <td>{{ device.clientId }}</td>
+          <td>{{ device.grpId }}</td>
+        </tr>
+
+        <tr *ngIf="devices.length === 0">
+          <td colspan="8" class="text-center text-muted">
+            No devices found
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
