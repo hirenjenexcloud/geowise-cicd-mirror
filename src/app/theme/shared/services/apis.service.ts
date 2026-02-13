@@ -8,6 +8,11 @@ export class ApisService {
 
   constructor(private http: HttpClient) { }
 
+  // Auth Module
+  login(credentials: any) {
+    return this.http.post('/api/auth/login', credentials);
+  }
+
   // Device Module
    getDevices() {
     return this.http.get('/api/device');
@@ -25,7 +30,9 @@ export class ApisService {
     return this.http.delete(`/api/device/${id}`);
   }
 
-
+  getDeviceHistory(imei: string) {
+    return this.http.get('/api/device/history' + '?imei=' + imei);
+  }
 
   // Group Module
 
@@ -44,5 +51,28 @@ export class ApisService {
   deleteGroup(id: string) {
     return this.http.delete(`/api/groups/${id}`);
   }
+
+
+  // Firmware Module
+
+  addFirmware(firmware: any) {
+    console.log('Adding Firmware:', firmware);
+    return this.http.post('/api/firmware', firmware);
+  }
+
+
+  getFirmwares() {
+    return this.http.get('/api/firmware');
+  }
+ 
+  getSettings() {
+    return this.http.get('/api/settings');
+  }
+
+
+
+  
+
+ 
 
 }

@@ -14,8 +14,8 @@ export class AuthSigninComponent implements OnInit {
   }
 
    login() {
-    // TEMP success redirect
-    this.router.navigate(['/dashboard/analytics']);
+   
+    this.router.navigate(['/device']);
   }
 
 

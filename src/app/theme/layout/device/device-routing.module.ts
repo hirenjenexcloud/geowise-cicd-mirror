@@ -3,6 +3,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { DeleteDeviceComponent } from './delete-device/delete-device.component';
 import { DeviceAddComponent } from './device-add/device-add.component';
 import { EditDeviceComponent } from './edit-device/edit-device.component';
+import { DeviceMapViewComponent } from './device-map-view/device-map-view.component';
 
 
 const routes: Routes = [
@@ -17,6 +18,10 @@ const routes: Routes = [
   {
     path: 'edit_device',
     component: EditDeviceComponent
+  },
+  {
+    path: 'map_view',
+    component: DeviceMapViewComponent
   }
 ];  
 

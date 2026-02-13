@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ApisService } from 'src/app/theme/shared/services/apis.service';
 import { ToastService } from 'src/app/theme/shared/services/toast.service';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-device-add',
@@ -24,42 +25,15 @@ clients = [
   { _id: '3', name: 'Client C', clientId: 'CC789' }
 ];
 
-devices: any[] = [
-  {
-    imei: '353081090133666',
-    imsi: '404100123456789',
-    iccid: '8991101200003204512',
-    msisdn: '9876543210',
-    carrier: 'Airtel',
-    clientId: 'CL001',
-    grpId: 'Group-A'
-  },
-  {
-    imei: '353081090133667',
-    imsi: '404100987654321',
-    iccid: '8991101200003204513',
-    msisdn: '9123456780',
-    carrier: 'Jio',
-    clientId: 'CL002',
-    grpId: 'Group-B'
-  },
-  {
-    imei: '353081090133668',
-    imsi: '404100456789123',
-    iccid: '8991101200003204514',
-    msisdn: '9988776655',
-    carrier: 'VI',
-    clientId: 'CL003',
-    grpId: 'Group-C'
-  }
-];
-
-
+devices: any[] = [];
 groups = [];
+editForm: FormGroup;
+selectedDevice: any;
 
-  constructor(private fb: FormBuilder,private apiSvc: ApisService, private notification: ToastService) { }
+constructor(private fb: FormBuilder,private apiSvc: ApisService, private notification: ToastService, private modalService: NgbModal) { }
 
   ngOnInit() {
+
     this.DeviceForm = this.fb.group({
     imei: ['', Validators.required],
     grpId: ['', Validators.required],
@@ -69,12 +43,25 @@ groups = [];
     carrier: ['', Validators.required],
     clientId: ['', Validators.required]
   })
+
+   this.editForm = this.fb.group({
+    imei: [''],
+    imsi: [''],
+    iccid: [''],
+    msisdn: ['']
+  });
    
 
    this.apiSvc.getGroups().subscribe((data: any) => {
      this.groups = data.data.groups;
 
      console.log("Groups:", this.groups);
+   });
+
+   this.apiSvc.getDevices().subscribe((data: any) => {
+     this.devices = data.data.devices;
+
+     console.log("Devices:", this.devices);
    });
 
   //    setTimeout(() => {
@@ -112,5 +99,53 @@ groups = [];
 
     });
   }
+
+  openEditModal(content: any, device: any) {
+  this.selectedDevice = device;
+
+  this.editForm.patchValue({
+    imei: device.imei,
+    imsi: device.deviceInfo.imsi,
+    iccid: device.deviceInfo.iccid,
+    msisdn: device.deviceInfo.msisdn
+  });
+
+  this.modalService.open(content, { centered: true });
+}
+
+
+
+updateDevice(modal: any) {
+  const updatedData = {
+    ...this.selectedDevice,
+    imei: this.editForm.value.imei,
+    deviceInfo: {
+      ...this.selectedDevice.deviceInfo,
+      imsi: this.editForm.value.imsi,
+      iccid: this.editForm.value.iccid,
+      msisdn: this.editForm.value.msisdn
+    }
+  };
+
+  console.log("Updated:", updatedData);
+
+  modal.close();
+}
+
+
+openDeleteModal(content: any, device: any) {
+  this.selectedDevice = device;
+  this.modalService.open(content, { centered: true });
+}
+
+
+confirmDelete(modal: any) {
+  this.devices = this.devices.filter(
+    d => d !== this.selectedDevice
+  );
+
+  modal.close();
+}
+
 
 }

@@ -62,6 +62,14 @@ const NavigationItems = [
             icon: 'feather icon-trash'
           },
 
+           {
+            id:'device',
+            title: 'Tracking Map',
+            type: 'item',
+            url: '/device/map_view',
+            icon: 'feather icon-map'
+          },
+
         ]
       },
        {

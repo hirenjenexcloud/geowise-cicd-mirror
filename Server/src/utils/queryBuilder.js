@@ -36,7 +36,7 @@ exports.buildQuery = (req, allowedFilters = {}) => {
   // PAGINATION
   // -------------------------------------
   let page = parseInt(q.page) || 1;
-  let limit = parseInt(q.limit) || 10;
+  let limit = parseInt(q.limit) || 20;
   const skip = (page - 1) * limit;
 
   // -------------------------------------

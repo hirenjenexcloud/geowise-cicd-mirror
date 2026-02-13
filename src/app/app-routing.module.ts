@@ -27,15 +27,12 @@ const routes: Routes = [
     path: '',
     component: AdminComponent,
     children: [
-      {
-        path: '',
-        redirectTo: 'dashboard/analytics',
-        pathMatch: 'full'
-      },
-      {
-        path: 'dashboard',
-        loadChildren: () => import('./demo/dashboard/dashboard.module').then(module => module.DashboardModule)
-      },
+      // {
+      //   path: '',
+      //   redirectTo: 'dashboard/analytics',
+      //   pathMatch: 'full'
+      // },
+     
        {
         path: 'device',
         loadChildren: () => import('./theme/layout/device/device.module').then(module => module.DeviceModule)
@@ -58,27 +55,12 @@ const routes: Routes = [
         path: 'setting',
         component: AddSettingComponent
       },
-      {
-        path: 'layout',
-        loadChildren: () => import('./demo/pages/layout/layout.module').then(module => module.LayoutModule)
-      },
-      {
-        path: 'basic',
-        loadChildren: () => import('./demo/ui-elements/ui-basic/ui-basic.module').then(module => module.UiBasicModule)
-      },
-      {
-        path: 'forms',
-        loadChildren: () => import('./demo/pages/form-elements/form-elements.module').then(module => module.FormElementsModule)
-      },
-      {
-        path: 'tbl-bootstrap',
-        loadChildren: () => import('./demo/pages/tables/tbl-bootstrap/tbl-bootstrap.module').then(module => module.TblBootstrapModule)
-      },
+      
      
-      {
-        path: 'sample-page',
-        loadChildren: () => import('./demo/pages/sample-page/sample-page.module').then(module => module.SamplePageModule)
-      }
+     
+     
+     
+     
     ]
   },
   

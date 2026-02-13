@@ -17,7 +17,6 @@ import { NavBarComponent } from './theme/layout/admin/nav-bar/nav-bar.component'
 import { NavLeftComponent } from './theme/layout/admin/nav-bar/nav-left/nav-left.component';
 import { NavSearchComponent } from './theme/layout/admin/nav-bar/nav-left/nav-search/nav-search.component';
 import { NavRightComponent } from './theme/layout/admin/nav-bar/nav-right/nav-right.component';
-import { ConfigurationComponent } from './theme/layout/admin/configuration/configuration.component';
 
 import { ToggleFullScreenDirective } from './theme/shared/full-screen/toggle-full-screen';
 
@@ -31,6 +30,10 @@ import { AddGroupComponent } from './theme/layout/group/add-group/add-group.comp
 import { AddSettingComponent } from './theme/layout/setting/add-setting/add-setting.component';
 import { HttpClientModule } from '@angular/common/http'; 
 import { ToastrModule } from 'ngx-toastr';
+import { FileUploadModule } from 'ng2-file-upload';
+import { NgSelectModule } from '@ng-select/ng-select';
+
+ 
 
 
 
@@ -49,7 +52,6 @@ import { ToastrModule } from 'ngx-toastr';
     NavLeftComponent,
     NavSearchComponent,
     NavRightComponent,
-    ConfigurationComponent,
     ToggleFullScreenDirective,
     AddFirmwareComponent,
     AddGroupComponent,
@@ -85,7 +87,11 @@ import { ToastrModule } from 'ngx-toastr';
     success: 'toast-success',
     warning: 'toast-warning'
   }        
-  })
+  }),
+
+   FileUploadModule,
+   NgSelectModule
+
   ],
   providers: [NavigationItem,AnimationService],
   bootstrap: [AppComponent]

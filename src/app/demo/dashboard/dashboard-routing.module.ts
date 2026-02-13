@@ -4,12 +4,12 @@ import { Routes, RouterModule } from '@angular/router';
 const routes: Routes = [
   {
     path: '',
-    children: [
-      {
-        path: 'analytics',
-        loadChildren: () => import('./dash-analytics/dash-analytics.module').then(module => module.DashAnalyticsModule)
-      }
-    ]
+    // children: [
+    //   {
+    //     path: 'analytics',
+    //     loadChildren: () => import('./dash-analytics/dash-analytics.module').then(module => module.DashAnalyticsModule)
+    //   }
+    // ]
   }
 ];
 

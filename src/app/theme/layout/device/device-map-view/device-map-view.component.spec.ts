@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { BreadcrumbPagingComponent } from './breadcrumb-paging.component';
+import { DeviceMapViewComponent } from './device-map-view.component';
 
-describe('BreadcrumbPagingComponent', () => {
-  let component: BreadcrumbPagingComponent;
-  let fixture: ComponentFixture<BreadcrumbPagingComponent>;
+describe('DeviceMapViewComponent', () => {
+  let component: DeviceMapViewComponent;
+  let fixture: ComponentFixture<DeviceMapViewComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ BreadcrumbPagingComponent ]
+      declarations: [ DeviceMapViewComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(BreadcrumbPagingComponent);
+    fixture = TestBed.createComponent(DeviceMapViewComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
