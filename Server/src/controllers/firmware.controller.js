@@ -313,7 +313,7 @@ exports.deleteFirmwares = async (req, res) => {
  
     const group = await Group.exists({ fwId: fw.fwId });
     if (group) {
-      return fail(res, "NOTFOUND", "Cannot delete firmware assigned to a group");
+      return fail(res, "OK", "Cannot delete firmware assigned to a group");
     }
 
     // ---------------------------------------------------------

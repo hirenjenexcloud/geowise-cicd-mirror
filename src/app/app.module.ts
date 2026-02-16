@@ -33,6 +33,8 @@ import { ToastrModule } from 'ngx-toastr';
 import { FileUploadModule } from 'ng2-file-upload';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { NgbModalModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+
 
  
 
@@ -92,7 +94,8 @@ import { NgbModalModule } from '@ng-bootstrap/ng-bootstrap';
   }),
 
    FileUploadModule,
-   NgSelectModule
+   NgSelectModule,
+   NgbModule
 
   ],
   providers: [NavigationItem,AnimationService],

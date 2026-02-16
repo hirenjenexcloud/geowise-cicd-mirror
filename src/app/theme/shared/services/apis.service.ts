@@ -61,13 +61,32 @@ export class ApisService {
   }
 
 
-  getFirmwares() {
-    return this.http.get('/api/firmware');
+  getFirmwares(page: number, limit: number) {
+    return this.http.get(`/api/firmware?page=${page}&limit=${limit}`);
   }
- 
+
+  updateFirmware(firmware: any,id:any) {
+    console.log('Updating Firmware:', firmware);
+    return this.http.put(`/api/firmware/${id}`, firmware);
+  }
+
+  deleteFirmware(id: string) {
+    console.log('Deleting Firmware with ID:', id);
+    return this.http.delete(`/api/firmware/${id}`);
+  }
+
+  getAllFirmwares()
+  {
+     return this.http.get(`/api/firmware`);
+  }
+
+
+  // Settings Module
   getSettings() {
     return this.http.get('/api/settings');
   }
+
+
 
 
 
