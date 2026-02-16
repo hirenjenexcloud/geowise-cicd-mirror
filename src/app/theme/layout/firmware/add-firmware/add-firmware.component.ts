@@ -157,8 +157,8 @@ getAllFirmwares(page: number = 1)
    this.apiSvc.getFirmwares(this.currentPage, this.itemsPerPage).subscribe((res: any) => {
       if (res.status == true) {
         this.firmwares = res.data.firmwares;
-         this.totalPages = res.totalPages;
-        this.totalElements = res.totalElements;
+         this.totalPages = res.data.totalPages;
+        this.totalElements = res.data.totalRecords;
         console.log('Firmwares:', this.firmwares);
       } else {
         this.notification.error(res.message);
