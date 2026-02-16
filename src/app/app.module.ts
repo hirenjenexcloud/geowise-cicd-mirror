@@ -32,6 +32,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { ToastrModule } from 'ngx-toastr';
 import { FileUploadModule } from 'ng2-file-upload';
 import { NgSelectModule } from '@ng-select/ng-select';
+import { NgbModalModule } from '@ng-bootstrap/ng-bootstrap';
 
  
 
@@ -70,6 +71,7 @@ import { NgSelectModule } from '@ng-select/ng-select';
     NgbButtonsModule,
     NgbTabsetModule,
     HttpClientModule,
+    NgbModalModule,
     ToastrModule.forRoot({
     timeOut: 5000,                  
     // extendedTimeOut: 1000,

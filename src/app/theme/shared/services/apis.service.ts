@@ -36,16 +36,16 @@ export class ApisService {
 
   // Group Module
 
-  getGroups() {
-    return this.http.get('/api/groups');
+  getGroups(query = '') {
+    return this.http.get('/api/groups' + query);
   }
 
   addGroup(group: any) {
     return this.http.post('/api/groups', group);
   }
 
-  updateGroup(group: any) {
-    return this.http.put(`/api/groups`, group);
+  updateGroup(id: string,group: any) {
+    return this.http.put(`/api/groups/${id}`, group);
   }
 
   deleteGroup(id: string) {

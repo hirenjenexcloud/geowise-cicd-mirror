@@ -154,6 +154,18 @@ exports.updateGroup = async (req, res) => {
       updateData.grpName = updateData.grpName.trim();
     }
 
+    // Duplicate name check
+    if (updateData.grpName) {
+      const existing = await Group.findOne({
+        grpName: updateData.grpName,
+        _id: { $ne: req.params.id }
+      });
+
+      if (existing) {
+        return fail(res, "INVALIDSYNTAX", "Group name already exists");
+      }
+    }
+
     const group = await Group.findByIdAndUpdate(
       req.params.id,
       updateData,

@@ -1,0 +1,309 @@
+<form
+  (ngSubmit)="onSubmit(groupForm)"
+  #groupForm="ngForm"
+  class="card p-4"
+>
+
+  <h3 class="mb-4">Create Group</h3>
+
+  <!-- Row 1 -->
+  <div class="row">
+
+    <!-- Group Name -->
+    <div class="col-md-6 mb-3">
+      <label class="form-label">Group Name</label>
+      <input
+        type="text"
+        class="form-control"
+        name="grpName"
+        [(ngModel)]="group.grpName"
+        required
+        #grpName="ngModel"
+        placeholder="Enter Group Name"
+      />
+      <small class="text-danger" *ngIf="grpName.invalid && grpName.touched">
+        Group Name is required
+      </small>
+    </div>
+
+    <!-- Hardware Version -->
+    <div class="col-md-6 mb-3">
+      <label class="form-label">Hardware Version</label>
+      <input
+        type="text"
+        class="form-control"
+        name="hwVersion"
+        [(ngModel)]="group.hwVersion"
+        required
+        #hwVersion="ngModel"
+        placeholder="Enter Hardware Version"
+      />
+      <small class="text-danger" *ngIf="hwVersion.invalid && hwVersion.touched">
+        Hardware Version is required
+      </small>
+    </div>
+
+  </div>
+
+  <!-- Row 2 -->
+  <div class="row">
+
+    <!-- Software Version -->
+    <div class="col-md-6 mb-3">
+      <label class="form-label">Software Version</label>
+      <input
+        type="text"
+        class="form-control"
+        name="swVersion"
+        [(ngModel)]="group.swVersion"
+        required
+        #swVersion="ngModel"
+        placeholder="Enter Software Version"
+      />
+      <small class="text-danger" *ngIf="swVersion.invalid && swVersion.touched">
+        Software Version is required
+      </small>
+    </div>
+
+    <!-- Firmware Dropdown -->
+    <div class="col-md-6 mb-3">
+      <label class="form-label">Firmware</label>
+      <select
+        class="form-control"
+        name="fwId"
+        [(ngModel)]="group.fwId"
+        required
+        #fwId="ngModel"
+      >
+        <option value="">Select Firmware</option>
+        <option *ngFor="let f of firmwareList" [value]="f.fwId">
+          {{ f.firmName }} - {{ f.swVersion }}
+        </option>
+      </select>
+      <small class="text-danger" *ngIf="fwId.invalid && fwId.touched">
+        Firmware is required
+      </small>
+    </div>
+
+  </div>
+
+  <!-- Row 3 -->
+  <div class="row">
+
+    <!-- Setting Dropdown -->
+    <div class="col-md-6 mb-3">
+      <label class="form-label">Setting</label>
+      <select
+        class="form-control"
+        name="settingId"
+        [(ngModel)]="group.settingId"
+        required
+        #settingId="ngModel"
+      >
+        <option value="">Select Setting</option>
+        <option *ngFor="let s of settingList" [value]="s.settingId">
+          {{ s.name }} (ID: {{ s.settingId }})
+        </option>
+      </select>
+      <small class="text-danger" *ngIf="settingId.invalid && settingId.touched">
+        Setting is required
+      </small>
+    </div>
+
+    <!-- Description -->
+    <div class="col-md-6 mb-3">
+      <label class="form-label">Description</label>
+      <textarea
+        class="form-control"
+        name="desc"
+        [(ngModel)]="group.desc"
+        rows="3"
+        placeholder="Enter Description"
+      ></textarea>
+    </div>
+
+  </div>
+
+  <!-- Submit Button -->
+  <div class="d-flex justify-content-end mt-4">
+    <button
+      type="submit"
+      class="btn btn-primary px-4"
+      [disabled]="groupForm.invalid"
+    >
+      Create Group
+    </button>
+  </div>
+
+</form>
+
+<div class="card mt-4 p-4">
+
+  <h4 class="mb-3">Groups List</h4>
+
+  <div class="table-responsive">
+    <table class="table table-bordered table-striped table-hover">
+
+      <thead style="background-color:#101b33;color:white">
+        <tr>
+          <th>Name</th>
+          <th>Firmware</th>
+          <th>Setting</th>
+          <th>HW Version</th>
+          <th>SW Version</th>
+          <th>Description</th>
+          <th width="140">Actions</th>
+        </tr>
+      </thead>
+
+      <tbody>
+
+        <tr *ngFor="let g of groups">
+
+          <td>{{ g.grpName }}</td>
+          <td>{{ g.fwId }}</td>
+          <td>{{ g.settingId }}</td>
+          <td>{{ g.hwVersion }}</td>
+          <td>{{ g.swVersion }}</td>
+          <td>{{ g.desc || '-' }}</td>
+
+          <td class="text-center">
+
+            <button class="btn btn-sm btn-info me-2"
+                    (click)="openEditModal(editModal, g)">
+              Edit
+            </button>
+
+            <button class="btn btn-sm btn-danger"
+                    (click)="openDeleteModal(deleteModal, g)">
+              Delete
+            </button>
+
+          </td>
+
+        </tr>
+
+        <tr *ngIf="groups.length === 0">
+          <td colspan="7" class="text-center text-muted">
+            No groups found
+          </td>
+        </tr>
+
+      </tbody>
+
+    </table>
+  </div>
+
+  <!-- Pagination -->
+  <div class="d-flex justify-content-between align-items-center mt-3">
+
+    <button class="btn btn-outline-primary btn-sm"
+            (click)="prevPage()"
+            [disabled]="currentPage===1">
+      Previous
+    </button>
+
+    <span>Page {{currentPage}} of {{totalPages}}</span>
+
+    <button class="btn btn-outline-primary btn-sm"
+            (click)="nextPage()"
+            [disabled]="currentPage===totalPages">
+      Next
+    </button>
+
+  </div>
+
+</div>
+
+
+
+<ng-template #editModal let-modal>
+
+  <div class="modal-header">
+    <h5>Edit Group</h5>
+    <button class="btn-close" (click)="modal.dismiss()"></button>
+  </div>
+
+  <div class="modal-body">
+
+    <!-- Name -->
+    <div class="mb-3">
+      <label>Group Name</label>
+      <input class="form-control"
+             [(ngModel)]="selectedGroup.grpName">
+    </div>
+
+    <!-- Firmware -->
+    <div class="mb-3">
+      <label>Firmware</label>
+      <select class="form-control"
+              [(ngModel)]="selectedGroup.fwId">
+        <option *ngFor="let f of firmwareList"
+                [value]="f.fwId">
+          {{f.firmName}} - {{f.swVersion}}
+        </option>
+      </select>
+    </div>
+
+    <!-- Setting -->
+    <div class="mb-3">
+      <label>Setting</label>
+      <select class="form-control"
+              [(ngModel)]="selectedGroup.settingId">
+        <option *ngFor="let s of settingList"
+                [value]="s.settingId">
+          {{s.name}}
+        </option>
+      </select>
+    </div>
+
+    <!-- Description -->
+    <div class="mb-3">
+      <label>Description</label>
+      <textarea class="form-control"
+                [(ngModel)]="selectedGroup.desc">
+      </textarea>
+    </div>
+
+  </div>
+
+  <div class="modal-footer">
+    <button class="btn btn-secondary"
+            (click)="modal.dismiss()">Cancel</button>
+
+    <button class="btn btn-primary"
+            (click)="updateGroup(modal)">
+      Update
+    </button>
+  </div>
+
+</ng-template>
+
+
+
+
+
+<ng-template #deleteModal let-modal>
+
+  <div class="modal-header">
+    <h5 class="text-danger">Confirm Delete</h5>
+    <button class="btn-close" (click)="modal.dismiss()"></button>
+  </div>
+
+  <div class="modal-body">
+    Are you sure you want to delete group
+    <b>{{selectedGroup?.grpName}}</b> ?
+  </div>
+
+  <div class="modal-footer">
+    <button class="btn btn-secondary"
+            (click)="modal.dismiss()">Cancel</button>
+
+    <button class="btn btn-danger"
+            (click)="confirmDelete(modal)">
+      Delete
+    </button>
+  </div>
+
+</ng-template>
+
