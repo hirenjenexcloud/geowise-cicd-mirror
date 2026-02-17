@@ -7,6 +7,7 @@ const Zone = require("../models/zone.model");
 const { success, fail } = require("../utils/apiResponse");
 const logger = require('../utils/logger');
 const { buildQuery } = require("../utils/queryBuilder");
+const e = require("express");
 
 // Add new device
 exports.addDevice = async (req, res) => {
@@ -62,6 +63,7 @@ exports.getAllDevices = async (req, res) => {
       grpId: { type: "string" },
       swVersion: { type: "string" },
       hwVersion: { type: "string" },
+      userId: { type: "number" },
     };
 
     const { filter, pagination, sorting } = buildQuery(req, allowedFilters);
@@ -180,5 +182,14 @@ exports.deviceHistory = async (req, res) => {
   }
 };
 
-
-
+exports.getDeviceByUserId = async (req, res) => {
+  const userId = req.query.userId;
+  try {
+    const devices = await Device.find({ userId: userId }).lean().exec()
+    if (!devices || devices.length === 0) return fail(res, "NOTFOUND", "No devices found for this user.");
+    return success(res, "OK", "Fetch Devices Successfully", devices);
+  } catch (err) {
+    console.error("Error fetching devices by userId:", err);
+    return fail(res, "INTERNALSERVERERROR", err.message);
+  }
+};

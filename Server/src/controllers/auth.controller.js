@@ -23,7 +23,7 @@ const generateToken = (user) => {
  */
 exports.signup = async (req, res) => {
   try {
-    const { name, email, password, phone, timezone } = req.body;
+    const { name, email, password, phone, timezone, role } = req.body;
 
     // basic validation
     if (!name || !email || !password) {
@@ -46,7 +46,8 @@ exports.signup = async (req, res) => {
       email,
       phone,
       timezone,
-      password: hashed
+      password: hashed,
+      role: role || 'user'
     });
 
     const data = {
@@ -88,6 +89,7 @@ exports.signin = async (req, res) => {
       userId: user.userId,
       name: user.name,
       email: user.email,
+      role: user.role,
       token
     });
   } catch (err) {
