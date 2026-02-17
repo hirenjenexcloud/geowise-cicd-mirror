@@ -210,19 +210,24 @@ exports.getAllFirmwares = async (req, res) => {
     const { filter, pagination, sorting } = buildQuery(req, allowedFilters);
 
     const total = await Firmware.countDocuments(filter);
-    const firmwares = await Firmware.find(filter)
-      .skip(pagination.skip)
-      .limit(pagination.limit)
-      .sort(sorting)
-      .lean();
 
-    return success(res, "OK", "Firmware fetched successfully", {
-      totalRecords: total,
-      totalPages: Math.ceil(total / pagination.limit),
-      currentPage: pagination.page,
-      pageSize: pagination.limit,
-      firmwares,
-    });
+    if (Object.keys(req.query).length === 0) {
+      const firmwares = await Firmware.find().lean();
+      return success(res, "OK", "Firmware fetched successfully", firmwares);
+    } else {
+      const firmwares = await Firmware.find(filter)
+        .skip(pagination.skip)
+        .limit(pagination.limit)
+        .sort(sorting)
+        .lean();
+      return success(res, "OK", "Firmware fetched successfully", {
+        totalRecords: total,
+        totalPages: Math.ceil(total / pagination.limit),
+        currentPage: pagination.page,
+        pageSize: pagination.limit,
+        firmwares,
+      });
+    }
 
   } catch (err) {
     // Unexpected server error

@@ -1,5 +1,6 @@
 const { required } = require('joi');
 const mongoose = require('mongoose');
+const { type } = require('os');
 
 const locationSchema = new mongoose.Schema(
   {
@@ -84,6 +85,7 @@ const DeviceSchema = new mongoose.Schema(
       minlength: [15, 'IMEI must be at least 15 characters'],
     },
     grpId: { type: mongoose.Schema.Types.ObjectId },
+    userId: { type: Number, required: true },
     clientId: { type: String},
     swVersion: { type: String, default: '' },
     hwVersion: { type: String, default: '' },

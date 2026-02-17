@@ -79,19 +79,25 @@ exports.getAllGroups = async (req, res) => {
     const { filter, pagination, sorting } = buildQuery(req, allowedFilters);
 
     const total = await Group.countDocuments(filter);
-    const groups = await Group.find(filter)
-      .skip(pagination.skip)
-      .limit(pagination.limit)
-      .sort(sorting)
-      .lean();
 
-    return success(res, "OK", "Groups fetched successfully", {
-      totalRecords: total,
-      totalPages: Math.ceil(total / pagination.limit),
-      currentPage: pagination.page,
-      pageSize: pagination.limit,
-      groups,
-    });
+    if (Object.keys(req.query).length === 0) {
+      const groups = await Group.find().lean();
+      return success(res, "OK", "Groups fetched successfully", groups);
+    } else {
+      const groups = await Group.find(filter)
+        .skip(pagination.skip)
+        .limit(pagination.limit)
+        .sort(sorting)
+        .lean();
+
+      return success(res, "OK", "Groups fetched successfully", {
+        totalRecords: total,
+        totalPages: Math.ceil(total / pagination.limit),
+        currentPage: pagination.page,
+        pageSize: pagination.limit,
+        groups,
+      });
+    }
 
   } catch (err) {
     logger.error("Fetch groups error:", err);

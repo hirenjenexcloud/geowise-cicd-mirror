@@ -37,8 +37,11 @@ exports.signup = async (req, res) => {
     }
 
     const hashed = await bcrypt.hash(password, 10);
+    const lastUser = await User.findOne().sort({ userId: -1 }).lean();
+    const nextUserId = lastUser ? lastUser.userId + 1 : 1;
 
     const user = await User.create({
+      userId: nextUserId,
       name,
       email,
       phone,
@@ -47,7 +50,7 @@ exports.signup = async (req, res) => {
     });
 
     const data = {
-      userId: user._id,
+      userId: user.userId,
       name: user.name,
       email: user.email
     };
@@ -82,7 +85,7 @@ exports.signin = async (req, res) => {
     const token = generateToken(user);
 
     return success(res, 'OK', 'Login successful', {
-      userId: user._id,
+      userId: user.userId,
       name: user.name,
       email: user.email,
       token

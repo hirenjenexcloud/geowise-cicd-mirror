@@ -57,21 +57,28 @@ exports.getAllSettings = async (req, res) => {
     const { filter, pagination, sorting } = buildQuery(req, allowedFilters);
 
     const total = await Setting.countDocuments(filter);
-    const settings = await Setting.find(filter)
-      .skip(pagination.skip)
-      .limit(pagination.limit)
-      .sort(sorting)
-      .lean();
 
-    if (!settings) return fail(res, "NOTFOUND", "No Settings Found.");
+    if (Object.keys(req.query).length === 0) {
+      const settings = await Setting.find().lean();
+      return success(res, "OK", "Settings fetched successfully", settings);
+    } else {
+      const settings = await Setting.find(filter)
+        .skip(pagination.skip)
+        .limit(pagination.limit)
+        .sort(sorting)
+        .lean();
 
-    return success(res, "OK", "Settings fetched successfully", {
-      totalRecords: total,
-      totalPages: Math.ceil(total / pagination.limit),
-      currentPage: pagination.page,
-      pageSize: pagination.limit,
-      settings,
-    });
+      if (!settings) return fail(res, "NOTFOUND", "No Settings Found.");
+
+      return success(res, "OK", "Settings fetched successfully", {
+        totalRecords: total,
+        totalPages: Math.ceil(total / pagination.limit),
+        currentPage: pagination.page,
+        pageSize: pagination.limit,
+        settings,
+      });
+    }
+    
   } catch (err) {
     return fail(res, "INTERNALSERVERERROR", err.message);
   }

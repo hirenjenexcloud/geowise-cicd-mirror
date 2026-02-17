@@ -18,6 +18,7 @@ exports.addDevice = async (req, res) => {
 
   payload.swVersion = group.swVersion;
   payload.hwVersion = group.hwVersion;
+  payload.userId = 1;
   try {
     let device = new Device(payload);
     let result = await device.save();
