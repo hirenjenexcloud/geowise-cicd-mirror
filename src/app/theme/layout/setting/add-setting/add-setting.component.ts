@@ -59,7 +59,7 @@ export class AddSettingComponent implements OnInit {
 
   loadSettings() {
     this.api.getSettings().subscribe((res: any) => {
-      this.settings = res.data.settings;
+      this.settings = res.data;
     });
   }
 

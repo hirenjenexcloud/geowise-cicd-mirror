@@ -1,5 +1,5 @@
-import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { Injectable } from "@angular/core";
+import { HttpClient } from "@angular/common/http";
 
 @Injectable({
   providedIn: "root",
@@ -9,15 +9,17 @@ export class ApisService {
 
   // Auth Module
   login(credentials: any) {
-    return this.http.post('/api/auth/signin', credentials);
+    return this.http.post("/api/auth/signin", credentials);
+  }
+
+  signup(data: any) {
+    return this.http.post("/api/auth/signup", data);
   }
 
   // Device Module
-   getDevices(query = "") {
-    return this.http.get('/api/device' + query);
+  getDevices(query = "") {
+    return this.http.get("/api/device" + query);
   }
-
-
 
   addDevice(device: any) {
     return this.http.post("/api/device", device);
@@ -68,7 +70,7 @@ export class ApisService {
     return this.http.post("/api/firmware", firmware);
   }
 
-  getFirmwares(query = '') {
+  getFirmwares(query = "") {
     return this.http.get(`/api/firmware${query}`);
   }
 

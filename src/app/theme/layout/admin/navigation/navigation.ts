@@ -122,7 +122,14 @@ const NavigationItems = [
         type: 'item',
         url: '/setting',
         icon: 'feather icon-settings'
-      }
+      },
+      {
+        id: 'user',
+        title:"Add User",
+        type: 'item',
+        url: '/user',
+        icon: 'feather icon-user-plus'
+      },
     ]
   },
   // {
@@ -254,54 +261,54 @@ const NavigationItems = [
      
   //   ]
   // },
-  {
-    id: 'pages',
-    title: 'Pages',
-    type: 'group',
-    icon: 'feather icon-file-text',
-    children: [
-      {
-        id: 'auth',
-        title: 'Authentication',
-        type: 'collapse',
-        icon: 'feather icon-lock',
-        children: [
-          {
-            id: 'signup',
-            title: 'Sign up',
-            type: 'item',
-            url: '/auth/signup',
-            target: true,
-            breadcrumbs: false
-          },
-          {
-            id: 'signin',
-            title: 'Sign in',
-            type: 'item',
-            url: '/auth/signin',
-            target: true,
-            breadcrumbs: false
-          },
-          {
-            id: 'reset-password',
-            title: 'Reset Password',
-            type: 'item',
-            url: '/auth/reset-password',
-            target: true,
-            breadcrumbs: false
-          },
-          {
-            id: 'change-password',
-            title: 'Change Password',
-            type: 'item',
-            url: '/auth/change-password',
-            target: true,
-            breadcrumbs: false
-          }
-        ]
-      },
-    ]
-  },
+  // {
+  //   id: 'pages',
+  //   title: 'Pages',
+  //   type: 'group',
+  //   icon: 'feather icon-file-text',
+  //   children: [
+  //     {
+  //       id: 'auth',
+  //       title: 'Authentication',
+  //       type: 'collapse',
+  //       icon: 'feather icon-lock',
+  //       children: [
+  //         {
+  //           id: 'signup',
+  //           title: 'Sign up',
+  //           type: 'item',
+  //           url: '/auth/signup',
+  //           target: true,
+  //           breadcrumbs: false
+  //         },
+  //         {
+  //           id: 'signin',
+  //           title: 'Sign in',
+  //           type: 'item',
+  //           url: '/auth/signin',
+  //           target: true,
+  //           breadcrumbs: false
+  //         },
+  //         {
+  //           id: 'reset-password',
+  //           title: 'Reset Password',
+  //           type: 'item',
+  //           url: '/auth/reset-password',
+  //           target: true,
+  //           breadcrumbs: false
+  //         },
+  //         {
+  //           id: 'change-password',
+  //           title: 'Change Password',
+  //           type: 'item',
+  //           url: '/auth/change-password',
+  //           target: true,
+  //           breadcrumbs: false
+  //         }
+  //       ]
+  //     },
+  //   ]
+  // },
   // {
   //   id: 'other',
   //   title: 'Other',

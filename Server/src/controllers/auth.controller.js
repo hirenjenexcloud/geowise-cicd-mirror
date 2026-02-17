@@ -37,8 +37,14 @@ exports.signup = async (req, res) => {
     }
 
     const hashed = await bcrypt.hash(password, 10);
-    const lastUser = await User.findOne().sort({ userId: -1 }).lean();
-    const nextUserId = lastUser ? lastUser.userId + 1 : 1;
+    const lastUser = await User.findOne({ userId: { $exists: true } })
+      .sort({ userId: -1 })
+      .lean();
+
+    const nextUserId = lastUser && !isNaN(lastUser.userId)
+      ? Number(lastUser.userId) + 1
+      : 1;
+
 
     const user = await User.create({
       userId: nextUserId,

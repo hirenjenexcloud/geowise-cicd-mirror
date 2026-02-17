@@ -5,6 +5,7 @@ import {AuthComponent} from './theme/layout/auth/auth.component';
 import { AddFirmwareComponent } from './theme/layout/firmware/add-firmware/add-firmware.component';
 import { AddGroupComponent } from './theme/layout/group/add-group/add-group.component';
 import { AddSettingComponent } from './theme/layout/setting/add-setting/add-setting.component';
+import { AddUserComponent } from './theme/layout/user/add-user/add-user.component';
 
 
 const routes: Routes = [
@@ -55,7 +56,10 @@ const routes: Routes = [
         path: 'setting',
         component: AddSettingComponent
       },
-      
+      {
+        path: 'user',
+        component: AddUserComponent
+      },
      
      
      

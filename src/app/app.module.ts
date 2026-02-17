@@ -36,6 +36,7 @@ import { NgbModalModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { JwtInterceptorService } from './theme/shared/interceptors/jwt-interceptor.service';
+import { AddUserComponent } from './theme/layout/user/add-user/add-user.component';
 
 
  
@@ -60,7 +61,8 @@ import { JwtInterceptorService } from './theme/shared/interceptors/jwt-intercept
     ToggleFullScreenDirective,
     AddFirmwareComponent,
     AddGroupComponent,
-    AddSettingComponent
+    AddSettingComponent,
+    AddUserComponent
 
 
   
