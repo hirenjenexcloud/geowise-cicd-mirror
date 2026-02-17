@@ -118,12 +118,21 @@ export class AddGroupComponent implements OnInit {
   updateGroup(modal: any) {
     this.groupService
       .updateGroup(this.selectedGroup._id, this.selectedGroup)
-      .subscribe((res: any) => {
-        this.toast.success(res.message || "Group updated");
+      .subscribe(
+        (res: any) => {
+          this.toast.success(res.message || "Group updated");
 
-        modal.close(); // 👈 this is correct
-        this.loadGroups(this.currentPage);
-      });
+          modal.close(); // 👈 this is correct
+          this.loadGroups(this.currentPage);
+        },
+        (err: any) => {
+          this.toast.error(
+            err && err.error && err.error.message
+              ? err.error.message
+              : "Failed to update group",
+          );
+        },
+      );
   }
 
   openDeleteModal(content: any, group: any) {
@@ -139,6 +148,62 @@ export class AddGroupComponent implements OnInit {
 
         modal.close();
         this.loadGroups(this.currentPage);
-      });
+      },
+      (err: any) => {
+        this.toast.error(
+          err && err.error && err.error.message
+            ? err.error.message
+            : "Failed to delete group",
+        );
+      },
+    );
+  }
+
+  imeiInput = "";
+  selectedGroupId = "";
+
+  openImportModal(content: any, group: any) {
+    this.selectedGroupId = group._id;
+    this.imeiInput = "";
+    this.modalService.open(content, { centered: true });
+  }
+
+  importDevices(modal: any) {
+    if (!this.imeiInput.trim()) {
+      this.toast.warning("Please enter IMEI list");
+      return;
+    }
+
+    const imeis = this.imeiInput
+      .split(/\s+/)
+      .map((i) => i.trim())
+      .filter((i) => i);
+
+    const payload = {
+      grpId: this.selectedGroupId,
+      imeis: imeis,
+    };
+
+    this.groupService.importDevicesToGroup(payload).subscribe(
+      (res: any) => {
+        this.toast.success(res.message || "Devices imported");
+
+        if (
+          res.data &&
+          res.data.notFoundImeis &&
+          res.data.notFoundImeis.length
+        ) {
+          this.toast.warning(
+            res.data.notFoundImeis.length + " IMEIs not found",
+          );
+        }
+
+        modal.close();
+      },
+
+      (err: any) => {
+        this.toast.error("Import failed");
+      },
+    );
   }
 }

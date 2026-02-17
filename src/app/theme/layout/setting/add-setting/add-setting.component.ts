@@ -1,15 +1,144 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit } from "@angular/core";
+import { ApisService } from "src/app/theme/shared/services/apis.service";
+import { ToastService } from "src/app/theme/shared/services/toast.service";
+import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 
 @Component({
-  selector: 'app-add-setting',
-  templateUrl: './add-setting.component.html',
-  styleUrls: ['./add-setting.component.scss']
+  selector: "app-add-setting",
+  templateUrl: "./add-setting.component.html",
+  styleUrls: ["./add-setting.component.scss"],
 })
 export class AddSettingComponent implements OnInit {
+  constructor(
+    private api: ApisService,
+    private toast: ToastService,
+    private modalService: NgbModal,
+  ) {}
 
-  constructor() { }
+  settings: any[] = [];
+  selected: any = null;
+
+  setting: any = {
+    name: "",
+    breadcrumb: "",
+    hbt: "",
+    btHbt: "",
+    stop: "",
+    sleep: "",
+
+    moveTrigger: {
+      minSpeedKph: "",
+      speedCount: "",
+      minDistanceM: "",
+    },
+
+    resetTimeouts: {
+      deviceTimeout: "",
+      gpsTimeout: "",
+      cellularTimeout: "",
+    },
+
+    qualityFilters: {
+      minSatellite: "",
+      stopHac: "",
+      moveHac: "",
+      gsmRssi: "",
+    },
+
+    dashboardServer: {
+      ip: "",
+      port: "",
+    },
+
+    atCommands: "",
+  };
 
   ngOnInit() {
+    this.loadSettings();
   }
 
+  loadSettings() {
+    this.api.getSettings().subscribe((res: any) => {
+      this.settings = res.data.settings;
+    });
+  }
+
+  create(form: any) {
+    if (form.invalid) {
+      this.toast.warning("Fill all required fields");
+      return;
+    }
+
+    let payload = { ...this.setting };
+
+    if (payload.atCommands) {
+      payload.atCommands = this.setting.atCommands
+        .split(/[,\s]+/)
+        .map((x) => x.trim())
+        .filter((x) => x);
+    }
+
+    this.api.addSetting(payload).subscribe(
+      (res: any) => {
+        this.toast.success(res.message);
+        form.resetForm();
+        this.loadSettings();
+      },
+      (err: any) => {
+        this.toast.error(
+          err && err.error && err.error.message
+            ? err.error.message
+            : "Failed to create setting",
+        );
+      },
+    );
+  }
+
+  openEdit(m: any, s: any) {
+    this.selected = { ...s };
+    this.modalService.open(m, { centered: true });
+  }
+
+  update(modal: any) {
+    this.api
+      .updateSetting(this.selected._id, {
+        name: this.selected.name,
+      })
+      .subscribe(
+        (res: any) => {
+          this.toast.success(res.message);
+          modal.close();
+          this.loadSettings();
+        },
+        (err: any) => {
+          this.toast.error(
+            err && err.error && err.error.message
+              ? err.error.message
+              : "Failed to update setting",
+          );
+        },
+      );
+  }
+
+  openDelete(m: any, s: any) {
+    this.selected = s;
+    this.modalService.open(m, { centered: true });
+  }
+
+  delete(modal: any) {
+    this.api.deleteSetting(this.selected._id).subscribe(
+      (res: any) => {
+        this.toast.success(res.message);
+        modal.close();
+        this.loadSettings();
+      },
+      (err: any) => {
+        this.toast.error(
+          err && err.error && err.error.message
+            ? err.error.message
+            : "Failed to delete setting",
+        );
+      },
+    );
+  }
 }

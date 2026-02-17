@@ -1,1 +1,273 @@
-<p>add-setting works!</p>
+<form #form="ngForm" (ngSubmit)="create(form)" class="card p-4">
+
+    <h4 class="mb-4">Create Setting</h4>
+
+    <!-- ================= BASIC ================= -->
+
+    <h5 class="mb-3">Basic Settings</h5>
+
+    <div class="row">
+
+        <div class="col-md-4 mb-3">
+            <label class="form-label">Setting Name *</label>
+            <input class="form-control" name="name" [(ngModel)]="setting.name" required>
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <label class="form-label">Breadcrumb Distance *</label>
+            <input type="number" class="form-control" name="breadcrumb" [(ngModel)]="setting.breadcrumb" required>
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <label class="form-label">Heartbeat Interval *</label>
+            <input type="number" class="form-control" name="hbt" [(ngModel)]="setting.hbt" required>
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <label class="form-label">Battery Heartbeat *</label>
+            <input type="number" class="form-control" name="btHbt" [(ngModel)]="setting.btHbt" required>
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <label class="form-label">Stop Threshold *</label>
+            <input type="number" class="form-control" name="stop" [(ngModel)]="setting.stop" required>
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <label class="form-label">Sleep Interval *</label>
+            <input type="number" class="form-control" name="sleep" [(ngModel)]="setting.sleep" required>
+        </div>
+
+    </div>
+
+    <hr class="my-4">
+
+    <!-- ================= MOVE TRIGGER ================= -->
+
+    <h5 class="mb-3">Move Trigger</h5>
+
+    <div class="row">
+
+        <div class="col-md-4 mb-3">
+            <label class="form-label">Minimum Speed (km/h)</label>
+            <input type="number" class="form-control" name="minSpeed" [(ngModel)]="setting.moveTrigger.minSpeedKph">
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <label class="form-label">Speed Count</label>
+            <input type="number" class="form-control" name="speedCount" [(ngModel)]="setting.moveTrigger.speedCount">
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <label class="form-label">Minimum Distance (meters)</label>
+            <input type="number" class="form-control" name="minDist" [(ngModel)]="setting.moveTrigger.minDistanceM">
+        </div>
+
+    </div>
+
+    <hr class="my-4">
+
+    <!-- ================= RESET TIMEOUTS ================= -->
+
+    <h5 class="mb-3">Reset Timeouts *</h5>
+
+    <div class="row">
+
+        <div class="col-md-4 mb-3">
+            <label class="form-label">Device Timeout (sec)</label>
+            <input type="number" class="form-control" name="deviceTimeout"
+                [(ngModel)]="setting.resetTimeouts.deviceTimeout" required>
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <label class="form-label">GPS Timeout (sec)</label>
+            <input type="number" class="form-control" name="gpsTimeout" [(ngModel)]="setting.resetTimeouts.gpsTimeout"
+                required>
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <label class="form-label">Cellular Timeout (sec)</label>
+            <input type="number" class="form-control" name="cellTimeout"
+                [(ngModel)]="setting.resetTimeouts.cellularTimeout" required>
+        </div>
+
+    </div>
+
+    <hr class="my-4">
+
+    <!-- ================= QUALITY FILTER ================= -->
+
+    <h5 class="mb-3">Quality Filter</h5>
+
+    <div class="row">
+
+        <div class="col-md-3 mb-3">
+            <label class="form-label">Minimum Satellites</label>
+            <input type="number" class="form-control" name="sat" [(ngModel)]="setting.qualityFilters.minSatellite">
+        </div>
+
+        <div class="col-md-3 mb-3">
+            <label class="form-label">Stop HAC</label>
+            <input type="number" class="form-control" name="stopHac" [(ngModel)]="setting.qualityFilters.stopHac">
+        </div>
+
+        <div class="col-md-3 mb-3">
+            <label class="form-label">Move HAC</label>
+            <input type="number" class="form-control" name="moveHac" [(ngModel)]="setting.qualityFilters.moveHac">
+        </div>
+
+        <div class="col-md-3 mb-3">
+            <label class="form-label">GSM RSSI</label>
+            <input type="number" class="form-control" name="rssi" [(ngModel)]="setting.qualityFilters.gsmRssi">
+        </div>
+
+    </div>
+
+    <hr class="my-4">
+
+    <!-- ================= DASHBOARD SERVER ================= -->
+
+    <h5 class="mb-3">Dashboard Server</h5>
+
+    <div class="row">
+
+        <div class="col-md-6 mb-3">
+            <label class="form-label">Server IP Address</label>
+            <input class="form-control" name="ip" [(ngModel)]="setting.dashboardServer.ip">
+        </div>
+
+        <div class="col-md-6 mb-3">
+            <label class="form-label">Server Port</label>
+            <input type="number" class="form-control" name="port" [(ngModel)]="setting.dashboardServer.port">
+        </div>
+
+    </div>
+
+    <hr class="my-4">
+
+    <!-- ================= AT COMMANDS ================= -->
+
+    <h5 class="mb-3">AT Commands</h5>
+
+    <div class="mb-3">
+
+        <label class="form-label">
+            Commands (comma or space separated)
+        </label>
+
+        <textarea class="form-control" rows="3" name="commands" [(ngModel)]="setting.atCommands"
+            placeholder="AT+CGATT=1, AT+CSQ, AT+CREG?">
+</textarea>
+
+        <small class="text-muted">
+            Example: AT+CGATT=1, AT+CSQ, AT+CREG?
+        </small>
+
+    </div>
+
+    <!-- ================= SUBMIT ================= -->
+
+    <div class="text-end mt-4">
+
+        <button class="btn btn-primary px-4" [disabled]="form.invalid">
+            Create Setting
+        </button>
+
+    </div>
+
+</form>
+
+
+
+<div class="card mt-4 p-4">
+
+    <h4>Settings List</h4>
+
+    <table class="table table-bordered mt-3">
+
+        <thead style="background:#101b33;color:white">
+            <tr>
+                <th>Name</th>
+                <th>Breadcrumb</th>
+                <th>HBT</th>
+                <th>Stop</th>
+                <th>Sleep</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+
+        <tbody>
+
+            <tr *ngFor="let s of settings">
+
+                <td>{{s.name}}</td>
+                <td>{{s.breadcrumb}}</td>
+                <td>{{s.hbt}}</td>
+                <td>{{s.stop}}</td>
+                <td>{{s.sleep}}</td>
+
+                <td class="text-center">
+
+                    <i class="fa fa-edit text-primary action-icon" ngbTooltip="Edit"
+                        (click)="openEdit(editModal,s)"></i>
+
+                    <i class="fa fa-trash text-danger action-icon" ngbTooltip="Delete"
+                        (click)="openDelete(deleteModal,s)"></i>
+
+                </td>
+
+            </tr>
+
+            <tr *ngIf="settings.length==0">
+                <td colspan="6" class="text-center text-muted">No data</td>
+            </tr>
+
+        </tbody>
+
+    </table>
+
+</div>
+
+
+
+<ng-template #editModal let-modal>
+
+    <div class="modal-header">
+        <h5>Edit Name</h5>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss()">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+
+    <div class="modal-body">
+        <input class="form-control" [(ngModel)]="selected.name">
+    </div>
+
+    <div class="modal-footer">
+        <button class="btn btn-secondary" (click)="modal.dismiss()">Cancel</button>
+        <button class="btn btn-primary" (click)="update(modal)">Update</button>
+    </div>
+
+</ng-template>
+
+
+
+<ng-template #deleteModal let-modal>
+
+    <div class="modal-header">
+        <h5 class="text-danger">Delete Setting</h5>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss()">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+
+    <div class="modal-body">
+        Delete <b>{{selected?.name}}</b> ?
+    </div>
+
+    <div class="modal-footer">
+        <button class="btn btn-secondary" (click)="modal.dismiss()">Cancel</button>
+        <button class="btn btn-danger" (click)="delete(modal)">Delete</button>
+    </div>
+
+</ng-template>

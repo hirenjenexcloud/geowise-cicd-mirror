@@ -168,18 +168,22 @@
           <td>{{ g.desc || '-' }}</td>
 
           <td class="text-center">
-
-            <button class="btn btn-sm btn-info me-2"
-                    (click)="openEditModal(editModal, g)">
-              Edit
-            </button>
-
-            <button class="btn btn-sm btn-danger"
-                    (click)="openDeleteModal(deleteModal, g)">
-              Delete
-            </button>
-
+          
+            <!-- Edit -->
+            <i class="fa fa-edit text-primary action-icon" ngbTooltip="Edit Group" (click)="openEditModal(editModal, g)">
+            </i>
+          
+            <!-- Delete -->
+            <i class="fa fa-trash text-danger action-icon" ngbTooltip="Delete Group" (click)="openDeleteModal(deleteModal, g)">
+            </i>
+          
+            <!-- Import -->
+            <i class="fa fa-upload text-secondary action-icon" ngbTooltip="Import Devices"
+              (click)="openImportModal(importModal, g)">
+            </i>
+          
           </td>
+
 
         </tr>
 
@@ -221,7 +225,9 @@
 
   <div class="modal-header">
     <h5>Edit Group</h5>
-    <button class="btn-close" (click)="modal.dismiss()"></button>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss()">
+      <span aria-hidden="true">&times;</span>
+    </button>
   </div>
 
   <div class="modal-body">
@@ -269,7 +275,9 @@
 
   <div class="modal-footer">
     <button class="btn btn-secondary"
-            (click)="modal.dismiss()">Cancel</button>
+            (click)="modal.dismiss()">
+      Cancel
+    </button>
 
     <button class="btn btn-primary"
             (click)="updateGroup(modal)">
@@ -287,7 +295,9 @@
 
   <div class="modal-header">
     <h5 class="text-danger">Confirm Delete</h5>
-    <button class="btn-close" (click)="modal.dismiss()"></button>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss()">
+      <span aria-hidden="true">&times;</span>
+    </button>
   </div>
 
   <div class="modal-body">
@@ -297,7 +307,9 @@
 
   <div class="modal-footer">
     <button class="btn btn-secondary"
-            (click)="modal.dismiss()">Cancel</button>
+            (click)="modal.dismiss()">
+      Cancel
+    </button>
 
     <button class="btn btn-danger"
             (click)="confirmDelete(modal)">
@@ -306,4 +318,47 @@
   </div>
 
 </ng-template>
+
+<ng-template #importModal let-modal>
+
+  <div class="modal-header">
+    <h5 class="modal-title">Device Import</h5>
+    
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+
+  <div class="modal-body">
+
+    <label class="form-label">
+      Devices (Paste IMEIs separated by space or line break)
+    </label>
+
+    <textarea
+      class="form-control"
+      rows="6"
+      [(ngModel)]="imeiInput"
+      placeholder="Enter IMEIs here">
+    </textarea>
+
+  </div>
+
+  <div class="modal-footer">
+
+    <button class="btn btn-primary"
+            (click)="importDevices(modal)">
+      Import
+    </button>
+
+    <button class="btn btn-secondary"
+            (click)="modal.dismiss()">
+      Cancel
+    </button>
+
+
+  </div>
+
+</ng-template>
+
 
