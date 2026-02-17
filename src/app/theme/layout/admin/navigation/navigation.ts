@@ -54,13 +54,13 @@ const NavigationItems = [
             url: '/device/add_device',
             icon: 'feather icon-plus'
           },
-          {
-            id:'device',
-            title: 'Delete Device',
-            type: 'item',
-            url: '/device/delete_device',
-            icon: 'feather icon-trash'
-          },
+          // {
+          //   id:'device',
+          //   title: 'Delete Device',
+          //   type: 'item',
+          //   url: '/device/delete_device',
+          //   icon: 'feather icon-trash'
+          // },
 
            {
             id:'device',
@@ -72,36 +72,36 @@ const NavigationItems = [
 
         ]
       },
-       {
-        id: 'transfer',
-        title:"Transfer Management",
-        type: 'collapse',
-        icon: 'feather icon-activity',
-        children:[
-          {
-            id:'transfer',
-            title: 'Transfer',
-            type: 'item',
-            url: '/transfer/transfer',
-            icon: 'feather icon-repeat'
-          },
-          {
-            id:'bulk-transfer',
-            title: 'Bulk Transfer',
-            type: 'item',
-            url: '/transfer/bulk_transfer',
-            icon: 'feather icon-layers'
-          },
-           {
-            id:'transfer_history',
-            title: 'Transfer History',
-            type: 'item',
-            url: '/transfer/transfer_history',
-            icon: 'feather icon-clock'
-          },
+      //  {
+      //   id: 'transfer',
+      //   title:"Transfer Management",
+      //   type: 'collapse',
+      //   icon: 'feather icon-activity',
+      //   children:[
+      //     {
+      //       id:'transfer',
+      //       title: 'Transfer',
+      //       type: 'item',
+      //       url: '/transfer/transfer',
+      //       icon: 'feather icon-repeat'
+      //     },
+      //     {
+      //       id:'bulk-transfer',
+      //       title: 'Bulk Transfer',
+      //       type: 'item',
+      //       url: '/transfer/bulk_transfer',
+      //       icon: 'feather icon-layers'
+      //     },
+      //      {
+      //       id:'transfer_history',
+      //       title: 'Transfer History',
+      //       type: 'item',
+      //       url: '/transfer/transfer_history',
+      //       icon: 'feather icon-clock'
+      //     },
 
-        ]
-      },
+      //   ]
+      // },
         {
         id: 'firmware',
         title:"Firmware Management",

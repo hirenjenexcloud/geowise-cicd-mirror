@@ -19,50 +19,47 @@ export class DeviceAddComponent implements OnInit {
     'AT&T',
     'T-Mobile'
 ];
-clients = [
-  { _id: '1', name: 'Client A', clientId: 'CA123' },
-  { _id: '2', name: 'Client B', clientId: 'CB456' },
-  { _id: '3', name: 'Client C', clientId: 'CC789' }
-];
+
 
 devices: any[] = [];
 groups = [];
 editForm: FormGroup;
 selectedDevice: any;
+currentPage = 1;
+itemsPerPage = 10;
+totalPages = 0;
+totalElements = 0;
+// selectedDeviceID: any;
+
+limit = 10;
 
 constructor(private fb: FormBuilder,private apiSvc: ApisService, private notification: ToastService, private modalService: NgbModal) { }
 
   ngOnInit() {
-
+  
     this.DeviceForm = this.fb.group({
-    imei: ['', Validators.required],
+    imei: ['', [Validators.required, Validators.pattern(/^[0-9]{15}$/)]],
     grpId: ['', Validators.required],
     iccid: ['', Validators.required],
-    imsi: ['', Validators.required],
-    msisdn: ['', Validators.required],
+    imsi: ['', [Validators.required, Validators.pattern(/^[0-9]{4,20}$/)]],
+    msisdn: ['', [Validators.required, Validators.pattern(/^[0-9]{4,12}$/)]],
     carrier: ['', Validators.required],
-    clientId: ['', Validators.required]
+    // clientId: ['', Validators.required]
   })
 
    this.editForm = this.fb.group({
     imei: [''],
     imsi: [''],
     iccid: [''],
-    msisdn: ['']
+    msisdn: [''],
+    carrier: ['']
   });
    
+    this.getAllDevices();
+    this.getAllGroups();
+ 
 
-   this.apiSvc.getGroups().subscribe((data: any) => {
-     this.groups = data.data.groups;
-
-     console.log("Groups:", this.groups);
-   });
-
-   this.apiSvc.getDevices().subscribe((data: any) => {
-     this.devices = data.data.devices;
-
-     console.log("Devices:", this.devices);
-   });
+  
 
   //    setTimeout(() => {
   //   this.notification.success('Test Toast Working');
@@ -74,7 +71,7 @@ constructor(private fb: FormBuilder,private apiSvc: ApisService, private notific
     var data = {
       imei: this.DeviceForm.value.imei,
       grpId: this.DeviceForm.value.grpId,
-      clientId: this.DeviceForm.value.clientId,
+      // clientId: this.DeviceForm.value.clientId,
       deviceInfo: {
       carrier: this.DeviceForm.value.carrier,
       iccid: this.DeviceForm.value.iccid,
@@ -91,11 +88,14 @@ constructor(private fb: FormBuilder,private apiSvc: ApisService, private notific
     }
 
     this.apiSvc.addDevice(data).subscribe((res:any) => {
-      console.log('Device added:', res);
-      console.log('Device msg:', res.message);
-      console.log('Device status:', res.status);
+      if(res.status == true) {
+      this.getAllDevices();
       this.DeviceForm.reset();
-      this.notification.success('Device added successfully');
+      this.notification.success(res.message);
+      }
+      else{
+        this.notification.error(res.message);
+      }
 
     });
   }
@@ -107,7 +107,8 @@ constructor(private fb: FormBuilder,private apiSvc: ApisService, private notific
     imei: device.imei,
     imsi: device.deviceInfo.imsi,
     iccid: device.deviceInfo.iccid,
-    msisdn: device.deviceInfo.msisdn
+    msisdn: device.deviceInfo.msisdn,
+    carrier: device.deviceInfo.carrier
   });
 
   this.modalService.open(content, { centered: true });
@@ -123,9 +124,23 @@ updateDevice(modal: any) {
       ...this.selectedDevice.deviceInfo,
       imsi: this.editForm.value.imsi,
       iccid: this.editForm.value.iccid,
-      msisdn: this.editForm.value.msisdn
+      msisdn: this.editForm.value.msisdn,
+      carrier: this.editForm.value.carrier
     }
   };
+
+  this.apiSvc.updateDevice(updatedData).subscribe((res: any) => {
+    console.log("Device updated:", res);
+    if(res.status == true) {
+      this.notification.success(res.message);
+      this.getAllDevices();
+      this.modalService.dismissAll();
+    }
+    else{
+      this.notification.error(res.message);
+    }
+    
+  });
 
   console.log("Updated:", updatedData);
 
@@ -140,12 +155,53 @@ openDeleteModal(content: any, device: any) {
 
 
 confirmDelete(modal: any) {
-  this.devices = this.devices.filter(
-    d => d !== this.selectedDevice
-  );
+
+  this.apiSvc.deleteDevice(this.selectedDevice.imei).subscribe((res: any) => {
+    console.log("Device deleted:", res);
+    if(res.status == true) {
+      this.notification.success(res.message);
+       this.getAllDevices();
+       this.modalService.dismissAll();
+    }
+    else{
+      this.notification.error(res.message);
+    }
+   
+  });
 
   modal.close();
 }
 
+getAllDevices(page: number = 1)
+{
+
+   this.apiSvc.getDevices(`?page=${page}&limit=${this.limit}`).subscribe((data: any) => {
+    
+     this.devices = data.data.devices;
+    this.totalPages = data.data.totalPages;
+        this.currentPage = data.data.currentPage;
+     console.log("Devices:", this.devices);
+   });
+}
+
+
+ nextPage() {
+    if (this.currentPage < this.totalPages) {
+      this.getAllDevices(this.currentPage + 1);
+    }
+  }
+
+  prevPage() {
+    if (this.currentPage > 1) {
+      this.getAllDevices(this.currentPage - 1);
+    }
+  }
+
+  getAllGroups() {
+    this.apiSvc.getGrps().subscribe((data: any) => {
+      this.groups = data.data;
+      console.log("Groups:", this.groups);
+    });
+  }
 
 }

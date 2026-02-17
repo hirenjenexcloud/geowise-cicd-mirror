@@ -27,6 +27,8 @@ itemsPerPage = 10;
 totalPages = 0;
 totalElements = 0;
 
+limit = 10;
+
 
   constructor(private fb: FormBuilder, private modalService: NgbModal, private apiSvc: ApisService, private notification: ToastService) { }
 
@@ -154,21 +156,32 @@ AddFirmware() {
 getAllFirmwares(page: number = 1)
 {
   this.currentPage = page;
-   this.apiSvc.getFirmwares(this.currentPage, this.itemsPerPage).subscribe((res: any) => {
+   this.apiSvc.getFirmwares(`?page=${page}&limit=${this.limit}`).subscribe((res: any) => {
       if (res.status == true) {
         this.firmwares = res.data.firmwares;
          this.totalPages = res.data.totalPages;
-        this.totalElements = res.data.totalRecords;
+        this.currentPage = res.data.currentPage;
         console.log('Firmwares:', this.firmwares);
       } else {
         this.notification.error(res.message);
       }
     });
 }
-
-changePage(page: number) {
-  if (page >= 1 && page <= this.totalPages) {
-    this.getAllFirmwares(page);
+ nextPage() {
+    if (this.currentPage < this.totalPages) {
+      this.getAllFirmwares(this.currentPage + 1);
+    }
   }
-}
+
+  prevPage() {
+    if (this.currentPage > 1) {
+      this.getAllFirmwares(this.currentPage - 1);
+    }
+  }
+
+// changePage(page: number) {
+//   if (page >= 1 && page <= this.totalPages) {
+//     this.getAllFirmwares(page);
+//   }
+// }
 }

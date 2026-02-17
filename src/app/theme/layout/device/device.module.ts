@@ -8,6 +8,7 @@ import { EditDeviceComponent } from './edit-device/edit-device.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { DeviceMapViewComponent } from './device-map-view/device-map-view.component';
 import { AgmCoreModule } from '@agm/core';
+import { ToastrModule }  from 'ngx-toastr';
 
 
 @NgModule({
@@ -18,8 +19,28 @@ import { AgmCoreModule } from '@agm/core';
     ReactiveFormsModule,
        AgmCoreModule.forRoot({
           apiKey: 'AIzaSyBExglEa6WhaOKDZ-cwQMMjbn5o1qQDTBQ&libraries=geometry'
-        })
+        }),
+
+          ToastrModule.forRoot({
+            timeOut: 5000,
+            // extendedTimeOut: 1000,
+            positionClass: 'toast-top-right',
+            //  positionClass: 'toast-top-full-width',
+            closeButton: true,
+            // progressBar: true,
+            // preventDuplicates: true,
+            // newestOnTop: true,
+            tapToDismiss: true,            // Click pe close
+            // enableHtml: false  
+            iconClasses: {
+            error: 'toast-error',
+            info: 'toast-info',
+            success: 'toast-success',
+            warning: 'toast-warning'
+          }        
+          }),
       
   ]
 })
 export class DeviceModule { }
+

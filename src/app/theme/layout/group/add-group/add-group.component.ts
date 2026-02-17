@@ -35,14 +35,14 @@ export class AddGroupComponent implements OnInit {
 
   loadFirmwares() {
     this.groupService.getAllFirmwares().subscribe((res: any) => {
-      console.log("Firmware Response:", res.data.firmwares);
-      this.firmwareList = res.data.firmwares;
+      console.log("Firmware Response:", res.data);
+      this.firmwareList = res.data;
     });
   }
 
   loadSettings() {
     this.groupService.getSettings().subscribe((res: any) => {
-      this.settingList = res.data.settings;
+      this.settingList = res.data;
     });
   }
 

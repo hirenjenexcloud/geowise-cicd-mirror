@@ -9,13 +9,15 @@ export class ApisService {
 
   // Auth Module
   login(credentials: any) {
-    return this.http.post("/api/auth/login", credentials);
+    return this.http.post('/api/auth/signin', credentials);
   }
 
   // Device Module
-  getDevices() {
-    return this.http.get("/api/device");
+   getDevices(query = "") {
+    return this.http.get('/api/device' + query);
   }
+
+
 
   addDevice(device: any) {
     return this.http.post("/api/device", device);
@@ -37,6 +39,10 @@ export class ApisService {
 
   getGroups(query = "") {
     return this.http.get("/api/groups" + query);
+  }
+
+  getGrps() {
+    return this.http.get(`/api/groups`);
   }
 
   addGroup(group: any) {
@@ -62,8 +68,8 @@ export class ApisService {
     return this.http.post("/api/firmware", firmware);
   }
 
-  getFirmwares(page: number, limit: number) {
-    return this.http.get(`/api/firmware?page=${page}&limit=${limit}`);
+  getFirmwares(query = '') {
+    return this.http.get(`/api/firmware${query}`);
   }
 
   updateFirmware(firmware: any, id: any) {

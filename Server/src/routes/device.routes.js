@@ -1,15 +1,15 @@
 const express = require('express');
 const router = express.Router();
 const DeviceController = require('../controllers/device.controller');
-const authManager = require('../middlewares/authJWT');
+const auth = require('../middlewares/authJWT');
 
-router.route('/history').get(DeviceController.deviceHistory);
-router.route('/').post(DeviceController.addDevice)
-                 .put(DeviceController.updateDevice)
-                 .get(DeviceController.getAllDevices);
+router.route('/history').get(auth.authenticate,DeviceController.deviceHistory);
+router.route('/').post(auth.authenticate,DeviceController.addDevice)
+                 .put(auth.authenticate,DeviceController.updateDevice)
+                 .get(auth.authenticate, DeviceController.getAllDevices);
 
-router.route('/:imei').get(DeviceController.getDeviceByImei)
-                      .delete(DeviceController.deleteDeviceByImei);
+router.route('/:imei').get(auth.authenticate,DeviceController.getDeviceByImei)
+                      .delete(auth.authenticate,DeviceController.deleteDeviceByImei);
 
 
 module.exports = router;

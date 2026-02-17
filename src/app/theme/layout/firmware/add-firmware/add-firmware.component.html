@@ -197,7 +197,7 @@
 </div>
 
 <!-- ✅ PAGINATION TABLE KE BAHAR -->
-<div class="d-flex justify-content-center mt-3" *ngIf="totalPages > 1">
+<!-- <div class="d-flex justify-content-center mt-3" *ngIf="totalPages > 1">
   <nav>
     <ul class="pagination">
 
@@ -219,7 +219,27 @@
 
     </ul>
   </nav>
-</div>
+</div> -->
+
+
+  <!-- Pagination -->
+  <div class="d-flex justify-content-between align-items-center mt-3">
+
+    <button class="btn btn-outline-primary btn-sm"
+            (click)="prevPage()"
+            [disabled]="currentPage===1">
+      Previous
+    </button>
+
+    <span>Page {{currentPage}} of {{totalPages}}</span>
+
+    <button class="btn btn-outline-primary btn-sm"
+            (click)="nextPage()"
+            [disabled]="currentPage===totalPages">
+      Next
+    </button>
+
+  </div>
 
 </div>
 

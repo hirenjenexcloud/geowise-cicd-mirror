@@ -34,6 +34,8 @@ import { FileUploadModule } from 'ng2-file-upload';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { NgbModalModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { JwtInterceptorService } from './theme/shared/interceptors/jwt-interceptor.service';
 
 
  
@@ -98,7 +100,13 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
    NgbModule
 
   ],
-  providers: [NavigationItem,AnimationService],
+  providers: [NavigationItem,AnimationService,
+     {
+    provide: HTTP_INTERCEPTORS,
+    useClass: JwtInterceptorService,
+    multi: true
+  }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
