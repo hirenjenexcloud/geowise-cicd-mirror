@@ -2316,6 +2316,7 @@ let JwtInterceptorService = class JwtInterceptorService {
                 }
             });
             return next.handle(auth_req).pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_2__["catchError"])(error => {
+                console.error('HTTP error occurred:', error);
                 if (error.status === 401) {
                     localStorage.removeItem('token');
                     this.router.navigate(['/auth/signin']);

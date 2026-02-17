@@ -1,4 +1,4 @@
-const JWT_SECRET = process.env.JWT_SECRET || 'geowise2025';
+const JWT_SECRET = 'geowise2025';
 const jwt = require('jsonwebtoken'); 
 const status = require('../config/status.config');
 const {fail} = require("../utils/apiResponse");
@@ -14,6 +14,10 @@ exports.authenticate = (req, res, next) => {
     req.user = payload;
     next();
   } catch (err) {
+    console.log("Token received:", token);
+    console.log("Using secret:", JWT_SECRET);
+    console.log("Error:", err.message);
+    console.log('JWT verification failed:', err.message);
     return fail(res, 'UNAUTHORIZED', 'Invalid or expired token');
   }
 };

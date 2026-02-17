@@ -8,7 +8,7 @@ const logger = require('../utils/logger');
 
 const { success, fail } = require('../utils/apiResponse');
 
-const JWT_SECRET = process.env.JWT_SECRET || 'change_this_secret';
+const JWT_SECRET = 'geowise2025';
 const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '7d';
 const RESET_TOKEN_EXPIRY_MS = 60 * 60 * 1000; // 1 hour
 

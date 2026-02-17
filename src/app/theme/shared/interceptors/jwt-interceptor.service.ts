@@ -32,7 +32,7 @@ export class JwtInterceptorService implements HttpInterceptor  {
 
       return next.handle(auth_req).pipe(
         catchError(error => {
-
+          console.error('HTTP error occurred:', error);
           if (error.status === 401) {
             localStorage.removeItem('token');
             this.router.navigate(['/auth/signin']);
