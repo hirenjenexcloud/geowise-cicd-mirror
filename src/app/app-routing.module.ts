@@ -6,6 +6,7 @@ import { AddFirmwareComponent } from './theme/layout/firmware/add-firmware/add-f
 import { AddGroupComponent } from './theme/layout/group/add-group/add-group.component';
 import { AddSettingComponent } from './theme/layout/setting/add-setting/add-setting.component';
 import { AddUserComponent } from './theme/layout/user/add-user/add-user.component';
+import { AuthGuard } from './theme/shared/authguard/auth.guard';
 
 
 const routes: Routes = [
@@ -27,16 +28,13 @@ const routes: Routes = [
   {
     path: '',
     component: AdminComponent,
+    canActivate: [AuthGuard],
+    canActivateChild: [AuthGuard], 
     children: [
-      // {
-      //   path: '',
-      //   redirectTo: 'dashboard/analytics',
-      //   pathMatch: 'full'
-      // },
-     
        {
         path: 'device',
-        loadChildren: () => import('./theme/layout/device/device.module').then(module => module.DeviceModule)
+        loadChildren: () => import('./theme/layout/device/device.module').then(module => module.DeviceModule),
+         canLoad: [AuthGuard] 
       },
 
     {
@@ -60,10 +58,7 @@ const routes: Routes = [
         path: 'user',
         component: AddUserComponent
       },
-     
-     
-     
-     
+    
      
     ]
   },

@@ -9,6 +9,8 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { DeviceMapViewComponent } from './device-map-view/device-map-view.component';
 import { AgmCoreModule } from '@agm/core';
 import { ToastrModule }  from 'ngx-toastr';
+import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
+
 
 
 @NgModule({
@@ -39,6 +41,7 @@ import { ToastrModule }  from 'ngx-toastr';
             warning: 'toast-warning'
           }        
           }),
+          NgbTooltipModule
       
   ]
 })

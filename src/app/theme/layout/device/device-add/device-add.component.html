@@ -60,8 +60,8 @@
     MSISDN is required
   </div>
 
-  <div *ngIf="DeviceForm.get('msiimsidn')?.hasError('pattern')">
-    MSISDN must be 4 to 12 digits
+  <div *ngIf="DeviceForm.get('imsi')?.hasError('pattern')">
+   IMSI must be 4 to 12 digits
   </div>
 
 </div>
@@ -201,7 +201,7 @@
           <td>{{ device.deviceInfo.carrier }}</td>
           <td>{{ device.clientId }}</td>
           <!-- <td>{{ device.grpId }}</td> -->
-          <td class="text-center">
+          <!-- <td class="text-center">
           <button class="btn btn-sm btn-info me-2"
                   (click)="openEditModal(editModal, device)">
             Edit
@@ -211,8 +211,24 @@
                   (click)="openDeleteModal(deleteModal, device)">
             Delete
           </button>
-        </td>
-        </tr>
+        </td> -->
+      <td class="text-center">
+
+  <!-- Edit -->
+  <i class="fa fa-edit text-primary action-icon"
+     ngbTooltip="Edit Device"
+     (click)="openEditModal(editModal, device)">
+  </i>
+
+  <!-- Delete -->
+  <i class="fa fa-trash text-danger action-icon"
+     ngbTooltip="Delete Device"
+     (click)="openDeleteModal(deleteModal, device)">
+  </i>
+
+</td>
+
+      </tr>
 
         <tr *ngIf="devices.length === 0">
           <td colspan="8" class="text-center text-muted">

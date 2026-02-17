@@ -33,13 +33,13 @@ const NavigationItems = [
     type: 'group',
     icon: 'feather icon-monitor',
     children: [
-      {
-        id: 'dashboard',
-        title: 'Search',
-        type: 'item',
-        url: '/dashboard/analytics',
-        icon: 'feather icon-search'
-      },
+      // {
+      //   id: 'dashboard',
+      //   title: 'Search',
+      //   type: 'item',
+      //   url: '/dashboard/analytics',
+      //   icon: 'feather icon-search'
+      // },
 
       {
         id: 'device',

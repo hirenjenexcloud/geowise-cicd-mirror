@@ -172,7 +172,7 @@
         <td>{{ fw.fwId }}</td>
         <td>{{ fw.swVersion }}</td>
         <td>{{ fw.firmName }}</td>
-        <td>
+        <!-- <td>
           <div class="d-flex justify-content-center">
             <button class="btn btn-sm btn-info mr-1"
                     (click)="openEditFirmwareModal(editFirmwareModal, fw)">
@@ -184,7 +184,23 @@
               Delete
             </button>
           </div>
-        </td>
+        </td> -->
+      <td class="text-center">
+
+  <!-- Edit -->
+  <i class="fa fa-edit text-primary action-icon"
+     ngbTooltip="Edit Firmware"
+     (click)="openEditFirmwareModal(editFirmwareModal, fw)">
+  </i>
+
+  <!-- Delete -->
+  <i class="fa fa-trash text-danger action-icon"
+     ngbTooltip="Delete Firmware"
+     (click)="openDeleteFirmwareModal(deleteFirmwareModal, fw)">
+  </i>
+
+</td>
+
       </tr>
 
       <tr *ngIf="firmwares.length === 0">
@@ -272,10 +288,10 @@
         <input class="form-control" formControlName="firmName">
       </div>
 
-        <div class="mb-3">
+        <!-- <div class="mb-3">
         <label>Firmware</label>
         <input class="form-control" formControlName="firmwareFile" disabled>
-      </div>
+      </div> -->
     </form>
   </div>
 
