@@ -66,7 +66,7 @@ class AllPacketsDef {
                     value = (value + 1) * -1;    // two's complement
                 }
 
-                return value / 10000000;
+                return value / 1000000;
             }
         },
 
@@ -81,7 +81,7 @@ class AllPacketsDef {
                     value = (value + 1) * -1;
                 }
 
-                return value / 10000000;
+                return value / 1000000;
             }
         },
 
