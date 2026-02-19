@@ -39,21 +39,52 @@ class AllPacketsDef {
             }
         },
 
+        // lat: {
+        //     size: 4,
+        //     parser: hex => {
+        //         let v = parseInt(hex, 16);
+        //         return v / 1_000_000;
+        //     }
+        // },
+
+        // lon: {
+        //     size: 4,
+        //     parser: hex => {
+        //         let v = parseInt(hex, 16);
+        //         return v / 1_000_000;
+        //     }
+        // },
+
         lat: {
             size: 4,
             parser: hex => {
-                let v = parseInt(hex, 16);
-                return v / 1_000_000;
+                let value = parseInt(hex, 16);
+
+                // Convert to signed 32-bit integer
+                if (value & 0x80000000) {        // check sign bit
+                    value = value ^ 0xFFFFFFFF;  // invert bits
+                    value = (value + 1) * -1;    // two's complement
+                }
+
+                return value / 10000000;
             }
         },
 
         lon: {
             size: 4,
             parser: hex => {
-                let v = parseInt(hex, 16);
-                return v / 1_000_000;
+                let value = parseInt(hex, 16);
+
+                // Convert to signed 32-bit integer
+                if (value & 0x80000000) {
+                    value = value ^ 0xFFFFFFFF;
+                    value = (value + 1) * -1;
+                }
+
+                return value / 10000000;
             }
         },
+
 
         hac: {
             size: 2,
