@@ -89,7 +89,11 @@ export class ApisService {
   }
 
   // Settings Module
-  getSettings() {
+  getSettings(page:number=1,limit:number=10) {
+    return this.http.get(`/api/settings?page=${page}&limit=${limit}`);
+  }
+
+  getAllSettings() {
     return this.http.get("/api/settings");
   }
 

@@ -17,6 +17,9 @@ export class AddSettingComponent implements OnInit {
 
   settings: any[] = [];
   selected: any = null;
+  currentPage = 1;
+  totalPages = 1;
+  limit = 10;
 
   setting: any = {
     name: "",
@@ -54,12 +57,15 @@ export class AddSettingComponent implements OnInit {
   };
 
   ngOnInit() {
-    this.loadSettings();
+    this.loadSettings(1);
   }
 
-  loadSettings() {
-    this.api.getSettings().subscribe((res: any) => {
-      this.settings = res.data;
+  loadSettings(page: number = 1) {
+    this.currentPage = page;
+
+    this.api.getSettings(this.currentPage, this.limit).subscribe((res: any) => {
+      this.settings = res.data.settings;
+      this.totalPages = res.data.totalPages;
     });
   }
 
@@ -140,5 +146,12 @@ export class AddSettingComponent implements OnInit {
         );
       },
     );
+  }
+
+  changePage(p: number) {
+    if (p < 1 || p > this.totalPages) return;
+
+    this.currentPage = p;
+    this.loadSettings(p);
   }
 }

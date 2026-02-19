@@ -41,7 +41,7 @@ export class AddGroupComponent implements OnInit {
   }
 
   loadSettings() {
-    this.groupService.getSettings().subscribe((res: any) => {
+    this.groupService.getAllSettings().subscribe((res: any) => {
       this.settingList = res.data;
     });
   }

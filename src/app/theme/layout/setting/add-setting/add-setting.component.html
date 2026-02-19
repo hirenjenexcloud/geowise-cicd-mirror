@@ -225,6 +225,31 @@
         </tbody>
 
     </table>
+    <div class="d-flex justify-content-between align-items-center mt-3">
+
+        <!-- LEFT -->
+        <div>
+            <button class="btn btn-outline-primary btn-sm" (click)="changePage(currentPage-1)"
+                [disabled]="currentPage==1">
+                Previous
+            </button>
+        </div>
+
+        <!-- CENTER -->
+        <div>
+            Page {{currentPage}} of {{totalPages}}
+        </div>
+
+        <!-- RIGHT -->
+        <div>
+            <button class="btn btn-outline-primary btn-sm" (click)="changePage(currentPage+1)"
+                [disabled]="currentPage==totalPages">
+                Next
+            </button>
+        </div>
+
+    </div>
+
 
 </div>
 
@@ -233,22 +258,149 @@
 <ng-template #editModal let-modal>
 
     <div class="modal-header">
-        <h5>Edit Name</h5>
+        <h5>Edit Setting</h5>
         <button type="button" class="close" aria-label="Close" (click)="modal.dismiss()">
             <span aria-hidden="true">&times;</span>
         </button>
     </div>
 
     <div class="modal-body">
-        <input class="form-control" [(ngModel)]="selected.name">
+
+        <!-- ================= NAME (EDITABLE) ================= -->
+
+        <div class="mb-3">
+            <label class="form-label">Setting Name</label>
+            <input class="form-control" [(ngModel)]="selected.name">
+        </div>
+
+        <hr>
+
+        <!-- ================= BASIC ================= -->
+
+        <h6 class="mt-3">Basic</h6>
+
+        <div class="row">
+
+            <div class="col-md-4 mb-3">
+                <label>Breadcrumb</label>
+                <input class="form-control" [value]="selected.breadcrumb" disabled>
+            </div>
+
+            <div class="col-md-4 mb-3">
+                <label>Heartbeat</label>
+                <input class="form-control" [value]="selected.hbt" disabled>
+            </div>
+
+            <div class="col-md-4 mb-3">
+                <label>Battery HBT</label>
+                <input class="form-control" [value]="selected.btHbt" disabled>
+            </div>
+
+            <div class="col-md-4 mb-3">
+                <label>Stop</label>
+                <input class="form-control" [value]="selected.stop" disabled>
+            </div>
+
+            <div class="col-md-4 mb-3">
+                <label>Sleep</label>
+                <input class="form-control" [value]="selected.sleep" disabled>
+            </div>
+
+        </div>
+
+        <hr>
+
+        <!-- ================= MOVE TRIGGER ================= -->
+
+        <h6>Move Trigger</h6>
+
+        <div class="row">
+
+            <div class="col-md-4 mb-3">
+                <label>Min Speed</label>
+                <input class="form-control" [value]="selected.moveTrigger?.minSpeedKph" disabled>
+            </div>
+
+            <div class="col-md-4 mb-3">
+                <label>Speed Count</label>
+                <input class="form-control" [value]="selected.moveTrigger?.speedCount" disabled>
+            </div>
+
+            <div class="col-md-4 mb-3">
+                <label>Min Distance</label>
+                <input class="form-control" [value]="selected.moveTrigger?.minDistanceM" disabled>
+            </div>
+
+        </div>
+
+        <hr>
+
+        <!-- ================= RESET ================= -->
+
+        <h6>Reset Timeouts</h6>
+
+        <div class="row">
+
+            <div class="col-md-4 mb-3">
+                <label>Device Timeout</label>
+                <input class="form-control" [value]="selected.resetTimeouts?.deviceTimeout" disabled>
+            </div>
+
+            <div class="col-md-4 mb-3">
+                <label>GPS Timeout</label>
+                <input class="form-control" [value]="selected.resetTimeouts?.gpsTimeout" disabled>
+            </div>
+
+            <div class="col-md-4 mb-3">
+                <label>Cell Timeout</label>
+                <input class="form-control" [value]="selected.resetTimeouts?.cellularTimeout" disabled>
+            </div>
+
+        </div>
+
+        <hr>
+
+        <!-- ================= SERVER ================= -->
+
+        <h6>Dashboard Server</h6>
+
+        <div class="row">
+
+            <div class="col-md-6 mb-3">
+                <label>IP</label>
+                <input class="form-control" [value]="selected.dashboardServer?.ip" disabled>
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label>Port</label>
+                <input class="form-control" [value]="selected.dashboardServer?.port" disabled>
+            </div>
+
+        </div>
+
+        <hr>
+
+        <!-- ================= AT COMMANDS ================= -->
+
+        <h6>AT Commands</h6>
+
+        <textarea class="form-control" rows="3" [value]="selected.atCommands?.join(', ')" disabled>
+</textarea>
+
     </div>
 
     <div class="modal-footer">
+
         <button class="btn btn-secondary" (click)="modal.dismiss()">Cancel</button>
-        <button class="btn btn-primary" (click)="update(modal)">Update</button>
+
+        <button class="btn btn-primary" (click)="update(modal)">
+            Update Name
+        </button>
+
     </div>
 
 </ng-template>
+
 
 
 
