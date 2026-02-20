@@ -96,8 +96,11 @@ constructor(private fb: FormBuilder,private apiSvc: ApisService, private notific
       else{
         this.notification.error(res.message);
       }
-
-    });
+    },
+    err => {
+      this.notification.error(err.message);
+    }
+  );
   }
 
   openEditModal(content: any, device: any) {

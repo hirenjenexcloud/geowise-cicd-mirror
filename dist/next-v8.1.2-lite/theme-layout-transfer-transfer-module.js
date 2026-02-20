@@ -7,7 +7,7 @@
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<p>bulk-transfer works!</p>\r\n"
+module.exports = "<p>bulk-transfer works!</p>\n"
 
 /***/ }),
 
@@ -18,7 +18,7 @@ module.exports = "<p>bulk-transfer works!</p>\r\n"
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<p>transfer-history works!</p>\r\n"
+module.exports = "<p>transfer-history works!</p>\n"
 
 /***/ }),
 
@@ -29,7 +29,7 @@ module.exports = "<p>transfer-history works!</p>\r\n"
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<p>transfer works!</p>\r\n"
+module.exports = "<p>transfer works!</p>\n"
 
 /***/ }),
 

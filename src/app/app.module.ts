@@ -37,6 +37,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { JwtInterceptorService } from './theme/shared/interceptors/jwt-interceptor.service';
 import { AddUserComponent } from './theme/layout/user/add-user/add-user.component';
+import { ConfigurationComponent } from './theme/layout/admin/configuration/configuration.component';
 
 
  
@@ -62,7 +63,8 @@ import { AddUserComponent } from './theme/layout/user/add-user/add-user.componen
     AddFirmwareComponent,
     AddGroupComponent,
     AddSettingComponent,
-    AddUserComponent
+    AddUserComponent,
+    ConfigurationComponent
 
 
   

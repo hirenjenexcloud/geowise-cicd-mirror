@@ -22,7 +22,8 @@ const routes: Routes = [
   {
     path: 'map_view',
     component: DeviceMapViewComponent
-  }
+  },
+ 
 ];  
 
 @NgModule({

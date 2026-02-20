@@ -36,6 +36,15 @@ export class ApisService {
   getDeviceHistory(imei: string) {
     return this.http.get("/api/device/history" + "?imei=" + imei);
   }
+//   getDeviceHistory(imei: string, from?: string, to?: string) {
+//   let url = `/api/device/history?imei=${imei}`;
+
+//   if (from && to) {
+//     url += `&from=${from}&to=${to}`;
+//   }
+
+//   return this.http.get(url);
+// }
 
   // Group Module
 
@@ -108,4 +117,5 @@ export class ApisService {
   deleteSetting(id: string) {
     return this.http.delete(`/api/settings/${id}`);
   }
+  
 }

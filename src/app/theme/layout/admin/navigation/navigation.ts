@@ -55,11 +55,11 @@ const NavigationItems = [
             icon: 'feather icon-plus'
           },
           // {
-          //   id:'device',
-          //   title: 'Delete Device',
+          //   id:'device_history',
+          //   title: 'Device History',
           //   type: 'item',
-          //   url: '/device/delete_device',
-          //   icon: 'feather icon-trash'
+          //   url: '/device/device_history',
+          //   icon: 'feather icon-history'
           // },
 
            {

@@ -146,14 +146,74 @@ onMapReady(mapInstance: any) {
   this.loadDeviceHistory();
 }
 
+// loadDeviceHistory() {
+
+//   console.log("Loading device history...");
+
+//   this.deviceService.getDeviceHistory('353081090133664')
+//     .subscribe((res: any) => {
+
+//       console.log("Full API response:", res);
+
+//       if (!res || !res.data || !res.data.data || !res.data.data.length) {
+//         console.log("No history found");
+//         return;
+//       }
+
+//       const history = res.data.data;
+
+//       console.log("Device history records:", history.length);
+
+//       // ✅ Sort by createdAt
+//       history.sort(function (a: any, b: any) {
+//         return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+//       });
+
+//       // ✅ Clear old polyline
+//       this.polyline.setPath([]);
+
+
+//       for (let index = 0; index < history.length; index++) {
+
+//     const item = history[index];
+//     const lat = item.deviceData.location.lat;
+//     const lng = item.deviceData.location.long;
+//     const latLng = new google.maps.LatLng(lat, lng);
+
+//     // Add point to polyline
+//     // this.polyline.getPath().push(latLng);
+
+//     // Move device marker
+//     this.deviceMarker.setPosition(latLng);
+//     this.map.panTo(latLng);
+
+//     new google.maps.Marker({
+//       position: latLng,
+//       map: this.map,
+//       icon: {
+//         path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
+//         scale: 4,
+//         strokeColor: 'green',
+//         fillColor: 'green',
+//         fillOpacity: 1,
+//         anchor: new google.maps.Point(0, 2) 
+//       }
+//     });
+// }
+
+
+//     }, (error) => {
+//       console.error("Error loading device history:", error);
+//     });
+
+// }
+
 loadDeviceHistory() {
 
   console.log("Loading device history...");
 
   this.deviceService.getDeviceHistory('353081090133664')
     .subscribe((res: any) => {
-
-      console.log("Full API response:", res);
 
       if (!res || !res.data || !res.data.data || !res.data.data.length) {
         console.log("No history found");
@@ -162,52 +222,76 @@ loadDeviceHistory() {
 
       const history = res.data.data;
 
-      console.log("Device history records:", history.length);
+     
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
 
-      // ✅ Sort by createdAt
-      history.sort(function (a: any, b: any) {
-        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+     
+      const tomorrow = new Date(today);
+      tomorrow.setDate(today.getDate() + 1);
+
+      const todayHistory = history.filter(function (item: any) {
+
+        if (!item.createdAt) return false;
+
+        const createdAt = new Date(item.createdAt);
+        return createdAt >= today && createdAt < tomorrow;
+
       });
 
-      // ✅ Clear old polyline
+      if (!todayHistory.length) {
+        console.log("No records found for today");
+        return;
+      }
+
+      // ✅ Sort ascending (old → new)
+      todayHistory.sort(function (a: any, b: any) {
+        return new Date(a.createdAt).getTime() -
+               new Date(b.createdAt).getTime();
+      });
+
       this.polyline.setPath([]);
 
+      for (let i = 0; i < todayHistory.length; i++) {
 
-      for (let index = 0; index < history.length; index++) {
+        const item = todayHistory[i];
 
-    const item = history[index];
-    const lat = item.deviceData.location.lat;
-    const lng = item.deviceData.location.long;
-    const latLng = new google.maps.LatLng(lat, lng);
+        if (!item.deviceData ||
+            !item.deviceData.location ||
+            item.deviceData.location.lat == null ||
+            item.deviceData.location.long == null) {
+          continue;
+        }
 
-    // Add point to polyline
-    // this.polyline.getPath().push(latLng);
+        const lat = item.deviceData.location.lat;
+        const lng = item.deviceData.location.long;
 
-    // Move device marker
-    this.deviceMarker.setPosition(latLng);
-    this.map.panTo(latLng);
+        const latLng = new google.maps.LatLng(lat, lng);
 
-    new google.maps.Marker({
-      position: latLng,
-      map: this.map,
-      icon: {
-        path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
-        scale: 4,
-        strokeColor: 'green',
-        fillColor: 'green',
-        fillOpacity: 1,
-        anchor: new google.maps.Point(0, 2) 
+      
+        this.polyline.getPath().push(latLng);
+
+       
+        this.deviceMarker.setPosition(latLng);
       }
-    });
-}
 
+     
+      const last = todayHistory[todayHistory.length - 1];
+
+      if (last &&
+          last.deviceData &&
+          last.deviceData.location) {
+
+        this.map.panTo({
+          lat: last.deviceData.location.lat,
+          lng: last.deviceData.location.long
+        });
+      }
 
     }, (error) => {
       console.error("Error loading device history:", error);
     });
-
 }
-
 
 
 
