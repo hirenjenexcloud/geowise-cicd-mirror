@@ -77,7 +77,7 @@
       >
         <option value="">Select Firmware</option>
         <option *ngFor="let f of firmwareList" [value]="f.fwId">
-          {{ f.firmName }} - {{ f.swVersion }}
+          {{ f.firmName }}
         </option>
       </select>
       <small class="text-danger" *ngIf="fwId.invalid && fwId.touched">
@@ -102,7 +102,7 @@
       >
         <option value="">Select Setting</option>
         <option *ngFor="let s of settingList" [value]="s.settingId">
-          {{ s.name }} (ID: {{ s.settingId }})
+          {{ s.name }}
         </option>
       </select>
       <small class="text-danger" *ngIf="settingId.invalid && settingId.touched">
@@ -161,8 +161,8 @@
         <tr *ngFor="let g of groups">
 
           <td>{{ g.grpName }}</td>
-          <td>{{ g.fwId }}</td>
-          <td>{{ g.settingId }}</td>
+          <td>{{ firmwareMap[g.fwId] || '-' }}</td>
+          <td>{{ settingMap[g.settingId] || '-' }}</td>
           <td>{{ g.hwVersion }}</td>
           <td>{{ g.swVersion }}</td>
           <td>{{ g.desc || '-' }}</td>

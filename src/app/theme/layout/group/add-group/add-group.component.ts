@@ -33,16 +33,31 @@ export class AddGroupComponent implements OnInit {
   firmwareList: any[] = [];
   settingList: any[] = [];
 
+  firmwareMap: any = {};
+  settingMap: any = {};
+
   loadFirmwares() {
     this.groupService.getAllFirmwares().subscribe((res: any) => {
       console.log("Firmware Response:", res.data);
       this.firmwareList = res.data;
+
+      this.firmwareMap = {};
+      this.firmwareList.forEach((f) => {
+        this.firmwareMap[f.fwId] = f.firmName;
+      });
+
     });
   }
 
   loadSettings() {
     this.groupService.getAllSettings().subscribe((res: any) => {
       this.settingList = res.data;
+
+      this.settingMap = {};
+      this.settingList.forEach((s) => {
+        this.settingMap[s.settingId] = s.name;
+      });
+
     });
   }
 
@@ -141,9 +156,8 @@ export class AddGroupComponent implements OnInit {
   }
 
   confirmDelete(modal: any) {
-    this.groupService
-      .deleteGroup(this.selectedGroup._id)
-      .subscribe((res: any) => {
+    this.groupService.deleteGroup(this.selectedGroup._id).subscribe(
+      (res: any) => {
         this.toast.success(res.message || "Group deleted");
 
         modal.close();
