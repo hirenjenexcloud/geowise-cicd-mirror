@@ -13,9 +13,10 @@ const errorHandler = require('./middlewares/errorHandler');
 
 const swaggerUi = require('swagger-ui-express');
 const swaggerFile = require('./swagger-output.json');
+const socket  = require("./config/socket-io.config");
 
 const app = express();
-
+socket.connectSocket()
 const frontendPath = path.resolve(
   __dirname,
   '../../dist/next-v8.1.2-lite'

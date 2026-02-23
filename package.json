@@ -38,6 +38,7 @@
     "rxjs-compat": "^6.5.2",
     "sass": "^1.97.3",
     "screenfull": "^4.2.0",
+    "socket.io-client": "^4.8.3",
     "tslib": "^1.9.0",
     "zone.js": "~0.9.1"
   },

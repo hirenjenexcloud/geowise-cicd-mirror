@@ -10,6 +10,8 @@ const group = require('../controllers/group.controller');
 const { getDeviceConfig } = require('../config/deviceCache');
 const handlers = require('../middlewares/eventsHandlers');
 const dtcCodes = require('../utils/dtcCode');
+const socket= require('../config/socket-io.config');
+let socketInstance = socket.getSocket();
 
 function deviceCommutionHandler(client) {
   startOtaRequestService(client);
@@ -137,6 +139,10 @@ function parsePacket(client) {
 
       const devicePacket = buildDevicePacket(parsed, packetHex, true);
       const deviceData = buildDevicePacket(parsed, packetHex, false);
+      const sendDTC = sendDtcData(parsed);
+      console.log("DTC Data to send:", sendDTC);
+
+      socketInstance.emit("geowise", deviceData);
       logger.info("Event Type Name :-", allPacketsDef.eType[parsed.eType] || "Unknown");
       logger.info("Event Type :-", parsed.eType);
       const config = await getDeviceConfig(parsed.imei);
@@ -230,6 +236,8 @@ function canPacketParseing(client) {
       // logger.info(`DTC Parsed Packet Data: ${JSON.stringify(parsed)}`);
 
       const canPacket = buildCanDevicePacket(parsed, packetHex);
+
+
       console.log("Event Type :-", parsed.eType);
       console.log("Event Type Name :-", allPacketsDef.eType[parsed.eType] || "Unknown");
       await DevicePackets.create(canPacket);
@@ -295,7 +303,9 @@ function buildDevicePacket(parsed, packetHex, includePacketInfo) {
 
 function buildCanDevicePacket(parsed, packetHex) {
 
-  return packet = {
+  console.log("Parsed CAN Packet Data: ", parsed);
+
+  const packet = {
     imei: parsed.imei,
     DTC: true,
     event: {
@@ -317,7 +327,25 @@ function buildCanDevicePacket(parsed, packetHex) {
       rssi: parsed.rssi
     }
   };
-}
 
+
+  const socketData = {
+    imei: parsed.imei?.trim(),
+    canData: {
+      code: parsed.DTC
+    },
+    power: {
+      main: parsed.mainPower,
+      battery: parsed.batteryPower
+    }
+  };
+
+    socketInstance.emit("geowise", socketData);
+    console.log("Sent over socket:", socketData);
+ 
+
+  return packet;
+
+}
 
 module.exports = deviceCommutionHandler;
