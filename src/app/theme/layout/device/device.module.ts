@@ -10,6 +10,7 @@ import { DeviceMapViewComponent } from './device-map-view/device-map-view.compon
 import { AgmCoreModule } from '@agm/core';
 import { ToastrModule }  from 'ngx-toastr';
 import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
+import { FormsModule } from '@angular/forms';
 
 
 
@@ -41,7 +42,8 @@ import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
             warning: 'toast-warning'
           }        
           }),
-          NgbTooltipModule
+          NgbTooltipModule,
+          FormsModule
       
   ]
 })

@@ -4423,7 +4423,7 @@ module.exports = "<p>delete-device works!</p>\r\n"
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<form\r\n  [formGroup]=\"DeviceForm\"\r\n  (ngSubmit)=\"submit()\"\r\n  class=\"card p-4\"\r\n  novalidate\r\n>\r\n\r\n  <h3 class=\"mb-4\">Device Registration</h3>\r\n\r\n  <!-- Row 1 -->\r\n  <div class=\"row\">\r\n    <div class=\"col-md-6 mb-3\">\r\n      <label class=\"form-label\">IMEI</label>\r\n      <input\r\n        type=\"text\"\r\n        class=\"form-control\"\r\n        formControlName=\"imei\"\r\n        placeholder=\"Enter IMEI\"\r\n        inputmode=\"numeric\"\r\n       pattern=\"[0-9]*\"\r\n       oninput=\"this.value=this.value.replace(/[^0-9]/g,'')\"\r\n         [ngClass]=\"{'is-invalid': DeviceForm.get('imei')?.touched && DeviceForm.get('imei')?.invalid}\" />\r\n\r\n<div class=\"invalid-feedback\"\r\n     *ngIf=\"DeviceForm.get('imei')?.touched\">\r\n\r\n  <div *ngIf=\"DeviceForm.get('imei')?.hasError('required')\">\r\n    IMEI is required\r\n  </div>\r\n\r\n  <div *ngIf=\"DeviceForm.get('imei')?.hasError('pattern')\">\r\n    IMEI must be exactly 15 digits\r\n  </div>\r\n\r\n</div>\r\n\r\n\r\n    </div>\r\n\r\n    <div class=\"col-md-6 mb-3\">\r\n      <label class=\"form-label\">IMSI</label>\r\n      <input\r\n        type=\"text\"\r\n        class=\"form-control\"\r\n        formControlName=\"imsi\"\r\n        placeholder=\"Enter IMSI\"\r\n        inputmode=\"numeric\"\r\n       pattern=\"[0-9]*\"\r\n       oninput=\"this.value=this.value.replace(/[^0-9]/g,'')\"\r\n      [ngClass]=\"{'is-invalid': DeviceForm.get('imsi')?.touched && DeviceForm.get('imsi')?.invalid}\" />\r\n      \r\n\r\n<!-- <div class=\"invalid-feedback\"\r\n     *ngIf=\"DeviceForm.get('imsi')?.touched && DeviceForm.get('imsi')?.hasError('required')\">\r\n  IMSI is required\r\n</div> -->\r\n<div class=\"invalid-feedback\"\r\n     *ngIf=\"DeviceForm.get('imsi')?.touched\">\r\n\r\n  <div *ngIf=\"DeviceForm.get('imsi')?.hasError('required')\">\r\n    IMSI is required\r\n  </div>\r\n\r\n  <div *ngIf=\"DeviceForm.get('imsi')?.hasError('pattern')\">\r\n   IMSI must be 4 to 12 digits\r\n  </div>\r\n\r\n</div>\r\n\r\n    </div>\r\n  </div>\r\n\r\n  <!-- Row 2 -->\r\n  <div class=\"row\">\r\n    <div class=\"col-md-6 mb-3\">\r\n      <label class=\"form-label\">ICCID</label>\r\n      <input\r\n        type=\"text\"\r\n        class=\"form-control\"\r\n        formControlName=\"iccid\"\r\n        placeholder=\"Enter ICCID\"\r\n        inputmode=\"numeric\"\r\n         [ngClass]=\"{'is-invalid': DeviceForm.get('iccid')?.touched && DeviceForm.get('iccid')?.invalid}\" />\r\n\r\n   \r\n<div class=\"invalid-feedback\"\r\n     *ngIf=\"DeviceForm.get('iccid')?.touched\">\r\n\r\n  <div *ngIf=\"DeviceForm.get('iccid')?.hasError('required')\">\r\n    ICCID is required\r\n  </div>\r\n\r\n  <div *ngIf=\"DeviceForm.get('iccid')?.hasError('pattern')\">\r\n    ICCID must be 4 to 20 digits\r\n  </div>\r\n\r\n</div>\r\n    </div>\r\n\r\n    <div class=\"col-md-6 mb-3\">\r\n      <label class=\"form-label\">MSISDN</label>\r\n      <input\r\n        type=\"text\"\r\n        class=\"form-control\"\r\n        formControlName=\"msisdn\"\r\n        placeholder=\"Enter MSISDN\"\r\n        inputmode=\"numeric\"\r\n       pattern=\"[0-9]*\"\r\n       oninput=\"this.value=this.value.replace(/[^0-9]/g,'')\"\r\n         [ngClass]=\"{'is-invalid': DeviceForm.get('msisdn')?.touched && DeviceForm.get('msisdn')?.invalid}\"\r\n      />\r\n\r\n   <div class=\"invalid-feedback\"\r\n     *ngIf=\"DeviceForm.get('msisdn')?.touched\">\r\n\r\n  <div *ngIf=\"DeviceForm.get('msisdn')?.hasError('required')\">\r\n    MSISDN is required\r\n  </div>\r\n\r\n  <div *ngIf=\"DeviceForm.get('msisdn')?.hasError('pattern')\">\r\n    MSISDN must be 4 to 12 digits\r\n  </div>\r\n\r\n</div>\r\n    </div>\r\n  </div>\r\n\r\n  <!-- Row 3 -->\r\n  <div class=\"row\">\r\n    <div class=\"col-md-6 mb-3\">\r\n      <label class=\"form-label\">Carrier</label>\r\n      <select class=\"form-control\" formControlName=\"carrier\"\r\n       [ngClass]=\"{'is-invalid': DeviceForm.get('carrier')?.touched && DeviceForm.get('carrier')?.invalid}\">\r\n        <option value=\"\">Select Carrier</option>\r\n        <option *ngFor=\"let c of carriers\" [value]=\"c\">\r\n          {{ c }}\r\n        </option>\r\n      </select>\r\n      <div class=\"invalid-feedback\"\r\n     *ngIf=\"DeviceForm.get('carrier')?.touched && DeviceForm.get('carrier')?.hasError('required')\">\r\n  Carrier is required\r\n</div>\r\n    </div>\r\n\r\n    \r\n    <div class=\"col-md-6 mb-3\">\r\n      <label class=\"form-label\">Group</label>\r\n      <select class=\"form-control\" formControlName=\"grpId\"  [ngClass]=\"{'is-invalid': DeviceForm.get('grpId')?.touched && DeviceForm.get('grpId')?.invalid}\">\r\n        <option value=\"\">Select Group</option>\r\n        <option *ngFor=\"let g of groups\" [value]=\"g._id\">\r\n          {{ g.grpName }}\r\n        </option>\r\n      </select>\r\n      <div class=\"invalid-feedback\"\r\n     *ngIf=\"DeviceForm.get('grpId')?.touched && DeviceForm.get('grpId')?.hasError('required')\">\r\n  Group is required\r\n</div>\r\n    </div>\r\n  </div>\r\n\r\n  <!-- Submit -->\r\n  <div class=\"d-flex justify-content-end mt-4\">\r\n    <button\r\n      type=\"submit\"\r\n      class=\"btn btn-primary px-4\"\r\n      [disabled]=\"DeviceForm.invalid\"\r\n    >\r\n      Submit\r\n    </button>\r\n  </div>\r\n\r\n</form>\r\n\r\n\r\n<!-- Device List Table -->\r\n<div class=\"card mt-4 p-4\">\r\n  <h4 class=\"mb-3\">Devices</h4>\r\n\r\n  <div class=\"table-responsive\">\r\n    <table class=\"table table-bordered table-striped table-hover\">\r\n      <thead style=\"background-color: #101b33; color: white;\">\r\n        <tr>\r\n          <th>IMEI</th>\r\n          <th>IMSI</th>\r\n          <th>ICCID</th>\r\n          <th>MSISDN</th>\r\n          <th>Carrier</th>\r\n          <!-- <th>User</th> -->\r\n          <!-- <th>Group</th> -->\r\n          <th>Actions</th>\r\n        </tr>\r\n      </thead>\r\n\r\n      <tbody>\r\n        <tr *ngFor=\"let device of devices; let i = index\">\r\n          <td>{{ device.imei }}</td>\r\n          <td>{{ device.deviceInfo.imsi }}</td>\r\n          <td>{{ device.deviceInfo.iccid }}</td>\r\n          <td>{{ device.deviceInfo.msisdn }}</td>\r\n          <td>{{ device.deviceInfo.carrier }}</td>\r\n          <!-- <td>{{ device.clientId }}</td> -->\r\n          <!-- <td>{{ device.grpId }}</td> -->\r\n          <!-- <td class=\"text-center\">\r\n          <button class=\"btn btn-sm btn-info me-2\"\r\n                  (click)=\"openEditModal(editModal, device)\">\r\n            Edit\r\n          </button>\r\n\r\n          <button class=\"btn btn-sm btn-danger\"\r\n                  (click)=\"openDeleteModal(deleteModal, device)\">\r\n            Delete\r\n          </button>\r\n        </td> -->\r\n      <td class=\"text-center\">\r\n\r\n  <!-- Edit -->\r\n  <i class=\"fa fa-edit text-primary action-icon\"\r\n     ngbTooltip=\"Edit Device\"\r\n     (click)=\"openEditModal(editModal, device)\">\r\n  </i>\r\n\r\n  <!-- Delete -->\r\n  <i class=\"fa fa-trash text-danger action-icon\"\r\n     ngbTooltip=\"Delete Device\"\r\n     (click)=\"openDeleteModal(deleteModal, device)\">\r\n  </i>\r\n\r\n</td>\r\n\r\n      </tr>\r\n\r\n        <tr *ngIf=\"devices.length === 0\">\r\n          <td colspan=\"8\" class=\"text-center text-muted\">\r\n            No devices found\r\n          </td>\r\n        </tr>\r\n      </tbody>\r\n    </table>\r\n  </div>\r\n\r\n    <div class=\"d-flex justify-content-between align-items-center mt-3\">\r\n\r\n    <button class=\"btn btn-outline-primary btn-sm\"\r\n            (click)=\"prevPage()\"\r\n            [disabled]=\"currentPage===1\">\r\n      Previous\r\n    </button>\r\n\r\n    <span>Page {{currentPage}} of {{totalPages}}</span>\r\n\r\n    <button class=\"btn btn-outline-primary btn-sm\"\r\n            (click)=\"nextPage()\"\r\n            [disabled]=\"currentPage===totalPages\">\r\n      Next\r\n    </button>\r\n\r\n  </div>\r\n</div>\r\n\r\n\r\n<!-- EDIT MODAL -->\r\n<ng-template #editModal let-modal>\r\n  <div class=\"modal-header\">\r\n    <h5 class=\"modal-title\">Edit Device</h5>\r\n     <button type=\"button\" class=\"close\"\r\n        aria-label=\"Close\"\r\n        (click)=\"modal.dismiss()\">\r\n  <span aria-hidden=\"true\">&times;</span>\r\n</button>\r\n  </div>\r\n\r\n  <div class=\"modal-body\">\r\n    <form [formGroup]=\"editForm\">\r\n      <div class=\"mb-3\">\r\n        <label>IMEI</label>\r\n        <input class=\"form-control\" formControlName=\"imei\" disabled>\r\n      </div>\r\n\r\n      <div class=\"mb-3\">\r\n        <label>IMSI</label>\r\n        <input class=\"form-control\" formControlName=\"imsi\">\r\n      </div>\r\n\r\n      <div class=\"mb-3\">\r\n        <label>ICCID</label>\r\n        <input class=\"form-control\" formControlName=\"iccid\">\r\n      </div>\r\n\r\n      <div class=\"mb-3\">\r\n        <label>MSISDN</label>\r\n        <input class=\"form-control\" formControlName=\"msisdn\">\r\n      </div>\r\n        <div class=\"mb-3\">\r\n        <label>CARRIER</label>\r\n        <input class=\"form-control\" formControlName=\"carrier\">\r\n      </div>\r\n    </form>\r\n  </div>\r\n\r\n  <div class=\"modal-footer\">\r\n    <button class=\"btn btn-secondary\"\r\n            (click)=\"modal.dismiss()\">Cancel</button>\r\n    <button class=\"btn btn-primary\"\r\n            (click)=\"updateDevice(modal)\">\r\n      Update\r\n    </button>\r\n  </div>\r\n</ng-template>\r\n\r\n\r\n\r\n<!-- DELETE MODAL -->\r\n<ng-template #deleteModal let-modal>\r\n  <div class=\"modal-header\">\r\n    <h5 class=\"modal-title text-danger\">Confirm Delete</h5>\r\n     <button type=\"button\" class=\"close\"\r\n        aria-label=\"Close\"\r\n        (click)=\"modal.dismiss()\">\r\n  <span aria-hidden=\"true\">&times;</span>\r\n</button>\r\n  </div>\r\n\r\n  <div class=\"modal-body\">\r\n    Are you sure you want to delete this device\r\n  </div>\r\n\r\n  <div class=\"modal-footer\">\r\n    <button class=\"btn btn-secondary\"\r\n            (click)=\"modal.dismiss()\">Cancel</button>\r\n    <button class=\"btn btn-danger\"\r\n            (click)=\"confirmDelete(modal)\">\r\n      Delete\r\n    </button>\r\n  </div>\r\n</ng-template>\r\n\r\n\r\n"
+module.exports = "<form [formGroup]=\"DeviceForm\" (ngSubmit)=\"submit()\" class=\"card p-4\" novalidate>\r\n\r\n  <h3 class=\"mb-4\">Device Registration</h3>\r\n\r\n  <!-- Row 1 -->\r\n  <div class=\"row\">\r\n    <div class=\"col-md-6 mb-3\">\r\n      <label class=\"form-label\">IMEI</label>\r\n      <input type=\"text\" class=\"form-control\" formControlName=\"imei\" placeholder=\"Enter IMEI\" inputmode=\"numeric\"\r\n        pattern=\"[0-9]*\" oninput=\"this.value=this.value.replace(/[^0-9]/g,'')\"\r\n        [ngClass]=\"{'is-invalid': DeviceForm.get('imei')?.touched && DeviceForm.get('imei')?.invalid}\" />\r\n\r\n      <div class=\"invalid-feedback\" *ngIf=\"DeviceForm.get('imei')?.touched\">\r\n\r\n        <div *ngIf=\"DeviceForm.get('imei')?.hasError('required')\">\r\n          IMEI is required\r\n        </div>\r\n\r\n        <div *ngIf=\"DeviceForm.get('imei')?.hasError('pattern')\">\r\n          IMEI must be exactly 15 digits\r\n        </div>\r\n\r\n      </div>\r\n\r\n\r\n    </div>\r\n\r\n    <div class=\"col-md-6 mb-3\">\r\n      <label class=\"form-label\">IMSI</label>\r\n      <input type=\"text\" class=\"form-control\" formControlName=\"imsi\" placeholder=\"Enter IMSI\" inputmode=\"numeric\"\r\n        pattern=\"[0-9]*\" oninput=\"this.value=this.value.replace(/[^0-9]/g,'')\"\r\n        [ngClass]=\"{'is-invalid': DeviceForm.get('imsi')?.touched && DeviceForm.get('imsi')?.invalid}\" />\r\n\r\n\r\n      <!-- <div class=\"invalid-feedback\"\r\n     *ngIf=\"DeviceForm.get('imsi')?.touched && DeviceForm.get('imsi')?.hasError('required')\">\r\n  IMSI is required\r\n</div> -->\r\n      <div class=\"invalid-feedback\" *ngIf=\"DeviceForm.get('imsi')?.touched\">\r\n\r\n        <div *ngIf=\"DeviceForm.get('imsi')?.hasError('required')\">\r\n          IMSI is required\r\n        </div>\r\n\r\n        <div *ngIf=\"DeviceForm.get('imsi')?.hasError('pattern')\">\r\n          IMSI must be 4 to 12 digits\r\n        </div>\r\n\r\n      </div>\r\n\r\n    </div>\r\n  </div>\r\n\r\n  <!-- Row 2 -->\r\n  <div class=\"row\">\r\n    <div class=\"col-md-6 mb-3\">\r\n      <label class=\"form-label\">ICCID</label>\r\n      <input type=\"text\" class=\"form-control\" formControlName=\"iccid\" placeholder=\"Enter ICCID\" inputmode=\"numeric\"\r\n        [ngClass]=\"{'is-invalid': DeviceForm.get('iccid')?.touched && DeviceForm.get('iccid')?.invalid}\" />\r\n\r\n\r\n      <div class=\"invalid-feedback\" *ngIf=\"DeviceForm.get('iccid')?.touched\">\r\n\r\n        <div *ngIf=\"DeviceForm.get('iccid')?.hasError('required')\">\r\n          ICCID is required\r\n        </div>\r\n\r\n        <div *ngIf=\"DeviceForm.get('iccid')?.hasError('pattern')\">\r\n          ICCID must be 4 to 20 digits\r\n        </div>\r\n\r\n      </div>\r\n    </div>\r\n\r\n    <div class=\"col-md-6 mb-3\">\r\n      <label class=\"form-label\">MSISDN</label>\r\n      <input type=\"text\" class=\"form-control\" formControlName=\"msisdn\" placeholder=\"Enter MSISDN\" inputmode=\"numeric\"\r\n        pattern=\"[0-9]*\" oninput=\"this.value=this.value.replace(/[^0-9]/g,'')\"\r\n        [ngClass]=\"{'is-invalid': DeviceForm.get('msisdn')?.touched && DeviceForm.get('msisdn')?.invalid}\" />\r\n\r\n      <div class=\"invalid-feedback\" *ngIf=\"DeviceForm.get('msisdn')?.touched\">\r\n\r\n        <div *ngIf=\"DeviceForm.get('msisdn')?.hasError('required')\">\r\n          MSISDN is required\r\n        </div>\r\n\r\n        <div *ngIf=\"DeviceForm.get('msisdn')?.hasError('pattern')\">\r\n          MSISDN must be 4 to 12 digits\r\n        </div>\r\n\r\n      </div>\r\n    </div>\r\n  </div>\r\n\r\n  <!-- Row 3 -->\r\n  <div class=\"row\">\r\n    <div class=\"col-md-6 mb-3\">\r\n      <label class=\"form-label\">Carrier</label>\r\n      <select class=\"form-control\" formControlName=\"carrier\"\r\n        [ngClass]=\"{'is-invalid': DeviceForm.get('carrier')?.touched && DeviceForm.get('carrier')?.invalid}\">\r\n        <option value=\"\">Select Carrier</option>\r\n        <option *ngFor=\"let c of carriers\" [value]=\"c\">\r\n          {{ c }}\r\n        </option>\r\n      </select>\r\n      <div class=\"invalid-feedback\"\r\n        *ngIf=\"DeviceForm.get('carrier')?.touched && DeviceForm.get('carrier')?.hasError('required')\">\r\n        Carrier is required\r\n      </div>\r\n    </div>\r\n\r\n\r\n    <div class=\"col-md-6 mb-3\">\r\n      <label class=\"form-label\">Group</label>\r\n      <select class=\"form-control\" formControlName=\"grpId\"\r\n        [ngClass]=\"{'is-invalid': DeviceForm.get('grpId')?.touched && DeviceForm.get('grpId')?.invalid}\">\r\n        <option value=\"\">Select Group</option>\r\n        <option *ngFor=\"let g of groups\" [value]=\"g._id\">\r\n          {{ g.grpName }}\r\n        </option>\r\n      </select>\r\n      <div class=\"invalid-feedback\"\r\n        *ngIf=\"DeviceForm.get('grpId')?.touched && DeviceForm.get('grpId')?.hasError('required')\">\r\n        Group is required\r\n      </div>\r\n    </div>\r\n  </div>\r\n\r\n  <!-- Submit -->\r\n  <div class=\"d-flex justify-content-end mt-4\">\r\n    <button type=\"submit\" class=\"btn btn-primary px-4\" [disabled]=\"DeviceForm.invalid\">\r\n      Submit\r\n    </button>\r\n  </div>\r\n\r\n</form>\r\n\r\n\r\n<!-- Device List Table -->\r\n<div class=\"card mt-4 p-4\">\r\n  <div class=\"d-flex justify-content-between align-items-center mb-3\">\r\n\r\n    <h4 class=\"mb-0\">Devices</h4>\r\n\r\n    <select class=\"form-control w-auto\" [(ngModel)]=\"selectedGroup\" (change)=\"filterByGroup()\">\r\n\r\n      <option value=\"\">All Groups</option>\r\n\r\n      <option *ngFor=\"let g of groups\" [value]=\"g._id\">\r\n        {{ g.grpName }}\r\n      </option>\r\n\r\n    </select>\r\n\r\n  </div>\r\n\r\n  <div class=\"table-responsive\">\r\n    <table class=\"table table-bordered table-striped table-hover\">\r\n      <thead style=\"background-color: #101b33; color: white;\">\r\n        <tr>\r\n          <th>IMEI</th>\r\n          <th>IMSI</th>\r\n          <th>ICCID</th>\r\n          <th>MSISDN</th>\r\n          <th>Carrier</th>\r\n          <!-- <th>User</th> -->\r\n          <th>Group</th>\r\n          <th>Actions</th>\r\n        </tr>\r\n      </thead>\r\n\r\n      <tbody>\r\n        <tr *ngFor=\"let device of devices; let i = index\">\r\n          <td>{{ device.imei }}</td>\r\n          <td>{{ device.deviceInfo.imsi }}</td>\r\n          <td>{{ device.deviceInfo.iccid }}</td>\r\n          <td>{{ device.deviceInfo.msisdn }}</td>\r\n          <td>{{ device.deviceInfo.carrier }}</td>\r\n          <td>{{ groupMap[device.grpId] || '-' }}</td>\r\n          <!-- <td>{{ device.clientId }}</td> -->\r\n          <!-- <td>{{ device.grpId }}</td> -->\r\n          <!-- <td class=\"text-center\">\r\n          <button class=\"btn btn-sm btn-info me-2\"\r\n                  (click)=\"openEditModal(editModal, device)\">\r\n            Edit\r\n          </button>\r\n\r\n          <button class=\"btn btn-sm btn-danger\"\r\n                  (click)=\"openDeleteModal(deleteModal, device)\">\r\n            Delete\r\n          </button>\r\n        </td> -->\r\n          <td class=\"text-center\">\r\n\r\n            <!-- Edit -->\r\n            <i class=\"fa fa-edit text-primary action-icon\" ngbTooltip=\"Edit Device\"\r\n              (click)=\"openEditModal(editModal, device)\">\r\n            </i>\r\n\r\n            <!-- Delete -->\r\n            <i class=\"fa fa-trash text-danger action-icon\" ngbTooltip=\"Delete Device\"\r\n              (click)=\"openDeleteModal(deleteModal, device)\">\r\n            </i>\r\n\r\n          </td>\r\n\r\n        </tr>\r\n\r\n        <tr *ngIf=\"devices.length === 0\">\r\n          <td colspan=\"8\" class=\"text-center text-muted\">\r\n            No devices found\r\n          </td>\r\n        </tr>\r\n      </tbody>\r\n    </table>\r\n  </div>\r\n\r\n  <div class=\"d-flex justify-content-between align-items-center mt-3\">\r\n\r\n    <button class=\"btn btn-outline-primary btn-sm\" (click)=\"prevPage()\" [disabled]=\"currentPage===1 || selectedGroup\">\r\n      Previous\r\n    </button>\r\n\r\n    <span>Page {{currentPage}} of {{totalPages}}</span>\r\n\r\n    <button class=\"btn btn-outline-primary btn-sm\" (click)=\"nextPage()\" [disabled]=\"currentPage===totalPages || selectedGroup\">\r\n      Next\r\n    </button>\r\n\r\n  </div>\r\n</div>\r\n\r\n\r\n<!-- EDIT MODAL -->\r\n<ng-template #editModal let-modal>\r\n  <div class=\"modal-header\">\r\n    <h5 class=\"modal-title\">Edit Device</h5>\r\n    <button type=\"button\" class=\"close\" aria-label=\"Close\" (click)=\"modal.dismiss()\">\r\n      <span aria-hidden=\"true\">&times;</span>\r\n    </button>\r\n  </div>\r\n\r\n  <div class=\"modal-body\">\r\n    <form [formGroup]=\"editForm\">\r\n      <div class=\"mb-3\">\r\n        <label>IMEI</label>\r\n        <input class=\"form-control\" formControlName=\"imei\" disabled>\r\n      </div>\r\n\r\n      <div class=\"mb-3\">\r\n        <label>IMSI</label>\r\n        <input class=\"form-control\" formControlName=\"imsi\">\r\n      </div>\r\n\r\n      <div class=\"mb-3\">\r\n        <label>ICCID</label>\r\n        <input class=\"form-control\" formControlName=\"iccid\">\r\n      </div>\r\n\r\n      <div class=\"mb-3\">\r\n        <label>MSISDN</label>\r\n        <input class=\"form-control\" formControlName=\"msisdn\">\r\n      </div>\r\n      <div class=\"mb-3\">\r\n        <label>CARRIER</label>\r\n        <input class=\"form-control\" formControlName=\"carrier\">\r\n      </div>\r\n    </form>\r\n  </div>\r\n\r\n  <div class=\"modal-footer\">\r\n    <button class=\"btn btn-secondary\" (click)=\"modal.dismiss()\">Cancel</button>\r\n    <button class=\"btn btn-primary\" (click)=\"updateDevice(modal)\">\r\n      Update\r\n    </button>\r\n  </div>\r\n</ng-template>\r\n\r\n\r\n\r\n<!-- DELETE MODAL -->\r\n<ng-template #deleteModal let-modal>\r\n  <div class=\"modal-header\">\r\n    <h5 class=\"modal-title text-danger\">Confirm Delete</h5>\r\n    <button type=\"button\" class=\"close\" aria-label=\"Close\" (click)=\"modal.dismiss()\">\r\n      <span aria-hidden=\"true\">&times;</span>\r\n    </button>\r\n  </div>\r\n\r\n  <div class=\"modal-body\">\r\n    Are you sure you want to delete this device\r\n  </div>\r\n\r\n  <div class=\"modal-footer\">\r\n    <button class=\"btn btn-secondary\" (click)=\"modal.dismiss()\">Cancel</button>\r\n    <button class=\"btn btn-danger\" (click)=\"confirmDelete(modal)\">\r\n      Delete\r\n    </button>\r\n  </div>\r\n</ng-template>"
 
 /***/ }),
 
@@ -4531,12 +4531,9 @@ let DeviceAddComponent = class DeviceAddComponent {
         this.apiSvc = apiSvc;
         this.notification = notification;
         this.modalService = modalService;
-        this.carriers = [
-            'Telit',
-            'Verizon',
-            'AT&T',
-            'T-Mobile'
-        ];
+        this.carriers = ["Telit", "Verizon", "AT&T", "T-Mobile"];
+        this.groupMap = {};
+        this.selectedGroup = "";
         this.devices = [];
         this.groups = [];
         this.currentPage = 1;
@@ -4548,19 +4545,19 @@ let DeviceAddComponent = class DeviceAddComponent {
     }
     ngOnInit() {
         this.DeviceForm = this.fb.group({
-            imei: ['', [_angular_forms__WEBPACK_IMPORTED_MODULE_2__["Validators"].required, _angular_forms__WEBPACK_IMPORTED_MODULE_2__["Validators"].pattern(/^[0-9]{15}$/)]],
-            grpId: ['', _angular_forms__WEBPACK_IMPORTED_MODULE_2__["Validators"].required],
-            iccid: ['', _angular_forms__WEBPACK_IMPORTED_MODULE_2__["Validators"].required],
-            imsi: ['', [_angular_forms__WEBPACK_IMPORTED_MODULE_2__["Validators"].required, _angular_forms__WEBPACK_IMPORTED_MODULE_2__["Validators"].pattern(/^[0-9]{4,20}$/)]],
-            msisdn: ['', [_angular_forms__WEBPACK_IMPORTED_MODULE_2__["Validators"].required, _angular_forms__WEBPACK_IMPORTED_MODULE_2__["Validators"].pattern(/^[0-9]{4,12}$/)]],
-            carrier: ['', _angular_forms__WEBPACK_IMPORTED_MODULE_2__["Validators"].required],
+            imei: ["", [_angular_forms__WEBPACK_IMPORTED_MODULE_2__["Validators"].required, _angular_forms__WEBPACK_IMPORTED_MODULE_2__["Validators"].pattern(/^[0-9]{15}$/)]],
+            grpId: ["", _angular_forms__WEBPACK_IMPORTED_MODULE_2__["Validators"].required],
+            iccid: ["", _angular_forms__WEBPACK_IMPORTED_MODULE_2__["Validators"].required],
+            imsi: ["", [_angular_forms__WEBPACK_IMPORTED_MODULE_2__["Validators"].required, _angular_forms__WEBPACK_IMPORTED_MODULE_2__["Validators"].pattern(/^[0-9]{4,20}$/)]],
+            msisdn: ["", [_angular_forms__WEBPACK_IMPORTED_MODULE_2__["Validators"].required, _angular_forms__WEBPACK_IMPORTED_MODULE_2__["Validators"].pattern(/^[0-9]{4,12}$/)]],
+            carrier: ["", _angular_forms__WEBPACK_IMPORTED_MODULE_2__["Validators"].required],
         });
         this.editForm = this.fb.group({
-            imei: [''],
-            imsi: [''],
-            iccid: [''],
-            msisdn: [''],
-            carrier: ['']
+            imei: [""],
+            imsi: [""],
+            iccid: [""],
+            msisdn: [""],
+            carrier: [""],
         });
         this.getAllDevices();
         this.getAllGroups();
@@ -4577,8 +4574,8 @@ let DeviceAddComponent = class DeviceAddComponent {
                 carrier: this.DeviceForm.value.carrier,
                 iccid: this.DeviceForm.value.iccid,
                 imsi: this.DeviceForm.value.imsi,
-                msisdn: this.DeviceForm.value.msisdn
-            }
+                msisdn: this.DeviceForm.value.msisdn,
+            },
         };
         if (this.DeviceForm.invalid) {
             this.DeviceForm.markAllAsTouched();
@@ -4593,7 +4590,7 @@ let DeviceAddComponent = class DeviceAddComponent {
             else {
                 this.notification.error(res.message);
             }
-        }, err => {
+        }, (err) => {
             this.notification.error(err.message);
         });
     }
@@ -4604,7 +4601,7 @@ let DeviceAddComponent = class DeviceAddComponent {
             imsi: device.deviceInfo.imsi,
             iccid: device.deviceInfo.iccid,
             msisdn: device.deviceInfo.msisdn,
-            carrier: device.deviceInfo.carrier
+            carrier: device.deviceInfo.carrier,
         });
         this.modalService.open(content, { centered: true });
     }
@@ -4643,12 +4640,28 @@ let DeviceAddComponent = class DeviceAddComponent {
         modal.close();
     }
     getAllDevices(page = 1) {
-        this.apiSvc.getDevices(`?page=${page}&limit=${this.limit}`).subscribe((data) => {
+        // 👉 IF GROUP FILTER SELECTED
+        if (this.selectedGroup) {
+            this.apiSvc.getDevicesByGroup(this.selectedGroup).subscribe((res) => {
+                this.devices = res.data || [];
+                this.totalPages = 1;
+                this.currentPage = 1;
+            }, (err) => {
+                this.devices = [];
+            });
+            return;
+        }
+        // 👉 OTHERWISE NORMAL PAGINATION
+        this.apiSvc
+            .getDevices(`?page=${page}&limit=${this.limit}`)
+            .subscribe((data) => {
             this.devices = data.data.devices;
             this.totalPages = data.data.totalPages;
             this.currentPage = data.data.currentPage;
-            console.log("Devices:", this.devices);
         });
+    }
+    filterByGroup() {
+        this.getAllDevices(1);
     }
     nextPage() {
         if (this.currentPage < this.totalPages) {
@@ -4663,7 +4676,11 @@ let DeviceAddComponent = class DeviceAddComponent {
     getAllGroups() {
         this.apiSvc.getGrps().subscribe((data) => {
             this.groups = data.data;
-            console.log("Groups:", this.groups);
+            // create id → name map
+            this.groupMap = {};
+            this.groups.forEach((g) => {
+                this.groupMap[g._id] = g.grpName;
+            });
         });
     }
 };
@@ -4675,11 +4692,14 @@ DeviceAddComponent.ctorParameters = () => [
 ];
 DeviceAddComponent = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
     Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Component"])({
-        selector: 'app-device-add',
+        selector: "app-device-add",
         template: __webpack_require__(/*! raw-loader!./device-add.component.html */ "./node_modules/raw-loader/index.js!./src/app/theme/layout/device/device-add/device-add.component.html"),
         styles: [__webpack_require__(/*! ./device-add.component.scss */ "./src/app/theme/layout/device/device-add/device-add.component.scss")]
     }),
-    tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"]("design:paramtypes", [_angular_forms__WEBPACK_IMPORTED_MODULE_2__["FormBuilder"], src_app_theme_shared_services_apis_service__WEBPACK_IMPORTED_MODULE_3__["ApisService"], src_app_theme_shared_services_toast_service__WEBPACK_IMPORTED_MODULE_4__["ToastService"], _ng_bootstrap_ng_bootstrap__WEBPACK_IMPORTED_MODULE_5__["NgbModal"]])
+    tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"]("design:paramtypes", [_angular_forms__WEBPACK_IMPORTED_MODULE_2__["FormBuilder"],
+        src_app_theme_shared_services_apis_service__WEBPACK_IMPORTED_MODULE_3__["ApisService"],
+        src_app_theme_shared_services_toast_service__WEBPACK_IMPORTED_MODULE_4__["ToastService"],
+        _ng_bootstrap_ng_bootstrap__WEBPACK_IMPORTED_MODULE_5__["NgbModal"]])
 ], DeviceAddComponent);
 
 
@@ -5023,6 +5043,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+
 let DeviceModule = class DeviceModule {
 };
 DeviceModule = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
@@ -5053,7 +5074,8 @@ DeviceModule = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
                     warning: 'toast-warning'
                 }
             }),
-            _ng_bootstrap_ng_bootstrap__WEBPACK_IMPORTED_MODULE_11__["NgbTooltipModule"]
+            _ng_bootstrap_ng_bootstrap__WEBPACK_IMPORTED_MODULE_11__["NgbTooltipModule"],
+            _angular_forms__WEBPACK_IMPORTED_MODULE_7__["FormsModule"]
         ]
     })
 ], DeviceModule);

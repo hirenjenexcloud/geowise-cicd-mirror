@@ -2752,6 +2752,9 @@ let ApisService = class ApisService {
     importDevicesToGroup(data) {
         return this.http.post("/api/groups/import", data);
     }
+    getDevicesByGroup(grpId) {
+        return this.http.get(`/api/groups/device/${grpId}`);
+    }
     // Firmware Module
     addFirmware(firmware) {
         console.log("Adding Firmware:", firmware);

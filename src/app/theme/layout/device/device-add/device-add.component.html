@@ -1,9 +1,4 @@
-<form
-  [formGroup]="DeviceForm"
-  (ngSubmit)="submit()"
-  class="card p-4"
-  novalidate
->
+<form [formGroup]="DeviceForm" (ngSubmit)="submit()" class="card p-4" novalidate>
 
   <h3 class="mb-4">Device Registration</h3>
 
@@ -11,61 +6,47 @@
   <div class="row">
     <div class="col-md-6 mb-3">
       <label class="form-label">IMEI</label>
-      <input
-        type="text"
-        class="form-control"
-        formControlName="imei"
-        placeholder="Enter IMEI"
-        inputmode="numeric"
-       pattern="[0-9]*"
-       oninput="this.value=this.value.replace(/[^0-9]/g,'')"
-         [ngClass]="{'is-invalid': DeviceForm.get('imei')?.touched && DeviceForm.get('imei')?.invalid}" />
+      <input type="text" class="form-control" formControlName="imei" placeholder="Enter IMEI" inputmode="numeric"
+        pattern="[0-9]*" oninput="this.value=this.value.replace(/[^0-9]/g,'')"
+        [ngClass]="{'is-invalid': DeviceForm.get('imei')?.touched && DeviceForm.get('imei')?.invalid}" />
 
-<div class="invalid-feedback"
-     *ngIf="DeviceForm.get('imei')?.touched">
+      <div class="invalid-feedback" *ngIf="DeviceForm.get('imei')?.touched">
 
-  <div *ngIf="DeviceForm.get('imei')?.hasError('required')">
-    IMEI is required
-  </div>
+        <div *ngIf="DeviceForm.get('imei')?.hasError('required')">
+          IMEI is required
+        </div>
 
-  <div *ngIf="DeviceForm.get('imei')?.hasError('pattern')">
-    IMEI must be exactly 15 digits
-  </div>
+        <div *ngIf="DeviceForm.get('imei')?.hasError('pattern')">
+          IMEI must be exactly 15 digits
+        </div>
 
-</div>
+      </div>
 
 
     </div>
 
     <div class="col-md-6 mb-3">
       <label class="form-label">IMSI</label>
-      <input
-        type="text"
-        class="form-control"
-        formControlName="imsi"
-        placeholder="Enter IMSI"
-        inputmode="numeric"
-       pattern="[0-9]*"
-       oninput="this.value=this.value.replace(/[^0-9]/g,'')"
-      [ngClass]="{'is-invalid': DeviceForm.get('imsi')?.touched && DeviceForm.get('imsi')?.invalid}" />
-      
+      <input type="text" class="form-control" formControlName="imsi" placeholder="Enter IMSI" inputmode="numeric"
+        pattern="[0-9]*" oninput="this.value=this.value.replace(/[^0-9]/g,'')"
+        [ngClass]="{'is-invalid': DeviceForm.get('imsi')?.touched && DeviceForm.get('imsi')?.invalid}" />
 
-<!-- <div class="invalid-feedback"
+
+      <!-- <div class="invalid-feedback"
      *ngIf="DeviceForm.get('imsi')?.touched && DeviceForm.get('imsi')?.hasError('required')">
   IMSI is required
 </div> -->
-<div class="invalid-feedback"
-     *ngIf="DeviceForm.get('imsi')?.touched">
+      <div class="invalid-feedback" *ngIf="DeviceForm.get('imsi')?.touched">
 
-  <div *ngIf="DeviceForm.get('imsi')?.hasError('required')">
-    IMSI is required
-  </div>
+        <div *ngIf="DeviceForm.get('imsi')?.hasError('required')">
+          IMSI is required
+        </div>
 
-  <div *ngIf="DeviceForm.get('imsi')?.hasError('pattern')">
-   IMSI must be 4 to 12 digits
-  </div>
+        <div *ngIf="DeviceForm.get('imsi')?.hasError('pattern')">
+          IMSI must be 4 to 12 digits
+        </div>
 
-</div>
+      </div>
 
     </div>
   </div>
@@ -74,54 +55,40 @@
   <div class="row">
     <div class="col-md-6 mb-3">
       <label class="form-label">ICCID</label>
-      <input
-        type="text"
-        class="form-control"
-        formControlName="iccid"
-        placeholder="Enter ICCID"
-        inputmode="numeric"
-         [ngClass]="{'is-invalid': DeviceForm.get('iccid')?.touched && DeviceForm.get('iccid')?.invalid}" />
+      <input type="text" class="form-control" formControlName="iccid" placeholder="Enter ICCID" inputmode="numeric"
+        [ngClass]="{'is-invalid': DeviceForm.get('iccid')?.touched && DeviceForm.get('iccid')?.invalid}" />
 
-   
-<div class="invalid-feedback"
-     *ngIf="DeviceForm.get('iccid')?.touched">
 
-  <div *ngIf="DeviceForm.get('iccid')?.hasError('required')">
-    ICCID is required
-  </div>
+      <div class="invalid-feedback" *ngIf="DeviceForm.get('iccid')?.touched">
 
-  <div *ngIf="DeviceForm.get('iccid')?.hasError('pattern')">
-    ICCID must be 4 to 20 digits
-  </div>
+        <div *ngIf="DeviceForm.get('iccid')?.hasError('required')">
+          ICCID is required
+        </div>
 
-</div>
+        <div *ngIf="DeviceForm.get('iccid')?.hasError('pattern')">
+          ICCID must be 4 to 20 digits
+        </div>
+
+      </div>
     </div>
 
     <div class="col-md-6 mb-3">
       <label class="form-label">MSISDN</label>
-      <input
-        type="text"
-        class="form-control"
-        formControlName="msisdn"
-        placeholder="Enter MSISDN"
-        inputmode="numeric"
-       pattern="[0-9]*"
-       oninput="this.value=this.value.replace(/[^0-9]/g,'')"
-         [ngClass]="{'is-invalid': DeviceForm.get('msisdn')?.touched && DeviceForm.get('msisdn')?.invalid}"
-      />
+      <input type="text" class="form-control" formControlName="msisdn" placeholder="Enter MSISDN" inputmode="numeric"
+        pattern="[0-9]*" oninput="this.value=this.value.replace(/[^0-9]/g,'')"
+        [ngClass]="{'is-invalid': DeviceForm.get('msisdn')?.touched && DeviceForm.get('msisdn')?.invalid}" />
 
-   <div class="invalid-feedback"
-     *ngIf="DeviceForm.get('msisdn')?.touched">
+      <div class="invalid-feedback" *ngIf="DeviceForm.get('msisdn')?.touched">
 
-  <div *ngIf="DeviceForm.get('msisdn')?.hasError('required')">
-    MSISDN is required
-  </div>
+        <div *ngIf="DeviceForm.get('msisdn')?.hasError('required')">
+          MSISDN is required
+        </div>
 
-  <div *ngIf="DeviceForm.get('msisdn')?.hasError('pattern')">
-    MSISDN must be 4 to 12 digits
-  </div>
+        <div *ngIf="DeviceForm.get('msisdn')?.hasError('pattern')">
+          MSISDN must be 4 to 12 digits
+        </div>
 
-</div>
+      </div>
     </div>
   </div>
 
@@ -130,41 +97,38 @@
     <div class="col-md-6 mb-3">
       <label class="form-label">Carrier</label>
       <select class="form-control" formControlName="carrier"
-       [ngClass]="{'is-invalid': DeviceForm.get('carrier')?.touched && DeviceForm.get('carrier')?.invalid}">
+        [ngClass]="{'is-invalid': DeviceForm.get('carrier')?.touched && DeviceForm.get('carrier')?.invalid}">
         <option value="">Select Carrier</option>
         <option *ngFor="let c of carriers" [value]="c">
           {{ c }}
         </option>
       </select>
       <div class="invalid-feedback"
-     *ngIf="DeviceForm.get('carrier')?.touched && DeviceForm.get('carrier')?.hasError('required')">
-  Carrier is required
-</div>
+        *ngIf="DeviceForm.get('carrier')?.touched && DeviceForm.get('carrier')?.hasError('required')">
+        Carrier is required
+      </div>
     </div>
 
-    
+
     <div class="col-md-6 mb-3">
       <label class="form-label">Group</label>
-      <select class="form-control" formControlName="grpId"  [ngClass]="{'is-invalid': DeviceForm.get('grpId')?.touched && DeviceForm.get('grpId')?.invalid}">
+      <select class="form-control" formControlName="grpId"
+        [ngClass]="{'is-invalid': DeviceForm.get('grpId')?.touched && DeviceForm.get('grpId')?.invalid}">
         <option value="">Select Group</option>
         <option *ngFor="let g of groups" [value]="g._id">
           {{ g.grpName }}
         </option>
       </select>
       <div class="invalid-feedback"
-     *ngIf="DeviceForm.get('grpId')?.touched && DeviceForm.get('grpId')?.hasError('required')">
-  Group is required
-</div>
+        *ngIf="DeviceForm.get('grpId')?.touched && DeviceForm.get('grpId')?.hasError('required')">
+        Group is required
+      </div>
     </div>
   </div>
 
   <!-- Submit -->
   <div class="d-flex justify-content-end mt-4">
-    <button
-      type="submit"
-      class="btn btn-primary px-4"
-      [disabled]="DeviceForm.invalid"
-    >
+    <button type="submit" class="btn btn-primary px-4" [disabled]="DeviceForm.invalid">
       Submit
     </button>
   </div>
@@ -174,7 +138,21 @@
 
 <!-- Device List Table -->
 <div class="card mt-4 p-4">
-  <h4 class="mb-3">Devices</h4>
+  <div class="d-flex justify-content-between align-items-center mb-3">
+
+    <h4 class="mb-0">Devices</h4>
+
+    <select class="form-control w-auto" [(ngModel)]="selectedGroup" (change)="filterByGroup()">
+
+      <option value="">All Groups</option>
+
+      <option *ngFor="let g of groups" [value]="g._id">
+        {{ g.grpName }}
+      </option>
+
+    </select>
+
+  </div>
 
   <div class="table-responsive">
     <table class="table table-bordered table-striped table-hover">
@@ -186,7 +164,7 @@
           <th>MSISDN</th>
           <th>Carrier</th>
           <!-- <th>User</th> -->
-          <!-- <th>Group</th> -->
+          <th>Group</th>
           <th>Actions</th>
         </tr>
       </thead>
@@ -198,6 +176,7 @@
           <td>{{ device.deviceInfo.iccid }}</td>
           <td>{{ device.deviceInfo.msisdn }}</td>
           <td>{{ device.deviceInfo.carrier }}</td>
+          <td>{{ groupMap[device.grpId] || '-' }}</td>
           <!-- <td>{{ device.clientId }}</td> -->
           <!-- <td>{{ device.grpId }}</td> -->
           <!-- <td class="text-center">
@@ -211,23 +190,21 @@
             Delete
           </button>
         </td> -->
-      <td class="text-center">
+          <td class="text-center">
 
-  <!-- Edit -->
-  <i class="fa fa-edit text-primary action-icon"
-     ngbTooltip="Edit Device"
-     (click)="openEditModal(editModal, device)">
-  </i>
+            <!-- Edit -->
+            <i class="fa fa-edit text-primary action-icon" ngbTooltip="Edit Device"
+              (click)="openEditModal(editModal, device)">
+            </i>
 
-  <!-- Delete -->
-  <i class="fa fa-trash text-danger action-icon"
-     ngbTooltip="Delete Device"
-     (click)="openDeleteModal(deleteModal, device)">
-  </i>
+            <!-- Delete -->
+            <i class="fa fa-trash text-danger action-icon" ngbTooltip="Delete Device"
+              (click)="openDeleteModal(deleteModal, device)">
+            </i>
 
-</td>
+          </td>
 
-      </tr>
+        </tr>
 
         <tr *ngIf="devices.length === 0">
           <td colspan="8" class="text-center text-muted">
@@ -238,19 +215,15 @@
     </table>
   </div>
 
-    <div class="d-flex justify-content-between align-items-center mt-3">
+  <div class="d-flex justify-content-between align-items-center mt-3">
 
-    <button class="btn btn-outline-primary btn-sm"
-            (click)="prevPage()"
-            [disabled]="currentPage===1">
+    <button class="btn btn-outline-primary btn-sm" (click)="prevPage()" [disabled]="currentPage===1 || selectedGroup">
       Previous
     </button>
 
     <span>Page {{currentPage}} of {{totalPages}}</span>
 
-    <button class="btn btn-outline-primary btn-sm"
-            (click)="nextPage()"
-            [disabled]="currentPage===totalPages">
+    <button class="btn btn-outline-primary btn-sm" (click)="nextPage()" [disabled]="currentPage===totalPages || selectedGroup">
       Next
     </button>
 
@@ -262,11 +235,9 @@
 <ng-template #editModal let-modal>
   <div class="modal-header">
     <h5 class="modal-title">Edit Device</h5>
-     <button type="button" class="close"
-        aria-label="Close"
-        (click)="modal.dismiss()">
-  <span aria-hidden="true">&times;</span>
-</button>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss()">
+      <span aria-hidden="true">&times;</span>
+    </button>
   </div>
 
   <div class="modal-body">
@@ -290,7 +261,7 @@
         <label>MSISDN</label>
         <input class="form-control" formControlName="msisdn">
       </div>
-        <div class="mb-3">
+      <div class="mb-3">
         <label>CARRIER</label>
         <input class="form-control" formControlName="carrier">
       </div>
@@ -298,10 +269,8 @@
   </div>
 
   <div class="modal-footer">
-    <button class="btn btn-secondary"
-            (click)="modal.dismiss()">Cancel</button>
-    <button class="btn btn-primary"
-            (click)="updateDevice(modal)">
+    <button class="btn btn-secondary" (click)="modal.dismiss()">Cancel</button>
+    <button class="btn btn-primary" (click)="updateDevice(modal)">
       Update
     </button>
   </div>
@@ -313,11 +282,9 @@
 <ng-template #deleteModal let-modal>
   <div class="modal-header">
     <h5 class="modal-title text-danger">Confirm Delete</h5>
-     <button type="button" class="close"
-        aria-label="Close"
-        (click)="modal.dismiss()">
-  <span aria-hidden="true">&times;</span>
-</button>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss()">
+      <span aria-hidden="true">&times;</span>
+    </button>
   </div>
 
   <div class="modal-body">
@@ -325,13 +292,9 @@
   </div>
 
   <div class="modal-footer">
-    <button class="btn btn-secondary"
-            (click)="modal.dismiss()">Cancel</button>
-    <button class="btn btn-danger"
-            (click)="confirmDelete(modal)">
+    <button class="btn btn-secondary" (click)="modal.dismiss()">Cancel</button>
+    <button class="btn btn-danger" (click)="confirmDelete(modal)">
       Delete
     </button>
   </div>
 </ng-template>
-
-

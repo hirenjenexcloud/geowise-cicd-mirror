@@ -36,15 +36,15 @@ export class ApisService {
   getDeviceHistory(imei: string) {
     return this.http.get("/api/device/history" + "?imei=" + imei);
   }
-//   getDeviceHistory(imei: string, from?: string, to?: string) {
-//   let url = `/api/device/history?imei=${imei}`;
+  //   getDeviceHistory(imei: string, from?: string, to?: string) {
+  //   let url = `/api/device/history?imei=${imei}`;
 
-//   if (from && to) {
-//     url += `&from=${from}&to=${to}`;
-//   }
+  //   if (from && to) {
+  //     url += `&from=${from}&to=${to}`;
+  //   }
 
-//   return this.http.get(url);
-// }
+  //   return this.http.get(url);
+  // }
 
   // Group Module
 
@@ -70,6 +70,10 @@ export class ApisService {
 
   importDevicesToGroup(data: any) {
     return this.http.post("/api/groups/import", data);
+  }
+
+  getDevicesByGroup(grpId: string) {
+    return this.http.get(`/api/groups/device/${grpId}`);
   }
 
   // Firmware Module
@@ -98,7 +102,7 @@ export class ApisService {
   }
 
   // Settings Module
-  getSettings(page:number=1,limit:number=10) {
+  getSettings(page: number = 1, limit: number = 10) {
     return this.http.get(`/api/settings?page=${page}&limit=${limit}`);
   }
 
@@ -117,5 +121,4 @@ export class ApisService {
   deleteSetting(id: string) {
     return this.http.delete(`/api/settings/${id}`);
   }
-  
 }
