@@ -31,7 +31,7 @@ const engineSchema = new mongoose.Schema(
 
 const fuelSchema = new mongoose.Schema(
   {
-    type: { type: Number },
+    type: { type: String },
     level: { type: Number }
   },
   { _id: false }

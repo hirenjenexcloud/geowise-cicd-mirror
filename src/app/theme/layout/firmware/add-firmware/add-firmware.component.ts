@@ -44,7 +44,7 @@ limit = 10;
     this.editFirmwareForm = this.fb.group({
       fwId: [''],
       swVersion: [''],
-      firmName: [''],
+      firmName: ['',Validators.required],
       firmwareFile: ['']
     });
   }
@@ -74,12 +74,20 @@ limit = 10;
         } else {
           this.notification.error(res.message);
         }
-      });
+      },
+      err=>{
+        console.error('Error updating firmware:', err);
+        
+          this.notification.error(err.error.message || 'Failed to update firmware');
+        
+      }
+    );
     }
         }
 
         // // Open delete modal
  openDeleteFirmwareModal(modal: any, firmware: any) {
+          this.selectedFirmware = firmware.firmName;
           this.selectedFirmwareId = firmware._id;
           this.modalService.open(modal, { centered: true });
         }
@@ -112,13 +120,48 @@ onFileSelect(event: any) {
     console.log('Selected File:', this.selectedFile.name);
   }
 }
+// onFileChange(event: any) {
+//   if (event.target.files.length > 0) {
+//     this.selectedFile = event.target.files[0];
+//     console.log('Selected File:', this.selectedFile.name);
+//     this.displayfile = this.selectedFile.name;
+//   }
+// }
+
 onFileChange(event: any) {
-  if (event.target.files.length > 0) {
-    this.selectedFile = event.target.files[0];
-    console.log('Selected File:', this.selectedFile.name);
-    this.displayfile = this.selectedFile.name;
+  if (event.target.files.length === 0) return;
+
+  const file = event.target.files[0];
+  const fileName = file.name.toLowerCase();
+  const fileExtension = fileName.split('.').pop();
+
+  const allowedExtensions = ['gbl', 'bin'];
+
+  // 🔒 Extension validation
+  if (!allowedExtensions.includes(fileExtension || '')) {
+    this.notification.error('Only .gbl and .bin firmware files are allowed.');
+    event.target.value = '';
+    this.selectedFile = null;
+    this.displayfile = '';
+    return;
   }
+
+  // const maxSize = 20 * 1024 * 1024;
+  // if (file.size > maxSize) {
+  //   this.notification.error('File size must be less than 20MB.');
+  //   event.target.value = '';
+  //   this.selectedFile = null;
+  //   this.displayfile = '';
+  //   return;
+  // }
+
+
+  this.selectedFile = file;
+  console.log('Selected File:', this.selectedFile.name);
+  this.firmwareForm.get('firmwareFile').markAsTouched();
+  this.displayfile = this.selectedFile.name;
 }
+
 AddFirmware() {
   console.log("this.firmwareForm.value:", this.firmwareForm.value);
   if (!this.selectedFile) {
@@ -147,9 +190,15 @@ AddFirmware() {
       this.getAllFirmwares();
 
     } else {
+      
       this.notification.error(res.message);
     }
-  }
+  },
+  (err) => {
+      console.log("Full error response:", err);
+      const errorMessage = err.error.message || err.message || "Something went wrong";
+      this.notification.error(errorMessage);
+    }
 );
 }
 

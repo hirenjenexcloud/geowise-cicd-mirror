@@ -85,7 +85,7 @@
         </div>
 
         <div *ngIf="DeviceForm.get('msisdn')?.hasError('pattern')">
-          MSISDN must be 4 to 12 digits
+          MSISDN must be 4 to 15 digits
         </div>
 
       </div>
@@ -249,28 +249,82 @@
 
       <div class="mb-3">
         <label>IMSI</label>
-        <input class="form-control" formControlName="imsi">
+        <input class="form-control" formControlName="imsi"
+        [ngClass]="{'is-invalid': editForm.get('imsi')?.touched && editForm.get('imsi')?.invalid}"
+        >
+
+        <div class="invalid-feedback" *ngIf="editForm.get('imsi')?.touched">
+
+        <div *ngIf="editForm.get('imsi')?.hasError('required')">
+          IMSI is required
+        </div>
+
+        <div *ngIf="editForm.get('imsi')?.hasError('pattern')">
+          IMSI must be 4 to 12 digits
+        </div>
+
+      </div>
       </div>
 
       <div class="mb-3">
         <label>ICCID</label>
-        <input class="form-control" formControlName="iccid">
+        <input class="form-control" formControlName="iccid"
+        [ngClass]="{'is-invalid': editForm.get('iccid')?.touched && editForm.get('iccid')?.invalid}"
+        >
+
+        <div class="invalid-feedback" *ngIf="editForm.get('iccid')?.touched">
+          <div *ngIf="editForm.get('iccid')?.hasError('required')">
+            ICCID is required
+          </div>
+          <div *ngIf="editForm.get('iccid')?.hasError('pattern')">
+            ICCID must be 4 to 20 digits
+          </div>
+        </div>
       </div>
 
       <div class="mb-3">
         <label>MSISDN</label>
-        <input class="form-control" formControlName="msisdn">
+        <input class="form-control" formControlName="msisdn"
+        [ngClass]="{'is-invalid': editForm.get('msisdn')?.touched && editForm.get('msisdn')?.invalid}"
+        >
+
+        <div class="invalid-feedback" *ngIf="editForm.get('msisdn')?.touched">
+          <div *ngIf="editForm.get('msisdn')?.hasError('required')">
+            MSISDN is required
+          </div>
+          <div *ngIf="editForm.get('msisdn')?.hasError('pattern')">
+            MSISDN must be 4 to 15 digits
+          </div>
+        </div>
       </div>
+       <div class="mb-3">
+ <div class="mb-3">
+  <label>GROUP</label>
+  <input 
+    class="form-control"
+    [value]="groupMap[editForm.get('grpId')?.value] || ''"
+    disabled>
+
+</div>
+</div>
       <div class="mb-3">
         <label>CARRIER</label>
-        <input class="form-control" formControlName="carrier">
+        <input class="form-control" formControlName="carrier"
+        [ngClass]="{'is-invalid': editForm.get('carrier')?.touched && editForm.get('carrier')?.invalid}"
+        >
+
+        <div class="invalid-feedback" *ngIf="editForm.get('carrier')?.touched">
+          <div *ngIf="editForm.get('carrier')?.hasError('required')">
+            Carrier is required
+          </div>
+        </div>
       </div>
     </form>
   </div>
 
   <div class="modal-footer">
     <button class="btn btn-secondary" (click)="modal.dismiss()">Cancel</button>
-    <button class="btn btn-primary" (click)="updateDevice(modal)">
+    <button class="btn btn-primary" [disabled]="editForm.invalid" (click)="updateDevice(modal)">
       Update
     </button>
   </div>
@@ -289,6 +343,7 @@
 
   <div class="modal-body">
     Are you sure you want to delete this device
+    <b><strong>{{ selectedDevice.imei }}</strong></b> ?
   </div>
 
   <div class="modal-footer">

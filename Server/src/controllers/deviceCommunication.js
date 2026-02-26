@@ -139,8 +139,7 @@ function parsePacket(client) {
 
       const devicePacket = buildDevicePacket(parsed, packetHex, true);
       const deviceData = buildDevicePacket(parsed, packetHex, false);
-      const sendDTC = sendDtcData(parsed);
-      console.log("DTC Data to send:", sendDTC);
+  
 
       socketInstance.emit("geowise", deviceData);
       logger.info("Event Type Name :-", allPacketsDef.eType[parsed.eType] || "Unknown");
@@ -251,6 +250,7 @@ function canPacketParseing(client) {
 
 
 function buildDevicePacket(parsed, packetHex, includePacketInfo) {
+  const fuelType = parsed.fuelType === 1 ? "gas" : parsed.fuelType === 2 ? "petrol" : "unknown";
   const packet = {
     imei: parsed.imei,
     deviceData: {
@@ -271,7 +271,7 @@ function buildDevicePacket(parsed, packetHex, includePacketInfo) {
         odoMeter: parsed.odometer
       },
       fuel: {
-        type: parsed.fuelType,
+        type: fuelType,
         level: parsed.fuelLevel
       },
       temperature: {
@@ -319,7 +319,7 @@ function buildCanDevicePacket(parsed, packetHex) {
     },
     canData: {
       code: parsed.DTC,
-      info: dtcCodes.dtcCodes[parsed.DTC] || "Unknown",
+      // info: dtcCodes.dtcCodes[parsed.DTC] || "Unknown",
       power: {
         main: parsed.mainPower,
         battery: parsed.batteryPower

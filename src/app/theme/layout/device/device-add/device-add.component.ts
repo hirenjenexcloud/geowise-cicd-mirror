@@ -39,19 +39,20 @@ export class DeviceAddComponent implements OnInit {
     this.DeviceForm = this.fb.group({
       imei: ["", [Validators.required, Validators.pattern(/^[0-9]{15}$/)]],
       grpId: ["", Validators.required],
-      iccid: ["", Validators.required],
+      iccid: ["", [Validators.required, Validators.pattern(/^[0-9]{4,20}$/)]],
       imsi: ["", [Validators.required, Validators.pattern(/^[0-9]{4,20}$/)]],
-      msisdn: ["", [Validators.required, Validators.pattern(/^[0-9]{4,12}$/)]],
+      msisdn: ["", [Validators.required, Validators.pattern(/^[0-9]{4,15}$/)]],
       carrier: ["", Validators.required],
       // clientId: ['', Validators.required]
     });
 
     this.editForm = this.fb.group({
       imei: [""],
-      imsi: [""],
-      iccid: [""],
-      msisdn: [""],
-      carrier: [""],
+      iccid: ["", [Validators.required, Validators.pattern(/^[0-9]{4,20}$/)]],
+      imsi: ["", [Validators.required, Validators.pattern(/^[0-9]{4,20}$/)]],
+      msisdn: ["", [Validators.required, Validators.pattern(/^[0-9]{4,15}$/)]],
+      carrier: ["", Validators.required],
+       grpId: ["", Validators.required],
     });
 
     this.getAllDevices();
@@ -62,39 +63,113 @@ export class DeviceAddComponent implements OnInit {
     // }, 5000);
   }
 
+  // submit() {
+  //   var data = {
+  //     imei: this.DeviceForm.value.imei,
+  //     grpId: this.DeviceForm.value.grpId,
+  //     // clientId: this.DeviceForm.value.clientId,
+  //     deviceInfo: {
+  //       carrier: this.DeviceForm.value.carrier,
+  //       iccid: this.DeviceForm.value.iccid,
+  //       imsi: this.DeviceForm.value.imsi,
+  //       msisdn: this.DeviceForm.value.msisdn,
+  //     },
+  //   };
+
+  //   if (this.DeviceForm.invalid) {
+  //     this.DeviceForm.markAllAsTouched();
+  //     return;
+  //   }
+
+  //   this.apiSvc.addDevice(data).subscribe(
+  //     (res: any) => {
+
+  //       console.log("Device added:", res);
+  //       if (res.status == true) {
+  //         this.getAllDevices();
+  //         this.DeviceForm.reset();
+  //         this.notification.success(res.message);
+  //       } else {
+  //         this.notification.error(res.message);
+  //       }
+  //     },
+  //     (err) => {
+  //       console.log("Error adding device:", err);
+  //       if(err.message == "Duplicate key error")
+  //       {
+  //         console.log("Duplicate key error:", err);
+  //         err.message = "Device with this IMEI already exists.";
+  //         this.notification.error(err.message);
+  //       }
+  //       else{
+  //         console.log("Error adding device else case:", err);
+  //       this.notification.error(err.message);
+
+  //       }
+
+  //     },
+  //   );
+  // }
+
+  resetForm() {
+  this.DeviceForm.reset({
+    imei: '',
+    imsi: '',
+    iccid: '',
+    msisdn: '',
+    carrier: '',
+    grpId: ''
+  });
+}
+
   submit() {
-    var data = {
-      imei: this.DeviceForm.value.imei,
-      grpId: this.DeviceForm.value.grpId,
-      // clientId: this.DeviceForm.value.clientId,
-      deviceInfo: {
-        carrier: this.DeviceForm.value.carrier,
-        iccid: this.DeviceForm.value.iccid,
-        imsi: this.DeviceForm.value.imsi,
-        msisdn: this.DeviceForm.value.msisdn,
-      },
-    };
-
-    if (this.DeviceForm.invalid) {
-      this.DeviceForm.markAllAsTouched();
-      return;
-    }
-
-    this.apiSvc.addDevice(data).subscribe(
-      (res: any) => {
-        if (res.status == true) {
-          this.getAllDevices();
-          this.DeviceForm.reset();
-          this.notification.success(res.message);
-        } else {
-          this.notification.error(res.message);
-        }
-      },
-      (err) => {
-        this.notification.error(err.message);
-      },
-    );
+  if (this.DeviceForm.invalid) {
+    this.DeviceForm.markAllAsTouched();
+    return;
   }
+
+  const data = {
+    imei: this.DeviceForm.value.imei,
+    grpId: this.DeviceForm.value.grpId,
+    deviceInfo: {
+      carrier: this.DeviceForm.value.carrier,
+      iccid: this.DeviceForm.value.iccid,
+      imsi: this.DeviceForm.value.imsi,
+      msisdn: this.DeviceForm.value.msisdn,
+    },
+  };
+
+  this.apiSvc.addDevice(data).subscribe(
+    (res: any) => {
+      if (res.status === true) {
+        this.getAllDevices();
+        // this.DeviceForm.reset();
+        this.resetForm();
+        this.notification.success(res.message || "Device added successfully");
+      } else {
+        this.notification.error(res.message || "Something went wrong");
+      }
+    },
+    (err) => {
+      console.log("Full error response:", err);
+
+      const errorMessage =
+        err.error.message || err.message || "Something went wrong";
+
+      // Duplicate IMEI Handling
+      if (
+        errorMessage === "Duplicate key error" ||
+        err.error.details.includes("imei_1")
+      ) {
+        this.notification.error(
+          "Device with this IMEI already exists. Please use a different IMEI."
+        );
+      } else {
+        this.notification.error(errorMessage);
+      }
+    }
+  );
+}
 
   openEditModal(content: any, device: any) {
     this.selectedDevice = device;
@@ -105,12 +180,18 @@ export class DeviceAddComponent implements OnInit {
       iccid: device.deviceInfo.iccid,
       msisdn: device.deviceInfo.msisdn,
       carrier: device.deviceInfo.carrier,
+      grpId: device.grpId
     });
 
-    this.modalService.open(content, { centered: true });
+    this.modalService.open(content, { centered: true  });
   }
 
   updateDevice(modal: any) {
+    if (this.editForm.invalid) {
+      this.editForm.markAllAsTouched();
+      return;
+    }
+
     const updatedData = {
       ...this.selectedDevice,
       imei: this.editForm.value.imei,
@@ -213,4 +294,5 @@ export class DeviceAddComponent implements OnInit {
       });
     });
   }
+  
 }

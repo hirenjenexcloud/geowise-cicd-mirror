@@ -17,7 +17,13 @@
         class="form-control"
         formControlName="firmName"
         placeholder="Enter Firmware Name"
+        [ngClass]="{'is-invalid': firmwareForm.get('firmName')?.touched && firmwareForm.get('firmName')?.invalid}"
       />
+      <div class="invalid-feedback" *ngIf="firmwareForm.get('firmName')?.touched">
+        <div *ngIf="firmwareForm.get('firmName')?.hasError('required')">
+          Firmware Name is required
+        </div>
+      </div>
     </div>
 
     <div class="col-md-4 mb-3">
@@ -27,7 +33,13 @@
         class="form-control"
         formControlName="swVersion"
         placeholder="Enter Software Version"
+        [ngClass]="{'is-invalid': firmwareForm.get('swVersion')?.touched && firmwareForm.get('swVersion')?.invalid}"
       />
+      <div class="invalid-feedback" *ngIf="firmwareForm.get('swVersion')?.touched">
+        <div *ngIf="firmwareForm.get('swVersion')?.hasError('required')">
+          Software Version is required
+        </div>
+      </div>
     </div>
 
 <div class="col-md-4 mb-3">
@@ -36,7 +48,7 @@
   <label>Firmware File (Click </label>
   &nbsp;
   <label style="color: blue; text-decoration: underline; cursor: pointer">
-    <input
+    <!-- <input
       type="file"
       class="form-control"
       formControlName="firmwareFile"
@@ -44,7 +56,17 @@
       style="display: none"
     
       (change)="onFileChange($event)"
-    />
+    /> -->
+   <input
+  type="file"
+  class="form-control"
+  formControlName="firmwareFile"
+  accept=".gbl,.bin,application/octet-stream"
+  style="display: none"
+  (change)="onFileChange($event)"
+/>
+
+
     here
   </label>
   &nbsp;
@@ -254,7 +276,12 @@
 
       <div class="mb-3">
         <label>Firmware Name</label>
-        <input class="form-control" formControlName="firmName">
+        <input class="form-control" formControlName="firmName" [ngClass]="{'is-invalid': editFirmwareForm.get('firmName')?.invalid && (editFirmwareForm.get('firmName')?.dirty || editFirmwareForm.get('firmName')?.touched)}"  >
+        <div class="invalid-feedback" *ngIf="editFirmwareForm.get('firmName')?.touched">
+        <div *ngIf="editFirmwareForm.get('firmName')?.hasError('required')">
+          Firmware Name is required
+        </div>
+      </div>
       </div>
 
         <!-- <div class="mb-3">
@@ -282,7 +309,8 @@
   </div>
 
   <div class="modal-body">
-    Are you sure you want to delete this firmware?
+    Are you sure you want to delete this firmware
+    <b><strong>{{ selectedFirmware }}</strong></b>?
   </div>
 
   <div class="modal-footer">
