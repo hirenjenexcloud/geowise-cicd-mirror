@@ -139,6 +139,7 @@ export class AddSettingComponent implements OnInit {
         this.loadSettings();
       },
       (err: any) => {
+        modal.close();
         this.toast.error(
           err && err.error && err.error.message
             ? err.error.message

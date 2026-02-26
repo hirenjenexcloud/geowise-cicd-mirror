@@ -293,7 +293,7 @@
 
   <div class="modal-footer">
     <button class="btn btn-secondary" (click)="modal.dismiss()">Cancel</button>
-    <button class="btn btn-primary" (click)="updateFirmware(modal)">Update</button>
+    <button class="btn btn-primary" [disabled]="editFirmwareForm.invalid" (click)="updateFirmware(modal)">Update</button>
   </div>
 </ng-template>
 

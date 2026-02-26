@@ -61,15 +61,20 @@ limit = 10;
   
   // Update firmware 
   updateFirmware(modal: any) {
+    if(this.editFirmwareForm.invalid) {
+      this.editFirmwareForm.markAllAsTouched();
+      return;
+    }
     console.log('Updated Firmware Data:', this.editFirmwareForm.value,"and id:",this.selectedFirmwareId);
     if (this.editFirmwareForm.valid) {
       this.apiSvc.updateFirmware(this.editFirmwareForm.value,this.selectedFirmwareId).subscribe((res: any) => {
         if (res.status == true) {
           this.notification.success(res.message);
-          const index = this.firmwares.findIndex(fw => fw.fwId === this.editFirmwareForm.value.fwId);
-          if (index !== -1) {
-            this.firmwares[index] = { ...this.editFirmwareForm.value };
-          }
+          // const index = this.firmwares.findIndex(fw => fw.fwId === this.editFirmwareForm.value.fwId);
+          // if (index !== -1) {
+          //   this.firmwares[index] = { ...this.editFirmwareForm.value };
+          // }
+          this.getAllFirmwares();
           this.modalService.dismissAll();
         } else {
           this.notification.error(res.message);
@@ -77,9 +82,7 @@ limit = 10;
       },
       err=>{
         console.error('Error updating firmware:', err);
-        
-          this.notification.error(err.error.message || 'Failed to update firmware');
-        
+        this.notification.error('Failed to update firmware');
       }
     );
     }
