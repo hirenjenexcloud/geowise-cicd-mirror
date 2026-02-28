@@ -165,6 +165,8 @@
           <th>Carrier</th>
           <!-- <th>User</th> -->
           <th>Group</th>
+          <th>HW</th>
+          <th>SW</th>
           <th>Actions</th>
         </tr>
       </thead>
@@ -177,6 +179,8 @@
           <td>{{ device.deviceInfo.msisdn }}</td>
           <td>{{ device.deviceInfo.carrier }}</td>
           <td>{{ groupMap[device.grpId] || '-' }}</td>
+          <td>{{ device.hwVersion }}</td>
+          <td>{{ device.swVersion }}</td>
           <!-- <td>{{ device.clientId }}</td> -->
           <!-- <td>{{ device.grpId }}</td> -->
           <!-- <td class="text-center">
