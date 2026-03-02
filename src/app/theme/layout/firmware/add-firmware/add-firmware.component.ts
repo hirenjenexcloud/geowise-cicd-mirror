@@ -112,7 +112,13 @@ deleteFirmware(model:any)
                 this.modalService.dismissAll();
                 this.notification.error(res.message);
               }
-            });
+            },
+            err=>{
+              console.error('Error deleting firmware:', err);
+              this.notification.error(err.error.message || 'Failed to delete firmware');
+              this.modalService.dismissAll();
+            }
+          );
           
         }
 

@@ -1978,6 +1978,10 @@ let AddFirmwareComponent = class AddFirmwareComponent {
                 this.modalService.dismissAll();
                 this.notification.error(res.message);
             }
+        }, err => {
+            console.error('Error deleting firmware:', err);
+            this.notification.error(err.error.message || 'Failed to delete firmware');
+            this.modalService.dismissAll();
         });
     }
     onFileSelect(event) {
@@ -2192,6 +2196,7 @@ let AddGroupComponent = class AddGroupComponent {
                 swVersion: "",
                 desc: "",
             };
+            this.loadGroups(this.currentPage);
             // reset form state
             form.resetForm();
         }, (err) => {
@@ -2249,6 +2254,7 @@ let AddGroupComponent = class AddGroupComponent {
             this.toast.error(err && err.error && err.error.message
                 ? err.error.message
                 : "Failed to delete group");
+            modal.close();
         });
     }
     openImportModal(content, group) {

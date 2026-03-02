@@ -80,6 +80,7 @@ export class AddGroupComponent implements OnInit {
           swVersion: "",
           desc: "",
         };
+        this.loadGroups(this.currentPage);
 
         // reset form state
         form.resetForm();
@@ -160,7 +161,7 @@ export class AddGroupComponent implements OnInit {
       (res: any) => {
         this.toast.success(res.message || "Group deleted");
 
-        modal.close();
+       modal.close();
         this.loadGroups(this.currentPage);
       },
       (err: any) => {
@@ -169,6 +170,7 @@ export class AddGroupComponent implements OnInit {
             ? err.error.message
             : "Failed to delete group",
         );
+        modal.close();
       },
     );
   }
