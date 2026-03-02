@@ -94,21 +94,73 @@ exports.createFirmwares = async (req, res) => {
     }
 
     // Flush accumulated bytes into PACKET_SIZE chunks
-    async function flushAccumulated(allowPartial = false) {
-      while (acc.length >= PACKET_SIZE) {
-        packetIndex++;
-        const pkt = acc.slice(0, PACKET_SIZE);
-        acc = acc.slice(PACKET_SIZE);
-        await writePacket(packetIndex, pkt);
-      }
+    // async function flushAccumulated(allowPartial = false) {
+    //   while (acc.length >= PACKET_SIZE) {
+    //     packetIndex++;
+    //     const pkt = acc.slice(0, PACKET_SIZE);
+    //     acc = acc.slice(PACKET_SIZE);
+    //     await writePacket(packetIndex, pkt);
+    //   }
 
-      // Final partial packet
-      if (allowPartial && acc.length > 0) {
-        packetIndex++;
-        await writePacket(packetIndex, acc);
-        acc = Buffer.alloc(0);
-      }
+    //   // Final partial packet
+    //   if (allowPartial && acc.length > 0) {
+    //     packetIndex++;
+    //     await writePacket(packetIndex, acc);
+    //     acc = Buffer.alloc(0);
+    //   }
+    // }
+
+    // Flush accumulated bytes into PACKET_SIZE chunks
+async function flushAccumulated(allowPartial = false) {
+
+  while (acc.length >= PACKET_SIZE) {
+
+    packetIndex++;
+
+    // Packet data
+    const dataChunk = acc.slice(0, PACKET_SIZE);
+    acc = acc.slice(PACKET_SIZE);
+
+    // 16-bit packet checksum
+    let packetChecksum = 0;
+    for (let i = 0; i < dataChunk.length; i++) {
+      packetChecksum = (packetChecksum + dataChunk[i]) & 0xffff;
     }
+
+    // Build 5-byte packet header
+    const packetHeader = Buffer.alloc(5);
+    packetHeader.writeUInt8(0x3C, 0);                    // '<'
+    packetHeader.writeUInt16BE(dataChunk.length, 1);     // length
+    packetHeader.writeUInt16BE(packetChecksum, 3);       // checksum
+
+    const finalPacket = Buffer.concat([packetHeader, dataChunk]);
+
+    await writePacket(packetIndex, finalPacket);
+  }
+
+  // Final partial packet
+  if (allowPartial && acc.length > 0) {
+
+    packetIndex++;
+
+    const dataChunk = acc;
+    acc = Buffer.alloc(0);
+
+    let packetChecksum = 0;
+    for (let i = 0; i < dataChunk.length; i++) {
+      packetChecksum = (packetChecksum + dataChunk[i]) & 0xffff;
+    }
+
+    const packetHeader = Buffer.alloc(5);
+    packetHeader.writeUInt8(0x3C, 0);
+    packetHeader.writeUInt16BE(dataChunk.length, 1);
+    packetHeader.writeUInt16BE(packetChecksum, 3);
+
+    const finalPacket = Buffer.concat([packetHeader, dataChunk]);
+
+    await writePacket(packetIndex, finalPacket);
+  }
+}
 
     // Add header as first bytes of data stream
     acc = Buffer.concat([acc, headerBuf]);
