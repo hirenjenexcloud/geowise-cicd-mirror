@@ -13,6 +13,35 @@ const dtcCodes = require('../utils/dtcCode');
 const socket= require('../config/socket-io.config');
 let socketInstance = socket.getSocket();
 
+//Fuel Types
+ const fuelTypeMap = {
+  0: "Not available",
+  1: "Gasoline",
+  2: "Methanol",
+  3: "Ethanol",
+  4: "Diesel",
+  5: "LPG",
+  6: "CNG",
+  7: "Propane",
+  8: "Electric",
+  9: "Bifuel running Gasoline",
+  10: "Bifuel running Methanol",
+  11: "Bifuel running Ethanol",
+  12: "Bifuel running LPG",
+  13: "Bifuel running CNG",
+  14: "Bifuel running Propane",
+  15: "Bifuel running Electricity",
+  16: "Bifuel running electric and combustion engine",
+  17: "Hybrid gasoline",
+  18: "Hybrid Ethanol",
+  19: "Hybrid Diesel",
+  20: "Hybrid Electric",
+  21: "Hybrid running electric and combustion engine",
+  22: "Hybrid Regenerative",
+  23: "Bifuel running diesel"
+};
+
+
 function deviceCommutionHandler(client) {
   startOtaRequestService(client);
   DeviceInitReq(client);
@@ -250,7 +279,10 @@ function canPacketParseing(client) {
 
 
 function buildDevicePacket(parsed, packetHex, includePacketInfo) {
-  const fuelType = parsed.fuelType === 1 ? "gas" : parsed.fuelType === 2 ? "petrol" : "unknown";
+
+  console.log("Parsed Packet fuelType : ", parsed.fuelType);
+  const fuelType = fuelTypeMap[parsed.fuelType] || "Unknown";
+
   const packet = {
     imei: parsed.imei,
     deviceData: {
