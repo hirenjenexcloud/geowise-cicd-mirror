@@ -212,7 +212,7 @@ loadDeviceHistory() {
 
   console.log("Loading device history...");
 
-  this.deviceService.getDeviceHistory('353081090133664')
+  this.deviceService.getDeviceHistory('350578850022519')
     .subscribe((res: any) => {
 
       if (!res || !res.data || !res.data.data || !res.data.data.length) {
