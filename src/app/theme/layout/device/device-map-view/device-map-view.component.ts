@@ -15,9 +15,9 @@ export class DeviceMapViewComponent implements OnInit, OnDestroy {
   zoom: number = 15;
   google: any;
   map: any;
-polyline: any;
-deviceMarker: any;
-  
+  polyline: any;
+  deviceMarker: any;
+
 
   polylineOptions: any;
 
@@ -29,74 +29,21 @@ deviceMarker: any;
 
   intervalId: any;
   currentIndex = 0;
+  selectedImei: string = '';
+  imeiList: string[] = [];
 
-  // dummyRoute = [
-  //   { lat: 28.6139, lng: 77.2090 },
-  //   { lat: 28.6145, lng: 77.2100 },
-  //   { lat: 28.6152, lng: 77.2110 },
-  //   { lat: 28.6160, lng: 77.2120 },
-  //   { lat: 28.6170, lng: 77.2135 },
-  //   { lat: 28.6180, lng: 77.2150 }
-  // ];
-
-  constructor(private deviceService: ApisService) {}
+  constructor(private deviceService: ApisService) { }
 
   ngOnInit(): void {
-    // this.deviceService.getDeviceHistory('353081090133664').subscribe((data: any) => {
 
-    //   console.log("device history:", data);
-    // })
-    
-    // setTimeout(() => {
-    //   if (typeof google !== 'undefined' && google.maps) {
-    //     this.polylineOptions = {
-    //       strokeColor: '#008000',
-    //       strokeWeight: 3,
-    //       icons: [
-    //         {
-    //           icon: {
-    //             path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
-    //             scale: 4,
-    //             strokeColor: 'green',
-    //             fillColor: 'green',
-    //             fillOpacity: 1
-    //           },
-    //           offset: '100%',
-    //           repeat: '50px'
-    //         }
-    //       ]
-    //     };
-    //   }
-    // }, 1000);
+     // API call on component load
+    this.deviceService.getDevices(this.selectedImei)
+      .subscribe((res: any) => {
+        console.log('Device Data:', res);
+        this.imeiList = res.data.devices.map((device: any) => device.imei);
+      });
 
-    // this.startDummyTracking();
   }
-
-//   startDummyTracking() {
-
-//     this.intervalId = setInterval(() => {
-
-//       if (this.currentIndex < this.dummyRoute.length) {
-
-//         const point = this.dummyRoute[this.currentIndex];
-//         let rotation = 0;
-
-//         if (this.currentIndex > 0) {
-//           const prev = this.dummyRoute[this.currentIndex - 1];
-//           rotation = this.getRotationAngle(prev, point);
-//         }
-
-//         this.lat = point.lat;
-//         this.lng = point.lng;
-
-//      const currentPath = this.polyline.getPath();
-// currentPath.push(new google.maps.LatLng(point.lat, point.lng));
-
-//         this.currentIndex++;
-//       }
-
-//     }, 2000);
-//   }
 
   getRotationAngle(p1: any, p2: any): number {
     const dy = p2.lat - p1.lat;
@@ -105,193 +52,150 @@ deviceMarker: any;
     return theta * (180 / Math.PI);
   }
 
-onMapReady(mapInstance: any) {
-  this.map = mapInstance;
+  onMapReady(mapInstance: any) {
+    this.map = mapInstance;
 
 
-  this.polyline = new google.maps.Polyline({
-    map: this.map,
-    path: [],
-    strokeColor: '#008000',
-    strokeWeight: 3,
-    icons: [
-      {
-        icon: {
-          path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
-          scale: 4,
-          strokeColor: 'green',
-          fillColor: 'green',
-          fillOpacity: 1
-        },
-        offset: '100%',
-        // repeat: '50px'
+    this.polyline = new google.maps.Polyline({
+      map: this.map,
+      path: [],
+      strokeColor: '#008000',
+      strokeWeight: 3,
+      icons: [
+        {
+          icon: {
+            path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
+            scale: 4,
+            strokeColor: 'green',
+            fillColor: 'green',
+            fillOpacity: 1
+          },
+          offset: '100%',
+          // repeat: '50px'
+        }
+      ]
+    });
+
+
+    this.deviceMarker = new google.maps.Marker({
+      map: this.map,
+      position: { lat: this.lat, lng: this.lng },
+      icon: {
+        path: google.maps.SymbolPath.STOP,
+        scale: 6,
+        strokeColor: 'red',
+        fillColor: 'red',
+        fillOpacity: 1,
+        rotation: 0
       }
-    ]
-  });
+    });
+
+    this.loadDeviceHistory();
+  }
 
 
-  this.deviceMarker = new google.maps.Marker({
-    map: this.map,
-    position: { lat: this.lat, lng: this.lng },
-    icon: {
-      path: google.maps.SymbolPath.STOP,
-      scale: 6,
-      strokeColor: 'red',
-      fillColor: 'red',
-      fillOpacity: 1,
-      rotation: 0
-    }
-  });
+  loadDeviceHistory() {
 
-  this.loadDeviceHistory();
-}
+    console.log("Loading device history......");
 
-// loadDeviceHistory() {
+    const infoWindow = new google.maps.InfoWindow();
 
-//   console.log("Loading device history...");
+    this.deviceService.getDeviceHistory(this.selectedImei)
+      .subscribe((res: any) => {
 
-//   this.deviceService.getDeviceHistory('353081090133664')
-//     .subscribe((res: any) => {
+        if (!res || !res.data || !res.data.data || !res.data.data.length) {
+          console.log("No history found");
+          return;
+        }
 
-//       console.log("Full API response:", res);
+        const history = res.data.data;
 
-//       if (!res || !res.data || !res.data.data || !res.data.data.length) {
-//         console.log("No history found");
-//         return;
-//       }
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
 
-//       const history = res.data.data;
+        const tomorrow = new Date(today);
+        tomorrow.setDate(today.getDate() + 1);
 
-//       console.log("Device history records:", history.length);
+        const todayHistory = history.filter(function (item: any) {
 
-//       // ✅ Sort by createdAt
-//       history.sort(function (a: any, b: any) {
-//         return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-//       });
+          if (!item.createdAt) return false;
 
-//       // ✅ Clear old polyline
-//       this.polyline.setPath([]);
+          const createdAt = new Date(item.createdAt);
+          return createdAt >= today && createdAt < tomorrow;
 
+        });
 
-//       for (let index = 0; index < history.length; index++) {
+        if (!todayHistory.length) {
+          console.log("No records found for today");
+          return;
+        }
 
-//     const item = history[index];
-//     const lat = item.deviceData.location.lat;
-//     const lng = item.deviceData.location.long;
-//     const latLng = new google.maps.LatLng(lat, lng);
+        todayHistory.sort(function (a: any, b: any) {
+          return new Date(a.createdAt).getTime() -
+            new Date(b.createdAt).getTime();
+        });
 
-//     // Add point to polyline
-//     // this.polyline.getPath().push(latLng);
+        for (let i = 0; i < todayHistory.length; i++) {
 
-//     // Move device marker
-//     this.deviceMarker.setPosition(latLng);
-//     this.map.panTo(latLng);
+          const item = todayHistory[i];
 
-//     new google.maps.Marker({
-//       position: latLng,
-//       map: this.map,
-//       icon: {
-//         path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
-//         scale: 4,
-//         strokeColor: 'green',
-//         fillColor: 'green',
-//         fillOpacity: 1,
-//         anchor: new google.maps.Point(0, 2) 
-//       }
-//     });
-// }
-
-
-//     }, (error) => {
-//       console.error("Error loading device history:", error);
-//     });
-
-// }
-
-loadDeviceHistory() {
-
-  console.log("Loading device history...");
-
-  this.deviceService.getDeviceHistory('350578850022519')
-    .subscribe((res: any) => {
-
-      if (!res || !res.data || !res.data.data || !res.data.data.length) {
-        console.log("No history found");
-        return;
-      }
-
-      const history = res.data.data;
-
-     
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-
-     
-      const tomorrow = new Date(today);
-      tomorrow.setDate(today.getDate() + 1);
-
-      const todayHistory = history.filter(function (item: any) {
-
-        if (!item.createdAt) return false;
-
-        const createdAt = new Date(item.createdAt);
-        return createdAt >= today && createdAt < tomorrow;
-
-      });
-
-      if (!todayHistory.length) {
-        console.log("No records found for today");
-        return;
-      }
-
-      // ✅ Sort ascending (old → new)
-      todayHistory.sort(function (a: any, b: any) {
-        return new Date(a.createdAt).getTime() -
-               new Date(b.createdAt).getTime();
-      });
-
-      this.polyline.setPath([]);
-
-      for (let i = 0; i < todayHistory.length; i++) {
-
-        const item = todayHistory[i];
-
-        if (!item.deviceData ||
+          if (!item.deviceData ||
             !item.deviceData.location ||
             item.deviceData.location.lat == null ||
             item.deviceData.location.long == null) {
-          continue;
+            continue;
+          }
+
+          const lat = item.deviceData.location.lat;
+          const lng = item.deviceData.location.long;
+
+          const latLng = new google.maps.LatLng(lat, lng);
+
+          const marker = new google.maps.Marker({
+            position: latLng,
+            map: this.map,
+            title: "Device Location",
+            icon: {
+              path: google.maps.SymbolPath.CIRCLE,
+              scale: 4,
+              fillColor: "#ff0000",
+              fillOpacity: 1,
+              strokeWeight: 0
+            }
+          });
+
+          // ✅ Marker click event
+          marker.addListener("click", () => {
+
+            const content = `
+            <div>
+              <strong>Latitude:</strong> ${lat} <br/>
+              <strong>Longitude:</strong> ${lng}
+            </div>
+          `;
+
+            infoWindow.setContent(content);
+            infoWindow.open(this.map, marker);
+
+          });
+
         }
 
-        const lat = item.deviceData.location.lat;
-        const lng = item.deviceData.location.long;
+        const last = todayHistory[todayHistory.length - 1];
 
-        const latLng = new google.maps.LatLng(lat, lng);
+        if (last && last.deviceData && last.deviceData.location) {
 
-      
-        this.polyline.getPath().push(latLng);
+          this.map.panTo({
+            lat: last.deviceData.location.lat,
+            lng: last.deviceData.location.long
+          });
 
-       
-        this.deviceMarker.setPosition(latLng);
-      }
+        }
 
-     
-      const last = todayHistory[todayHistory.length - 1];
-
-      if (last &&
-          last.deviceData &&
-          last.deviceData.location) {
-
-        this.map.panTo({
-          lat: last.deviceData.location.lat,
-          lng: last.deviceData.location.long
-        });
-      }
-
-    }, (error) => {
-      console.error("Error loading device history:", error);
-    });
-}
+      }, (error) => {
+        console.error("Error loading device history:", error);
+      });
+  }
 
 
 

@@ -1,27 +1,26 @@
-<agm-map
+<div style="padding: 10px;">
+  <label for="imei-select">Select IMEI:</label>
+  <select 
+    id="imei-select" 
+    [(ngModel)]="selectedImei" 
+    (change)="onImeiSelected($event)"
+    style="padding: 5px; margin-left: 10px;">
+    <option value="">-- Choose IMEI --</option>
+    <!-- <option value="350578850022519">350578850022519</option> -->
+    <option *ngFor="let imei of imeiList" [value]="imei">
+      {{ imei }}
+    </option>
+  </select>
+</div>
 
+<agm-map
+  *ngIf="selectedImei"
   [latitude]="lat"
   [longitude]="lng"
   [zoom]="zoom"
   (mapReady)="onMapReady($event)"
   style="height: 100vh; width: 100%;">
 
-
-
-  <!-- Path -->
-  <!-- <agm-polyline
-    [strokeColor]="'green'"
-    [strokeWeight]="3">
-
-    <agm-polyline-point
-      *ngFor="let point of path"
-      [latitude]="point.lat"
-      [longitude]="point.lng">
-    </agm-polyline-point>
-
-  </agm-polyline> -->
-
-  <!-- Green markers for every lat/lng -->
   <agm-marker
     *ngFor="let point of path; let i = index"
     [latitude]="point.lat"

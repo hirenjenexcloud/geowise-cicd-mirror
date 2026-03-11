@@ -34,7 +34,7 @@ export class ApisService {
   }
 
   getDeviceHistory(imei: string) {
-    return this.http.get("/api/device/history" + "?imei=" + imei);
+    return this.http.get("/api/device/history" + "?imei=" + imei + "&limit=150");
   }
   //   getDeviceHistory(imei: string, from?: string, to?: string) {
   //   let url = `/api/device/history?imei=${imei}`;

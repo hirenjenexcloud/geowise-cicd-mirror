@@ -166,7 +166,7 @@ exports.deviceHistory = async (req, res) => {
       .sort(sorting)
       .lean();
 
-    console.log("Fetched data:", data);
+    // console.log("Fetched data:", data);
 
     return success(res, "OK", "Fetched successfully", {
       totalRecords: total,
