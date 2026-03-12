@@ -13,8 +13,11 @@ services:
       - "1883:1883"
 
     volumes:
+      - ./Server:/usr/src/app/Server
+      - ./dist:/usr/src/app/dist
       - /opt/geotracker/uploads:/usr/src/app/Server/src/uploads
       - /opt/geotracker/logs:/usr/src/app/Server/src/logs
+      - /usr/src/app/Server/node_modules
 
     environment:
       - NODE_ENV=production

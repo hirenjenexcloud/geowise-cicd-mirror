@@ -19,4 +19,4 @@ RUN chown -R node:node /usr/src/app
 USER node
 
 EXPOSE 4000
-CMD ["node", "Server/src/server.js"]
+CMD ["npx","nodemon","--legacy-watch","Server/src/server.js"]

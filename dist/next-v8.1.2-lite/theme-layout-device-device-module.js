@@ -4877,7 +4877,7 @@ let DeviceMapViewComponent = class DeviceMapViewComponent {
             const previousDate = new Date(selectedDate);
             previousDate.setDate(selectedDate.getDate() + 1);
             const previousDateISO = previousDate.toISOString();
-            console.log("Loading device history......", selectedDateISO, previousDateISO);
+            console.log("Loading device history......");
             const infoWindow = new google.maps.InfoWindow();
             this.deviceService.getDeviceHistory(this.selectedImei, selectedDateISO, previousDateISO)
                 .subscribe((res) => {
@@ -4886,7 +4886,7 @@ let DeviceMapViewComponent = class DeviceMapViewComponent {
                     return;
                 }
                 const todayHistory = res.data.data;
-                console.log("todayHistory............", todayHistory);
+                // console.log("todayHistory............", todayHistory);
                 if (!todayHistory.length) {
                     console.log("No records found for today");
                     return;
