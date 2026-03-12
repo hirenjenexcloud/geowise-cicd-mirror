@@ -348,7 +348,7 @@ function buildCanDevicePacket(parsed, packetHex) {
     },
     canData: {
       code: parsed.DTC,
-      // info: dtcCodes.dtcCodes[parsed.DTC] || "Unknown",
+      info: dtcCodes.dtcCodes[parsed.DTC] || "Unknown",
       power: {
         main: parsed.mainPower,
         battery: parsed.batteryPower
