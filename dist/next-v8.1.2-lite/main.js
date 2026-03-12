@@ -2771,8 +2771,8 @@ let ApisService = class ApisService {
     deleteDevice(id) {
         return this.http.delete(`/api/device/${id}`);
     }
-    getDeviceHistory(imei) {
-        return this.http.get("/api/device/history" + "?imei=" + imei + "&limit=150");
+    getDeviceHistory(imei, start, end) {
+        return this.http.get(`/api/device/history?imei=${imei}&createdStart=${start}&createdEnd=${end}&limit=150`);
     }
     //   getDeviceHistory(imei: string, from?: string, to?: string) {
     //   let url = `/api/device/history?imei=${imei}`;

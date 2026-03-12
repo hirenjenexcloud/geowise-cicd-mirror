@@ -33,8 +33,8 @@ export class ApisService {
     return this.http.delete(`/api/device/${id}`);
   }
 
-  getDeviceHistory(imei: string) {
-    return this.http.get("/api/device/history" + "?imei=" + imei + "&limit=150");
+  getDeviceHistory(imei: string, start: any, end: any) {
+    return this.http.get(`/api/device/history?imei=${imei}&createdStart=${start}&createdEnd=${end}&limit=150`);
   }
   //   getDeviceHistory(imei: string, from?: string, to?: string) {
   //   let url = `/api/device/history?imei=${imei}`;

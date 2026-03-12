@@ -260,9 +260,6 @@ function canPacketParseing(client) {
         offset += bytes;
       }
 
-      parsed["DTC"] = packetHex.substring(34 ,39);
-      // logger.info(`DTC Parsed Packet Data: ${JSON.stringify(parsed)}`);
-
       const canPacket = buildCanDevicePacket(parsed, packetHex);
 
 

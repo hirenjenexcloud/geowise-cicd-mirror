@@ -6,15 +6,22 @@
     (change)="onImeiSelected($event)"
     style="padding: 5px; margin-left: 10px;">
     <option value="">-- Choose IMEI --</option>
-    <!-- <option value="350578850022519">350578850022519</option> -->
     <option *ngFor="let imei of imeiList" [value]="imei">
       {{ imei }}
     </option>
   </select>
+
+  <label for="date-picker" style="margin-left: 20px;">Select Date:</label>
+  <input 
+    id="date-picker" 
+    type="date" 
+    [(ngModel)]="selectedDate" 
+    (change)="onDateSelected($event)"
+    style="padding: 5px; margin-left: 10px;">
 </div>
 
 <agm-map
-  *ngIf="selectedImei"
+  *ngIf="selectedImei && selectedDate"
   [latitude]="lat"
   [longitude]="lng"
   [zoom]="zoom"

@@ -4434,7 +4434,7 @@ module.exports = "<form [formGroup]=\"DeviceForm\" (ngSubmit)=\"submit()\" class
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<div style=\"padding: 10px;\">\r\n  <label for=\"imei-select\">Select IMEI:</label>\r\n  <select \r\n    id=\"imei-select\" \r\n    [(ngModel)]=\"selectedImei\" \r\n    (change)=\"onImeiSelected($event)\"\r\n    style=\"padding: 5px; margin-left: 10px;\">\r\n    <option value=\"\">-- Choose IMEI --</option>\r\n    <!-- <option value=\"350578850022519\">350578850022519</option> -->\r\n    <option *ngFor=\"let imei of imeiList\" [value]=\"imei\">\r\n      {{ imei }}\r\n    </option>\r\n  </select>\r\n</div>\r\n\r\n<agm-map\r\n  *ngIf=\"selectedImei\"\r\n  [latitude]=\"lat\"\r\n  [longitude]=\"lng\"\r\n  [zoom]=\"zoom\"\r\n  (mapReady)=\"onMapReady($event)\"\r\n  style=\"height: 100vh; width: 100%;\">\r\n\r\n  <agm-marker\r\n    *ngFor=\"let point of path; let i = index\"\r\n    [latitude]=\"point.lat\"\r\n    [longitude]=\"point.lng\"\r\n    [iconUrl]=\"'http://maps.google.com/mapfiles/ms/icons/FORWARD_CLOSED_ARROW.png'\">\r\n  </agm-marker>\r\n\r\n</agm-map>\r\n"
+module.exports = "<div style=\"padding: 10px;\">\r\n  <label for=\"imei-select\">Select IMEI:</label>\r\n  <select \r\n    id=\"imei-select\" \r\n    [(ngModel)]=\"selectedImei\" \r\n    (change)=\"onImeiSelected($event)\"\r\n    style=\"padding: 5px; margin-left: 10px;\">\r\n    <option value=\"\">-- Choose IMEI --</option>\r\n    <option *ngFor=\"let imei of imeiList\" [value]=\"imei\">\r\n      {{ imei }}\r\n    </option>\r\n  </select>\r\n\r\n  <label for=\"date-picker\" style=\"margin-left: 20px;\">Select Date:</label>\r\n  <input \r\n    id=\"date-picker\" \r\n    type=\"date\" \r\n    [(ngModel)]=\"selectedDate\" \r\n    (change)=\"onDateSelected($event)\"\r\n    style=\"padding: 5px; margin-left: 10px;\">\r\n</div>\r\n\r\n<agm-map\r\n  *ngIf=\"selectedImei && selectedDate\"\r\n  [latitude]=\"lat\"\r\n  [longitude]=\"lng\"\r\n  [zoom]=\"zoom\"\r\n  (mapReady)=\"onMapReady($event)\"\r\n  style=\"height: 100vh; width: 100%;\">\r\n\r\n  <agm-marker\r\n    *ngFor=\"let point of path; let i = index\"\r\n    [latitude]=\"point.lat\"\r\n    [longitude]=\"point.lng\"\r\n    [iconUrl]=\"'http://maps.google.com/mapfiles/ms/icons/FORWARD_CLOSED_ARROW.png'\">\r\n  </agm-marker>\r\n\r\n</agm-map>\r\n"
 
 /***/ }),
 
@@ -4815,9 +4815,17 @@ let DeviceMapViewComponent = class DeviceMapViewComponent {
         // API call on component load
         this.deviceService.getDevices(this.selectedImei)
             .subscribe((res) => {
-            console.log('Device Data:', res);
+            // console.log('Device Data:', res);
             this.imeiList = res.data.devices.map((device) => device.imei);
         });
+    }
+    // onDateSelected function to handle date selection
+    onDateSelected(event) {
+        this.loadDeviceHistory();
+    }
+    // onImeiSelected function to handle IMEI selection
+    onImeiSelected(event) {
+        this.loadDeviceHistory();
     }
     getRotationAngle(p1, p2) {
         const dy = p2.lat - p1.lat;
@@ -4860,78 +4868,75 @@ let DeviceMapViewComponent = class DeviceMapViewComponent {
         this.loadDeviceHistory();
     }
     loadDeviceHistory() {
-        console.log("Loading device history......");
-        const infoWindow = new google.maps.InfoWindow();
-        this.deviceService.getDeviceHistory(this.selectedImei)
-            .subscribe((res) => {
-            if (!res || !res.data || !res.data.data || !res.data.data.length) {
-                console.log("No history found");
-                return;
-            }
-            const history = res.data.data;
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
-            const tomorrow = new Date(today);
-            tomorrow.setDate(today.getDate() + 1);
-            const todayHistory = history.filter(function (item) {
-                if (!item.createdAt)
-                    return false;
-                const createdAt = new Date(item.createdAt);
-                return createdAt >= today && createdAt < tomorrow;
-            });
-            if (!todayHistory.length) {
-                console.log("No records found for today");
-                return;
-            }
-            todayHistory.sort(function (a, b) {
-                return new Date(a.createdAt).getTime() -
-                    new Date(b.createdAt).getTime();
-            });
-            for (let i = 0; i < todayHistory.length; i++) {
-                const item = todayHistory[i];
-                if (!item.deviceData ||
-                    !item.deviceData.location ||
-                    item.deviceData.location.lat == null ||
-                    item.deviceData.location.long == null) {
-                    continue;
+        if (!this.selectedImei || !this.selectedDate) {
+            return;
+        }
+        else {
+            const selectedDate = new Date(this.selectedDate);
+            const selectedDateISO = selectedDate.toISOString();
+            const previousDate = new Date(selectedDate);
+            previousDate.setDate(selectedDate.getDate() + 1);
+            const previousDateISO = previousDate.toISOString();
+            console.log("Loading device history......", selectedDateISO, previousDateISO);
+            const infoWindow = new google.maps.InfoWindow();
+            this.deviceService.getDeviceHistory(this.selectedImei, selectedDateISO, previousDateISO)
+                .subscribe((res) => {
+                if (!res || !res.data || !res.data.data || !res.data.data.length) {
+                    console.log("No history found");
+                    return;
                 }
-                const lat = item.deviceData.location.lat;
-                const lng = item.deviceData.location.long;
-                const latLng = new google.maps.LatLng(lat, lng);
-                const marker = new google.maps.Marker({
-                    position: latLng,
-                    map: this.map,
-                    title: "Device Location",
-                    icon: {
-                        path: google.maps.SymbolPath.CIRCLE,
-                        scale: 4,
-                        fillColor: "#ff0000",
-                        fillOpacity: 1,
-                        strokeWeight: 0
+                const todayHistory = res.data.data;
+                console.log("todayHistory............", todayHistory);
+                if (!todayHistory.length) {
+                    console.log("No records found for today");
+                    return;
+                }
+                for (let i = 0; i < todayHistory.length; i++) {
+                    const item = todayHistory[i];
+                    if (!item.deviceData ||
+                        !item.deviceData.location ||
+                        item.deviceData.location.lat == null ||
+                        item.deviceData.location.long == null) {
+                        continue;
                     }
-                });
-                // ✅ Marker click event
-                marker.addListener("click", () => {
-                    const content = `
+                    const lat = item.deviceData.location.lat;
+                    const lng = item.deviceData.location.long;
+                    const latLng = new google.maps.LatLng(lat, lng);
+                    const marker = new google.maps.Marker({
+                        position: latLng,
+                        map: this.map,
+                        title: "Device Location",
+                        icon: {
+                            path: google.maps.SymbolPath.CIRCLE,
+                            scale: 4,
+                            fillColor: "#ff0000",
+                            fillOpacity: 1,
+                            strokeWeight: 0
+                        }
+                    });
+                    // ✅ Marker click event
+                    marker.addListener("click", () => {
+                        const content = `
             <div>
               <strong>Latitude:</strong> ${lat} <br/>
               <strong>Longitude:</strong> ${lng}
             </div>
           `;
-                    infoWindow.setContent(content);
-                    infoWindow.open(this.map, marker);
-                });
-            }
-            const last = todayHistory[todayHistory.length - 1];
-            if (last && last.deviceData && last.deviceData.location) {
-                this.map.panTo({
-                    lat: last.deviceData.location.lat,
-                    lng: last.deviceData.location.long
-                });
-            }
-        }, (error) => {
-            console.error("Error loading device history:", error);
-        });
+                        infoWindow.setContent(content);
+                        infoWindow.open(this.map, marker);
+                    });
+                }
+                const last = todayHistory[todayHistory.length - 1];
+                if (last && last.deviceData && last.deviceData.location) {
+                    this.map.panTo({
+                        lat: last.deviceData.location.lat,
+                        lng: last.deviceData.location.long
+                    });
+                }
+            }, (error) => {
+                console.error("Error loading device history:", error);
+            });
+        }
     }
     ngOnDestroy() {
         clearInterval(this.intervalId);

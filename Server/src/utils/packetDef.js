@@ -169,7 +169,15 @@ class AllPacketsDef {
                 let v = parseInt(hex, 16);
                 return v > 127 ? v - 256 : v;
             }
+        },
+
+        DTC: {
+            size: 5,
+            parser:  hex =>  hex.match(/.{1,2}/g)
+                   .map(b => String.fromCharCode(parseInt(b, 16)))
+                   .join('')
         }
+
     };
 
 

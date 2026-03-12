@@ -25,7 +25,7 @@ module.exports.connectSocket = function() {
   });
 
   socket.on("connect_error", (err) => {
-    console.log("Connection Error:", err.message);
+    // console.log("Connection Error:", err.message);
   });
 
  
