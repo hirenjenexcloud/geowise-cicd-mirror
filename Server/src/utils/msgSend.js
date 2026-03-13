@@ -1,7 +1,7 @@
 const twilio = require("twilio");
 
-const accountSid = "AC48c6118b86c91f27b8a3d6a13e500d0f";
-const authToken = "b0557b98433458b8453c6fce2d1ea0db";
+const accountSid = process.env.TWILIO_ACCOUNT_SID;
+const authToken = process.env.TWILIO_AUTH_TOKEN;
 
 const client = twilio(accountSid, authToken);
 
@@ -10,7 +10,7 @@ exports.SendMsg = async (output, number) => {
         const message = await client.messages.create({
             body: output,
             to: number,
-            messagingServiceSid: "MG609f569bfe884756008962d0bfc604e2",
+            messagingServiceSid: process.env.TWILIO_MESSAGE_SERVICES_SID,
         });
 
         console.log("SMS Sent:", message.sid);
