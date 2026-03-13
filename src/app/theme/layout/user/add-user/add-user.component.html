@@ -1,0 +1,85 @@
+<form #form="ngForm" (ngSubmit)="submit(form)" class="card p-4">
+
+    <h4 class="mb-4">Add User</h4>
+
+    <div class="row">
+
+        <!-- NAME -->
+        <div class="col-md-6 mb-3">
+            <label class="form-label">Full Name *</label>
+            <input class="form-control" name="name" [(ngModel)]="user.name" required>
+        </div>
+
+        <!-- EMAIL -->
+        <div class="col-md-6 mb-3">
+            <label class="form-label">Email *</label>
+            <input type="email" class="form-control" name="email" [(ngModel)]="user.email" required email>
+        </div>
+
+        <!-- PASSWORD -->
+        <div class="col-md-6 mb-3">
+            <label class="form-label">Password *</label>
+            <input type="password" class="form-control" name="password" [(ngModel)]="user.password" required
+                minlength="6">
+
+            <small class="text-danger" *ngIf="form.submitted && form.controls.password?.errors?.minlength">
+                Password must be at least 6 characters
+            </small>
+        </div>
+
+        <!-- PHONE -->
+        <div class="col-md-6 mb-3">
+            <label class="form-label">Phone *</label>
+            <input class="form-control" name="phone" [(ngModel)]="user.phone" required pattern="^[0-9]{10}$">
+
+            <small class="text-danger" *ngIf="form.submitted && form.controls.phone?.invalid">
+                Enter valid 10 digit number
+            </small>
+        </div>
+
+        <!-- TIMEZONE -->
+        <div class="col-md-6 mb-3">
+            <label class="form-label">Timezone *</label>
+
+            <select class="form-control" name="timezone" [(ngModel)]="user.timezone" required>
+
+                <option value="">Select Timezone</option>
+
+                <option *ngFor="let t of timezones" [value]="t">
+                    {{t}}
+                </option>
+
+            </select>
+        </div>
+
+        <!-- ROLE -->
+        <div class="col-md-6 mb-3">
+            <label class="form-label d-block">Role</label>
+
+            <div class="form-check">
+
+                <input class="form-check-input" type="checkbox" name="role" [(ngModel)]="user.role" id="roleCheck">
+
+                <label class="form-check-label" for="roleCheck">
+                    Master User
+                </label>
+
+            </div>
+
+            <small class="text-muted">
+                Checked = Master user, Unchecked = Normal user
+            </small>
+
+        </div>
+
+
+    </div>
+
+    <!-- SUBMIT -->
+    <div class="text-end mt-4">
+        <button class="btn btn-primary px-4" [disabled]="form.invalid">
+            Create User
+        </button>
+    </div>
+
+</form>

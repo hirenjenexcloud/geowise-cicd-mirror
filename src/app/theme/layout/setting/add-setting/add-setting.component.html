@@ -1,0 +1,498 @@
+<form #form="ngForm" (ngSubmit)="create(form)" class="card p-4">
+
+    <h4 class="mb-4">Create Setting</h4>
+
+    <!-- ================= BASIC ================= -->
+
+    <h5 class="mb-3">Basic Settings</h5>
+
+    <div class="row">
+
+        <div class="col-md-4 mb-3">
+            <label class="form-label">Setting Name *</label>
+            <input class="form-control" name="name" [(ngModel)]="setting.name" #name="ngModel" required>
+
+            <div class="text-danger mt-1" *ngIf="name.invalid && name.touched">
+            <small *ngIf="name.errors?.required">Setting Name is required</small>
+        </div>
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <label class="form-label">Breadcrumb Distance *</label>
+            <input type="number" class="form-control" name="breadcrumb" [(ngModel)]="setting.breadcrumb" #breadcrumb="ngModel" required>
+
+            <div class="text-danger mt-1" *ngIf="breadcrumb.invalid && breadcrumb.touched">
+                <small *ngIf="breadcrumb.errors?.required">Breadcrumb Distance is required</small>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <label class="form-label">Heartbeat Interval *</label>
+            <input type="number" class="form-control" name="hbt" [(ngModel)]="setting.hbt" #hbt="ngModel" required>
+
+            <div class="text-danger mt-1" *ngIf="hbt.invalid && hbt.touched">
+                <small *ngIf="hbt.errors?.required">Heartbeat Interval is required</small>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <label class="form-label">Battery Heartbeat *</label>
+            <input type="number" class="form-control" name="btHbt" [(ngModel)]="setting.btHbt" #btHbt="ngModel" required>
+
+            <div class="text-danger mt-1" *ngIf="btHbt.invalid && btHbt.touched">
+                <small *ngIf="btHbt.errors?.required">Battery Heartbeat is required</small>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <label class="form-label">Stop Threshold *</label>
+            <input type="number" class="form-control" name="stop" [(ngModel)]="setting.stop" #stop="ngModel" required>
+
+            <div class="text-danger mt-1" *ngIf="stop.invalid && stop.touched">
+                <small *ngIf="stop.errors?.required">Stop Threshold is required</small>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <label class="form-label">Sleep Interval *</label>
+            <input type="number" class="form-control" name="sleep" [(ngModel)]="setting.sleep" #sleep="ngModel" required>
+
+            <div class="text-danger mt-1" *ngIf="sleep.invalid && sleep.touched">
+                <small *ngIf="sleep.errors?.required">Sleep Interval is required</small>
+            </div>
+        </div>
+
+    </div>
+
+    <hr class="my-4">
+
+    <!-- ================= MOVE TRIGGER ================= -->
+
+    <h5 class="mb-3">Move Trigger</h5>
+
+    <div class="row">
+
+        <div class="col-md-4 mb-3">
+            <label class="form-label">Minimum Speed (km/h)</label>
+            <input type="number" class="form-control" name="minSpeed" [(ngModel)]="setting.moveTrigger.minSpeedKph" #minSpeed="ngModel" required>
+            <div class="text-danger mt-1" *ngIf="minSpeed.invalid && minSpeed.touched">
+                <small *ngIf="minSpeed.errors?.required">Minimum Speed is required</small>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <label class="form-label">Speed Count</label>
+            <input type="number" class="form-control" name="speedCount" [(ngModel)]="setting.moveTrigger.speedCount" #speedCount="ngModel" required>
+            <div class="text-danger mt-1" *ngIf="speedCount.invalid && speedCount.touched">
+                <small *ngIf="speedCount.errors?.required">Speed Count is required</small>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <label class="form-label">Minimum Distance (meters)</label>
+            <input type="number" class="form-control" name="minDist" [(ngModel)]="setting.moveTrigger.minDistanceM" #minDist="ngModel" required>
+            <div class="text-danger mt-1" *ngIf="minDist.invalid && minDist.touched">
+                <small *ngIf="minDist.errors?.required">Minimum Distance is required</small>
+            </div>
+        </div>
+
+    </div>
+
+    <hr class="my-4">
+
+    <!-- ================= RESET TIMEOUTS ================= -->
+
+    <h5 class="mb-3">Reset Timeouts *</h5>
+
+    <div class="row">
+
+        <div class="col-md-4 mb-3">
+            <label class="form-label">Device Timeout (sec)</label>
+            <input type="number" class="form-control" name="deviceTimeout"
+                [(ngModel)]="setting.resetTimeouts.deviceTimeout" #deviceTimeout="ngModel" required>
+
+                <div class="text-danger mt-1" *ngIf="deviceTimeout.invalid && deviceTimeout.touched">
+                    <small *ngIf="deviceTimeout.errors?.required">Device Timeout is required</small>
+                </div>
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <label class="form-label">GPS Timeout (sec)</label>
+            <input type="number" class="form-control" name="gpsTimeout" [(ngModel)]="setting.resetTimeouts.gpsTimeout" #gpsTimeout="ngModel" required>
+
+            <div class="text-danger mt-1" *ngIf="gpsTimeout.invalid && gpsTimeout.touched">
+                <small *ngIf="gpsTimeout.errors?.required">GPS Timeout is required</small>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <label class="form-label">Cellular Timeout (sec)</label>
+            <input type="number" class="form-control" name="cellTimeout"
+                [(ngModel)]="setting.resetTimeouts.cellularTimeout" #cellTimeout="ngModel" required>
+
+            <div class="text-danger mt-1" *ngIf="cellTimeout.invalid && cellTimeout.touched">
+                <small *ngIf="cellTimeout.errors?.required">Cellular Timeout is required</small>
+            </div>
+        </div>
+
+    </div>
+
+    <hr class="my-4">
+
+    <!-- ================= QUALITY FILTER ================= -->
+
+    <h5 class="mb-3">Quality Filter</h5>
+
+    <div class="row">
+
+        <div class="col-md-3 mb-3">
+            <label class="form-label">Minimum Satellites</label>
+            <input type="number" class="form-control" name="sat" [(ngModel)]="setting.qualityFilters.minSatellite" #sat="ngModel" required>
+
+            <div class="text-danger mt-1" *ngIf="sat.invalid && sat.touched">
+                <small *ngIf="sat.errors?.required">Minimum Satellites is required</small>
+            </div>
+        </div>
+
+        <div class="col-md-3 mb-3">
+            <label class="form-label">Stop HAC</label>
+            <input type="number" class="form-control" name="stopHac" [(ngModel)]="setting.qualityFilters.stopHac" #stopHac="ngModel" required>
+
+            <div class="text-danger mt-1" *ngIf="stopHac.invalid && stopHac.touched">
+                <small *ngIf="stopHac.errors?.required">Stop HAC is required</small>
+            </div>
+        </div>
+
+        <div class="col-md-3 mb-3">
+            <label class="form-label">Move HAC</label>
+            <input type="number" class="form-control" name="moveHac" [(ngModel)]="setting.qualityFilters.moveHac" #moveHac="ngModel" required>
+
+            <div class="text-danger mt-1" *ngIf="moveHac.invalid && moveHac.touched">
+                <small *ngIf="moveHac.errors?.required">Move HAC is required</small>
+            </div>
+        </div>
+
+        <div class="col-md-3 mb-3">
+            <label class="form-label">GSM RSSI</label>
+            <input type="number" class="form-control" name="rssi" [(ngModel)]="setting.qualityFilters.gsmRssi" #rssi="ngModel" required>
+
+            <div class="text-danger mt-1" *ngIf="rssi.invalid && rssi.touched">
+                <small *ngIf="rssi.errors?.required">GSM RSSI is required</small>
+            </div>
+        </div>
+
+    </div>
+
+    <hr class="my-4">
+
+    <!-- ================= DASHBOARD SERVER ================= -->
+
+    <h5 class="mb-3">Dashboard Server</h5>
+
+    <div class="row">
+
+        <div class="col-md-6 mb-3">
+            <label class="form-label">Server IP Address</label>
+            <input class="form-control" name="ip" [(ngModel)]="setting.dashboardServer.ip" #ip="ngModel" required>
+
+            <div class="text-danger mt-1" *ngIf="ip.invalid && ip.touched">
+                <small *ngIf="ip.errors?.required">Server IP Address is required</small>
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-3">
+            <label class="form-label">Server Port</label>
+            <input type="number" class="form-control" name="port" [(ngModel)]="setting.dashboardServer.port" #port="ngModel" required>
+
+            <div class="text-danger mt-1" *ngIf="port.invalid && port.touched">
+                <small *ngIf="port.errors?.required">Server Port is required</small>
+            </div>
+        </div>
+
+    </div>
+
+    <hr class="my-4">
+
+    <!-- ================= AT COMMANDS ================= -->
+
+    <h5 class="mb-3">AT Commands</h5>
+
+    <div class="mb-3">
+
+        <label class="form-label">
+            Commands (comma or space separated)
+        </label>
+
+        <textarea class="form-control" rows="3" name="commands" [(ngModel)]="setting.atCommands" #atCommands="ngModel" 
+            placeholder="AT+CGATT=1, AT+CSQ, AT+CREG?" required>
+</textarea>
+
+
+        <small class="text-muted">
+            Example: AT+CGATT=1, AT+CSQ, AT+CREG?
+        </small>
+
+<div class="text-danger mt-1" *ngIf="atCommands.invalid && atCommands.touched">
+                <small *ngIf="atCommands.errors?.required">AT Commands are required</small>
+            </div>
+
+    </div>
+
+    <!-- ================= SUBMIT ================= -->
+
+    <div class="text-end mt-4">
+
+        <button class="btn btn-primary px-4" [disabled]="form.invalid">
+            Create Setting
+        </button>
+
+    </div>
+
+</form>
+
+
+
+<div class="card mt-4 p-4">
+
+    <h4>Settings List</h4>
+
+    <table class="table table-bordered mt-3">
+
+        <thead style="background:#101b33;color:white">
+            <tr>
+                <th>Name</th>
+                <th>Breadcrumb</th>
+                <th>HBT</th>
+                <th>Stop</th>
+                <th>Sleep</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+
+        <tbody>
+
+            <tr *ngFor="let s of settings">
+
+                <td>{{s.name}}</td>
+                <td>{{s.breadcrumb}}</td>
+                <td>{{s.hbt}}</td>
+                <td>{{s.stop}}</td>
+                <td>{{s.sleep}}</td>
+
+                <td class="text-center">
+
+                    <i class="fa fa-edit text-primary action-icon" ngbTooltip="Edit"
+                        (click)="openEdit(editModal,s)"></i>
+
+                    <i class="fa fa-trash text-danger action-icon" ngbTooltip="Delete"
+                        (click)="openDelete(deleteModal,s)"></i>
+
+                </td>
+
+            </tr>
+
+            <tr *ngIf="settings.length==0">
+                <td colspan="6" class="text-center text-muted">No data</td>
+            </tr>
+
+        </tbody>
+
+    </table>
+    <div class="d-flex justify-content-between align-items-center mt-3">
+
+        <!-- LEFT -->
+        <div>
+            <button class="btn btn-outline-primary btn-sm" (click)="changePage(currentPage-1)"
+                [disabled]="currentPage==1">
+                Previous
+            </button>
+        </div>
+
+        <!-- CENTER -->
+        <div>
+            Page {{currentPage}} of {{totalPages}}
+        </div>
+
+        <!-- RIGHT -->
+        <div>
+            <button class="btn btn-outline-primary btn-sm" (click)="changePage(currentPage+1)"
+                [disabled]="currentPage==totalPages">
+                Next
+            </button>
+        </div>
+
+    </div>
+
+
+</div>
+
+
+
+<ng-template #editModal let-modal>
+
+    <div class="modal-header">
+        <h5>Edit Setting</h5>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss()">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+
+    <div class="modal-body">
+
+        <!-- ================= NAME (EDITABLE) ================= -->
+
+        <div class="mb-3">
+            <label class="form-label">Setting Name</label>
+            <input class="form-control" [(ngModel)]="selected.name">
+        </div>
+
+        <hr>
+
+        <!-- ================= BASIC ================= -->
+
+        <h6 class="mt-3">Basic</h6>
+
+        <div class="row">
+
+            <div class="col-md-4 mb-3">
+                <label>Breadcrumb</label>
+                <input class="form-control" [value]="selected.breadcrumb" disabled>
+            </div>
+
+            <div class="col-md-4 mb-3">
+                <label>Heartbeat</label>
+                <input class="form-control" [value]="selected.hbt" disabled>
+            </div>
+
+            <div class="col-md-4 mb-3">
+                <label>Battery HBT</label>
+                <input class="form-control" [value]="selected.btHbt" disabled>
+            </div>
+
+            <div class="col-md-4 mb-3">
+                <label>Stop</label>
+                <input class="form-control" [value]="selected.stop" disabled>
+            </div>
+
+            <div class="col-md-4 mb-3">
+                <label>Sleep</label>
+                <input class="form-control" [value]="selected.sleep" disabled>
+            </div>
+
+        </div>
+
+        <hr>
+
+        <!-- ================= MOVE TRIGGER ================= -->
+
+        <h6>Move Trigger</h6>
+
+        <div class="row">
+
+            <div class="col-md-4 mb-3">
+                <label>Min Speed</label>
+                <input class="form-control" [value]="selected.moveTrigger?.minSpeedKph" disabled>
+            </div>
+
+            <div class="col-md-4 mb-3">
+                <label>Speed Count</label>
+                <input class="form-control" [value]="selected.moveTrigger?.speedCount" disabled>
+            </div>
+
+            <div class="col-md-4 mb-3">
+                <label>Min Distance</label>
+                <input class="form-control" [value]="selected.moveTrigger?.minDistanceM" disabled>
+            </div>
+
+        </div>
+
+        <hr>
+
+        <!-- ================= RESET ================= -->
+
+        <h6>Reset Timeouts</h6>
+
+        <div class="row">
+
+            <div class="col-md-4 mb-3">
+                <label>Device Timeout</label>
+                <input class="form-control" [value]="selected.resetTimeouts?.deviceTimeout" disabled>
+            </div>
+
+            <div class="col-md-4 mb-3">
+                <label>GPS Timeout</label>
+                <input class="form-control" [value]="selected.resetTimeouts?.gpsTimeout" disabled>
+            </div>
+
+            <div class="col-md-4 mb-3">
+                <label>Cell Timeout</label>
+                <input class="form-control" [value]="selected.resetTimeouts?.cellularTimeout" disabled>
+            </div>
+
+        </div>
+
+        <hr>
+
+        <!-- ================= SERVER ================= -->
+
+        <h6>Dashboard Server</h6>
+
+        <div class="row">
+
+            <div class="col-md-6 mb-3">
+                <label>IP</label>
+                <input class="form-control" [value]="selected.dashboardServer?.ip" disabled>
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label>Port</label>
+                <input class="form-control" [value]="selected.dashboardServer?.port" disabled>
+            </div>
+
+        </div>
+
+        <hr>
+
+        <!-- ================= AT COMMANDS ================= -->
+
+        <h6>AT Commands</h6>
+
+        <textarea class="form-control" rows="3" [value]="selected.atCommands?.join(', ')" disabled>
+</textarea>
+
+    </div>
+
+    <div class="modal-footer">
+
+        <button class="btn btn-secondary" (click)="modal.dismiss()">Cancel</button>
+
+        <button class="btn btn-primary" (click)="update(modal)">
+            Update Name
+        </button>
+
+    </div>
+
+</ng-template>
+
+
+
+
+<ng-template #deleteModal let-modal>
+
+    <div class="modal-header">
+        <h5 class="text-danger">Delete Setting</h5>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss()">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+
+    <div class="modal-body">
+        Delete <b>{{selected?.name}}</b> ?
+    </div>
+
+    <div class="modal-footer">
+        <button class="btn btn-secondary" (click)="modal.dismiss()">Cancel</button>
+        <button class="btn btn-danger" (click)="delete(modal)">Delete</button>
+    </div>
+
+</ng-template>

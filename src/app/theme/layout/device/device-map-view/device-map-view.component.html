@@ -1,0 +1,38 @@
+<div style="padding: 10px;">
+  <label for="imei-select">Select IMEI:</label>
+  <select 
+    id="imei-select" 
+    [(ngModel)]="selectedImei" 
+    (change)="onImeiSelected($event)"
+    style="padding: 5px; margin-left: 10px;">
+    <option value="">-- Choose IMEI --</option>
+    <option *ngFor="let imei of imeiList" [value]="imei">
+      {{ imei }}
+    </option>
+  </select>
+
+  <label for="date-picker" style="margin-left: 20px;">Select Date:</label>
+  <input 
+    id="date-picker" 
+    type="date" 
+    [(ngModel)]="selectedDate" 
+    (change)="onDateSelected($event)"
+    style="padding: 5px; margin-left: 10px;">
+</div>
+
+<agm-map
+  *ngIf="selectedImei && selectedDate"
+  [latitude]="lat"
+  [longitude]="lng"
+  [zoom]="zoom"
+  (mapReady)="onMapReady($event)"
+  style="height: 100vh; width: 100%;">
+
+  <agm-marker
+    *ngFor="let point of path; let i = index"
+    [latitude]="point.lat"
+    [longitude]="point.lng"
+    [iconUrl]="'http://maps.google.com/mapfiles/ms/icons/FORWARD_CLOSED_ARROW.png'">
+  </agm-marker>
+
+</agm-map>

@@ -1,0 +1,323 @@
+
+<!-- FIRMWARE REGISTRATION FORM -->
+<form
+  [formGroup]="firmwareForm"
+  (ngSubmit)="AddFirmware()"
+  class="card p-4 mb-4"
+>
+  <h4 class="mb-4">Add Firmware</h4>
+
+  <div class="row">
+   
+
+    <div class="col-md-4 mb-3">
+      <label class="form-label">Firmware Name</label>
+      <input
+        type="text"
+        class="form-control"
+        formControlName="firmName"
+        placeholder="Enter Firmware Name"
+        [ngClass]="{'is-invalid': firmwareForm.get('firmName')?.touched && firmwareForm.get('firmName')?.invalid}"
+      />
+      <div class="invalid-feedback" *ngIf="firmwareForm.get('firmName')?.touched">
+        <div *ngIf="firmwareForm.get('firmName')?.hasError('required')">
+          Firmware Name is required
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4 mb-3">
+      <label class="form-label">SW Version</label>
+      <input
+        type="text"
+        class="form-control"
+        formControlName="swVersion"
+        placeholder="Enter Software Version"
+        [ngClass]="{'is-invalid': firmwareForm.get('swVersion')?.touched && firmwareForm.get('swVersion')?.invalid}"
+      />
+      <div class="invalid-feedback" *ngIf="firmwareForm.get('swVersion')?.touched">
+        <div *ngIf="firmwareForm.get('swVersion')?.hasError('required')">
+          Software Version is required
+        </div>
+      </div>
+    </div>
+
+<div class="col-md-4 mb-3">
+  <input type="hidden" name="msgtype" value="2" />
+
+  <label>Firmware File (Click </label>
+  &nbsp;
+  <label style="color: blue; text-decoration: underline; cursor: pointer">
+    <!-- <input
+      type="file"
+      class="form-control"
+      formControlName="firmwareFile"
+      placeholder="Select Firmware File"
+      style="display: none"
+    
+      (change)="onFileChange($event)"
+    /> -->
+   <input
+  type="file"
+  class="form-control"
+  formControlName="firmwareFile"
+  accept=".gbl,.bin,application/octet-stream"
+  style="display: none"
+  (change)="onFileChange($event)"
+/>
+
+
+    here
+  </label>
+  &nbsp;
+  <label>to upload)</label>
+
+  <textarea class="form-control" rows="1">{{displayfile}}</textarea>
+</div>
+
+  </div>
+      <div class="d-flex justify-content-end mt-4">
+    <button
+      type="submit"
+      class="btn btn-primary px-4"
+      [disabled]="firmwareForm.invalid"
+    >
+      Save
+    </button>
+  </div>
+</form>
+
+
+
+<!-- Firmware List Table -->
+<div class="card mt-4 p-4">
+  <h4 class="mb-3 text-left">Firmwares</h4>
+
+  <!-- <div class="table-responsive">
+    <table class="table table-bordered table-striped table-hover text-center">
+      <thead style="background-color: #101b33; color: white;">
+        <tr>
+          <th>FWID</th>
+          <th>SW Version</th>
+          <th>Firmware Name</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr *ngFor="let fw of firmwares; let i = index">
+          <td>{{ fw.fwId }}</td>
+          <td>{{ fw.swVersion }}</td>
+          <td>{{ fw.firmName }}</td>
+          <td>
+            <div class="d-flex justify-content-center">
+              <button class="btn btn-sm btn-info mr-1"
+                      (click)="openEditFirmwareModal(editFirmwareModal, fw)">
+                Edit
+              </button>
+
+              <button class="btn btn-sm btn-info mr-1"
+                      (click)="openDeleteFirmwareModal(deleteFirmwareModal, fw)">
+                Delete
+              </button>
+            </div>
+          </td>
+        </tr>
+
+        <tr *ngIf="firmwares.length === 0">
+          <td colspan="4" class="text-muted">
+            No firmwares found
+          </td>
+        </tr>
+      </tbody>
+     
+    </table>
+
+  
+
+  </div>
+
+     <div class="d-flex justify-content-center mt-3" *ngIf="totalPages > 1">
+  <nav>
+    <ul class="pagination">
+
+      <li class="page-item" [class.disabled]="currentPage === 1">
+        <a class="page-link" (click)="changePage(currentPage - 1)">Previous</a>
+      </li>
+
+      <li class="page-item"
+          *ngFor="let page of [].constructor(totalPages); let i = index"
+          [class.active]="currentPage === i + 1">
+        <a class="page-link" (click)="changePage(i + 1)">
+          {{ i + 1 }}
+        </a>
+      </li>
+
+      <li class="page-item" [class.disabled]="currentPage === totalPages">
+        <a class="page-link" (click)="changePage(currentPage + 1)">Next</a>
+      </li>
+
+    </ul>
+  </nav>
+</div> -->
+<div class="table-responsive">
+  <table class="table table-bordered table-striped table-hover text-center">
+    <thead style="background-color: #101b33; color: white;">
+      <tr>
+        <th>FWID</th>
+        <th>SW Version</th>
+        <th>Firmware Name</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr *ngFor="let fw of firmwares; let i = index">
+        <td>{{ fw.fwId }}</td>
+        <td>{{ fw.swVersion }}</td>
+        <td>{{ fw.firmName }}</td>
+      <td class="text-center">
+
+  <!-- Edit -->
+  <i class="fa fa-edit text-primary action-icon"
+     ngbTooltip="Edit Firmware"
+     (click)="openEditFirmwareModal(editFirmwareModal, fw)">
+  </i>
+
+  <!-- Delete -->
+  <i class="fa fa-trash text-danger action-icon"
+     ngbTooltip="Delete Firmware"
+     (click)="openDeleteFirmwareModal(deleteFirmwareModal, fw)">
+  </i>
+
+</td>
+
+      </tr>
+
+      <tr *ngIf="firmwares.length === 0">
+        <td colspan="4" class="text-muted">
+          No firmwares found
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ✅ PAGINATION TABLE KE BAHAR -->
+<!-- <div class="d-flex justify-content-center mt-3" *ngIf="totalPages > 1">
+  <nav>
+    <ul class="pagination">
+
+      <li class="page-item" [class.disabled]="currentPage === 1">
+        <a class="page-link" (click)="changePage(currentPage - 1)">Previous</a>
+      </li>
+
+      <li class="page-item"
+          *ngFor="let page of [].constructor(totalPages); let i = index"
+          [class.active]="currentPage === i + 1">
+        <a class="page-link" (click)="changePage(i + 1)">
+          {{ i + 1 }}
+        </a>
+      </li>
+
+      <li class="page-item" [class.disabled]="currentPage === totalPages">
+        <a class="page-link" (click)="changePage(currentPage + 1)">Next</a>
+      </li>
+
+    </ul>
+  </nav>
+</div> -->
+
+
+  <!-- Pagination -->
+  <div class="d-flex justify-content-between align-items-center mt-3">
+
+    <button class="btn btn-outline-primary btn-sm"
+            (click)="prevPage()"
+            [disabled]="currentPage===1">
+      Previous
+    </button>
+
+    <span>Page {{currentPage}} of {{totalPages}}</span>
+
+    <button class="btn btn-outline-primary btn-sm"
+            (click)="nextPage()"
+            [disabled]="currentPage===totalPages">
+      Next
+    </button>
+
+  </div>
+
+</div>
+
+
+<!-- EDIT FIRMWARE MODAL -->
+<ng-template #editFirmwareModal let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title">Edit Firmware</h5>
+   <button type="button" class="close"
+        aria-label="Close"
+        (click)="modal.dismiss()">
+  <span aria-hidden="true">&times;</span>
+</button>
+  </div>
+
+  <div class="modal-body">
+    <form [formGroup]="editFirmwareForm">
+      <div class="mb-3">
+        <label>FWID</label>
+        <input class="form-control" formControlName="fwId" disabled>
+      </div>
+
+      <div class="mb-3">
+        <label>SW Version</label>
+        <input class="form-control" formControlName="swVersion" disabled>
+      </div>
+
+      <div class="mb-3">
+        <label>Firmware Name</label>
+        <input class="form-control" formControlName="firmName" [ngClass]="{'is-invalid': editFirmwareForm.get('firmName')?.invalid && (editFirmwareForm.get('firmName')?.dirty || editFirmwareForm.get('firmName')?.touched)}"  >
+        <div class="invalid-feedback" *ngIf="editFirmwareForm.get('firmName')?.touched">
+        <div *ngIf="editFirmwareForm.get('firmName')?.hasError('required')">
+          Firmware Name is required
+        </div>
+      </div>
+      </div>
+
+        <!-- <div class="mb-3">
+        <label>Firmware</label>
+        <input class="form-control" formControlName="firmwareFile" disabled>
+      </div> -->
+    </form>
+  </div>
+
+  <div class="modal-footer">
+    <button class="btn btn-secondary" (click)="modal.dismiss()">Cancel</button>
+    <button class="btn btn-primary" [disabled]="editFirmwareForm.invalid" (click)="updateFirmware(modal)">Update</button>
+  </div>
+</ng-template>
+
+<!-- DELETE FIRMWARE MODAL -->
+<ng-template #deleteFirmwareModal let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title text-danger">Confirm Delete</h5>
+      <button type="button" class="close"
+        aria-label="Close"
+        (click)="modal.dismiss()">
+  <span aria-hidden="true">&times;</span>
+</button>
+  </div>
+
+  <div class="modal-body">
+    Are you sure you want to delete this firmware
+    <b><strong>{{ selectedFirmware }}</strong></b>?
+  </div>
+
+  <div class="modal-footer">
+    <button class="btn btn-secondary" (click)="modal.dismiss()">Cancel</button>
+    <button class="btn btn-danger" (click)="deleteFirmware(model)">Delete</button>
+  </div>
+</ng-template>
+
+
+
