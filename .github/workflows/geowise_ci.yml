@@ -24,6 +24,8 @@ jobs:
       - name: Skip tests
         run: echo "No tests yet"
 
+      - name: Build Angular project
+        run: npm run build
 
       - name: Build Docker image
         run: docker build -t geotracker-app .
