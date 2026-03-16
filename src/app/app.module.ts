@@ -38,7 +38,8 @@ import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { JwtInterceptorService } from './theme/shared/interceptors/jwt-interceptor.service';
 import { AddUserComponent } from './theme/layout/user/add-user/add-user.component';
 import { ConfigurationComponent } from './theme/layout/admin/configuration/configuration.component';
-
+import { NgxSpinnerModule, NgxSpinnerService } from "ngx-spinner";
+import { LoaderInterceptorService } from './theme/shared/interceptors/loader-interceptor.service';
 
  
 
@@ -101,13 +102,19 @@ import { ConfigurationComponent } from './theme/layout/admin/configuration/confi
 
    FileUploadModule,
    NgSelectModule,
+   NgxSpinnerModule,
    NgbModule
 
   ],
-  providers: [NavigationItem,AnimationService,
+  providers: [NavigationItem,AnimationService,NgxSpinnerService, 
      {
     provide: HTTP_INTERCEPTORS,
     useClass: JwtInterceptorService,
+    multi: true
+  },
+  {
+    provide: HTTP_INTERCEPTORS,
+    useClass: LoaderInterceptorService,
     multi: true
   }
   ],
