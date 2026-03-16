@@ -16,11 +16,11 @@ export class AppComponent implements OnInit {
   //   loader.style.display = 'none';
   // }
 
-//   const loader = document.getElementById('app-loader');
-// if (loader) {
-//   loader.style.opacity = '0';
-//   setTimeout(() => loader.remove(), 300);
-// }
+  const loader = document.getElementById('app-loader');
+if (loader) {
+  loader.style.opacity = '0';
+  setTimeout(() => loader.remove(), 300);
+}
     this.router.events.subscribe((evt) => {
       if (!(evt instanceof NavigationEnd)) {
         return;
