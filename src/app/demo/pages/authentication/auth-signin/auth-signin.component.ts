@@ -33,7 +33,7 @@ export class AuthSigninComponent implements OnInit {
 
       this.apiSvc.login(credentials).subscribe(
         (res: any) => {
-          console.log("Login response:", res);
+          
 
           if (res.status === true) {
             
@@ -43,11 +43,17 @@ export class AuthSigninComponent implements OnInit {
             }
 
             
-            this.toast.success(res.message || "Login successful");
+            // this.toast.success(res.message || "Login successful");
 
+            // localStorage.setItem("token", "Bearer " + res.data.token);
+
+            // this.router.navigate(["/device/add_device"]);
             localStorage.setItem("token", "Bearer " + res.data.token);
 
-            this.router.navigate(["/device/add_device"]);
+            this.router.navigate(["/device/add_device"]).then(() => {
+              this.toast.success(res.message || "Login successful");
+            });
+
           } else {
             this.toast.error(res.message || "Login failed");
           }
