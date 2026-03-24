@@ -13,11 +13,35 @@
               </div>
               <input type="email" class="form-control"  formControlName="email" placeholder="Email address">
             </div>
-            <div class="input-group mb-4">
+            <!-- <div class="input-group mb-4">
               <div class="input-group-prepend">
                 <span class="input-group-text"><i class="feather icon-lock"></i></span>
               </div>
               <input type="password" class="form-control"  formControlName="password" placeholder="Password">
+            </div> -->
+
+              <div class="input-group mb-4 password-field position-relative">
+              
+              <div class="input-group-prepend">
+                <span class="input-group-text">
+                  <i class="feather icon-lock"></i>
+                </span>
+              </div>
+
+              <input 
+                [type]="showLoginPassword ? 'text' : 'password'" 
+                class="form-control"  
+                formControlName="password" 
+                placeholder="Password"
+              >
+
+            
+              <i 
+                class="fa eye-icon" 
+                [ngClass]="showLoginPassword ? 'fa-eye-slash' : 'fa-eye'"
+                (click)="showLoginPassword = !showLoginPassword"
+              ></i>
+
             </div>
             <button class="btn btn-block btn-primary mb-4">Signin</button>
             <p class="mb-2 text-muted">Forgot password? <a [routerLink]="['/auth/reset-password']" class="f-w-400">Reset</a></p>

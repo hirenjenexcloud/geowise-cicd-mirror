@@ -1,0 +1,77 @@
+.logout-btn {
+  color: inherit;
+  transition: all 0.2s ease;
+  font-weight: 600; 
+}
+
+.logout-btn:hover {
+  color: #fff !important;   /* 🔥 white text + icon */
+  background-color: rgba(255, 255, 255, 0.1); /* optional hover bg */
+  cursor: pointer;
+}
+
+
+
+// #nav-ps-next,
+// #nav-ps-next .ps,
+// #nav-ps-next .ps-content {
+//   height: 100% !important;
+//   display: flex;
+//   flex-direction: column;
+// }
+
+// #nav-ps-next .ps-content {
+//   flex: 1;
+// }
+
+// #nav-ps-next .navbar-content {
+//   display: flex;
+//   flex-direction: column;
+//   height: 100%;
+// }
+
+// #nav-ps-next .pcoded-inner-navbar {
+//   flex-grow: 1;
+// }
+
+// .logout-fixed {
+//   position: absolute;
+//   bottom: 0;
+//   left: 0;
+//   width: 100%;
+//   padding: 10px 0;
+// }
+
+
+
+.sidebar-wrapper {
+  position: relative;
+  height: calc(100vh - 60px);
+}
+
+.sidebar-scroll {
+  height: 100%;
+}
+
+/* 🔥 logout bottom fix */
+.logout-fixed {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  text-align: center;
+  padding: 12px 0;
+  background: #0f1c3f;
+}
+
+/* button style */
+.logout-btn {
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* hover */
+.logout-btn:hover {
+  color: #fff;
+  opacity: 0.8;
+}

@@ -2,6 +2,7 @@ import { AfterViewInit, Component, ElementRef, EventEmitter, NgZone, OnInit, Out
 import { NavigationItem } from '../navigation';
 import { NextConfig } from '../../../../../app-config';
 import { Location } from '@angular/common';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-nav-content',
@@ -23,7 +24,7 @@ export class NavContentComponent implements OnInit, AfterViewInit {
   @ViewChild('navbarContent', {static: false}) navbarContent: ElementRef;
   @ViewChild('navbarWrapper', {static: false}) navbarWrapper: ElementRef;
 
-  constructor(public nav: NavigationItem, private zone: NgZone, private location: Location) {
+  constructor(public nav: NavigationItem, private zone: NgZone, private location: Location, private router: Router) {
     this.nextConfig = NextConfig.config;
     this.windowWidth = window.innerWidth;
 
@@ -141,6 +142,13 @@ export class NavContentComponent implements OnInit, AfterViewInit {
         last_parent.classList.add('active');
       }
     }
+  }
+
+
+  logout() {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    this.router.navigate(['/auth/signin']);
   }
 
 }

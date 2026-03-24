@@ -124,9 +124,11 @@ exports.passwordUpdate = async (req, res) => {
     await user.save();
 
     // Construct reset link. Prefer FRONTEND_URL in env. Fallback to server route.
-    const frontendUrl = process.env.FRONTEND_URL || process.env.BACKEND_URL || 'http://localhost:4000';
-    const resetPath = process.env.PASSWORD_RESET_PATH || '/reset-password';
+    const frontendUrl = process.env.FRONTEND_URL || process.env.BACKEND_URL || 'http://3.132.68.38:4000';
+    const resetPath = process.env.PASSWORD_RESET_PATH || '/auth/change-password';
     const resetLink = `${frontendUrl}${resetPath}?token=${token}&email=${encodeURIComponent(user.email)}`;
+
+    console.log(`Password reset link for ${user.email}: ${resetLink}`);
 
     const subject = 'Password reset request';
     const html = `
