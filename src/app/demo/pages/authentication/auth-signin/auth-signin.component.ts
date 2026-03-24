@@ -10,6 +10,7 @@ import { ToastService } from "src/app/theme/shared/services/toast.service";
 })
 export class AuthSigninComponent implements OnInit {
   loginForm: FormGroup;
+  showLoginPassword: boolean = false;
 
   constructor(
     private router: Router,
@@ -49,6 +50,7 @@ export class AuthSigninComponent implements OnInit {
 
             // this.router.navigate(["/device/add_device"]);
             localStorage.setItem("token", "Bearer " + res.data.token);
+            localStorage.setItem("user",  res.data.email);
 
             this.router.navigate(["/device/add_device"]).then(() => {
               this.toast.success(res.message || "Login successful");

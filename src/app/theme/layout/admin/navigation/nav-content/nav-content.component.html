@@ -1,4 +1,4 @@
-<perfect-scrollbar *ngIf="this.nextConfig['layout'] === 'vertical'" (clickOutside)="navMob()"   id="nav-ps-next" ngClass="next-scroll" [style.max-width]="'300px'" [style.max-height]="'calc(100vh - 60px)'" [usePSClass]="'next'" [disabled]="null">
+<!-- <perfect-scrollbar *ngIf="this.nextConfig['layout'] === 'vertical'" (clickOutside)="navMob()"   id="nav-ps-next" ngClass="next-scroll" [style.max-width]="'300px'" [style.max-height]="'calc(100vh - 60px)'" [usePSClass]="'next'" [disabled]="null">
   <div class="navbar-content">
     <ul class="nav pcoded-inner-navbar" (clickOutside)="fireOutClick()">
       <ng-container *ngFor="let item of navigation">
@@ -7,8 +7,44 @@
         <app-nav-item *ngIf="item.type=='item'" [item]="item"></app-nav-item>
       </ng-container>
     </ul>
+     <div class="logout-fixed">
+    <a class="nav-link logout-btn d-flex align-items-center justify-content-center"
+       (click)="logout()">
+      <i class="feather icon-log-out mr-2"></i> Logout
+    </a>
   </div>
-</perfect-scrollbar>
+  </div>
+
+ 
+</perfect-scrollbar> -->
+<div class="sidebar-wrapper">
+
+  <!-- SCROLL AREA -->
+  <perfect-scrollbar 
+    *ngIf="this.nextConfig['layout'] === 'vertical'" 
+    class="sidebar-scroll">
+
+    <div class="navbar-content">
+      <ul class="nav pcoded-inner-navbar">
+        <ng-container *ngFor="let item of navigation">
+          <app-nav-group *ngIf="item.type=='group'" [item]="item"></app-nav-group>
+          <app-nav-collapse *ngIf="item.type=='collapse'" [item]="item"></app-nav-collapse>
+          <app-nav-item *ngIf="item.type=='item'" [item]="item"></app-nav-item>
+        </ng-container>
+      </ul>
+    </div>
+
+  </perfect-scrollbar>
+
+  <!-- 🔥 LOGOUT (FIXED BOTTOM) -->
+  <div class="logout-fixed">
+    <a class="logout-btn" (click)="logout()">
+      <i class="feather icon-log-out"></i>
+      Logout
+    </a>
+  </div>
+
+</div>
 
 <div *ngIf="this.nextConfig['layout'] === 'horizontal'" #navbarWrapper class="navbar-content sidenav-horizontal" id="layout-sidenav">
   <a href="javascript:" class="sidenav-horizontal-prev" [ngClass]="prevDisabled" (click)="scrollMinus()"></a>

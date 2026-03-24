@@ -16,6 +16,14 @@ export class ApisService {
     return this.http.post("/api/auth/signup", data);
   }
 
+  sendPasswordResetLink(email: string) {
+    return this.http.post("/api/auth/passwordupdate", { email });
+  }
+
+  resetPassword(email: string, token: string, newPassword: string) {
+    return this.http.post("/api/auth/reset-password", { email: email, token: token, newPassword: newPassword });
+  }
+
   // Device Module
   getDevices(query = "") {
     return this.http.get("/api/device" + query);

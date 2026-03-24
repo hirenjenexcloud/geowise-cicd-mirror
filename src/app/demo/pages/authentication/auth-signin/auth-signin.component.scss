@@ -1,0 +1,29 @@
+.eye-toggle {
+  cursor: pointer;
+}
+
+.eye-toggle i {
+  color: #888;
+}
+
+.eye-toggle:hover i {
+  color: #000;
+}
+
+.password-field input {
+  padding-right: 45px !important; /* space for eye */
+}
+
+.eye-icon {
+  position: absolute;
+  top: 50%;
+  right: 15px;   /* adjust if needed */
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: #888;
+  z-index: 10;
+}
+
+.eye-icon:hover {
+  color: #000;
+}
