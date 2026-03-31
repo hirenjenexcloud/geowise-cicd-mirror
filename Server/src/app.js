@@ -13,7 +13,7 @@ const errorHandler = require('./middlewares/errorHandler');
 
 const swaggerUi = require('swagger-ui-express');
 const swaggerFile = require('./swagger-output.json');
-const socket  = require("./config/socket-io.config");
+const socket  = require("./config/websocket.config");
 
 const app = express();
 socket.connectSocket()
