@@ -10,9 +10,8 @@ const group = require('../controllers/group.controller');
 const { getDeviceConfig } = require('../config/deviceCache');
 const handlers = require('../middlewares/eventsHandlers');
 const dtcCodes = require('../utils/dtcCode');
-const socket= require('../config/socket-io.config');
+const socket = require('../config/websocket.config');
 let socketInstance = socket.getSocket();
-
 //Fuel Types
  const fuelTypeMap = {
   0: "Not available",
@@ -170,7 +169,15 @@ function parsePacket(client) {
       const deviceData = buildDevicePacket(parsed, packetHex, false);
   
 
-      socketInstance.emit("geowise", deviceData);
+      // socketInstance.emit("geowise", deviceData);
+      // socketInstance.send(JSON.stringify(deviceData));
+      if (socketInstance && socketInstance.readyState === 1) {
+        const payload = JSON.stringify(deviceData);
+        logger.info("Sending telemetry data:", payload);
+        socketInstance.send(payload);
+      } else {
+        logger.warn("WebSocket not connected. Data not sent.");
+      }
       logger.info("Event Type Name :-", allPacketsDef.eType[parsed.eType] || "Unknown");
       logger.info("Event Type :-", parsed.eType);
       const config = await getDeviceConfig(parsed.imei);
@@ -369,8 +376,17 @@ function buildCanDevicePacket(parsed, packetHex) {
     }
   };
 
-    socketInstance.emit("geowise", socketData);
-    console.log("Sent over socket:", socketData);
+    // socketInstance.emit("geowise", socketData);
+    // socketInstance.send(JSON.stringify(socketData));
+    // console.log("Sent over socket:", socketData);
+
+    if (socketInstance && socketInstance.readyState === 1) {
+      const payload = JSON.stringify(socketData);
+      logger.info("Sending telemetry data:", payload);
+      socketInstance.send(payload);
+    } else {
+      logger.warn("WebSocket not connected. Data not sent.");
+    }
  
 
   return packet;
