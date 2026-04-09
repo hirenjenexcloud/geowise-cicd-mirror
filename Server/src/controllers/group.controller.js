@@ -145,6 +145,8 @@ exports.updateGroup = async (req, res) => {
 
       // Inject swVersion from firmware
       updateData.swVersion = firmware.swVersion;
+      console.log("Firmware ID changed → swVersion updated to:", firmware.swVersion);
+
     }
 
     // If setting ID is provided in update, validate it
@@ -186,6 +188,11 @@ exports.updateGroup = async (req, res) => {
       sendReboot(mqttClient,req.params.id)
  
     }
+    const device_update = await Device.findOneAndUpdate(
+      { grpId: req.params.id },
+      { $set: { swVersion: updateData.swVersion } }
+    );
+
     return success(res, "OK", "Group updated successfully");
 
   } catch (err) {
