@@ -21,8 +21,10 @@ server.on('ready', () => {
 });
 server.on('published', (packet, client) => {
   if (!packet.topic.startsWith('$SYS')) {
+    if(packet.payload.toString() == "reboot") {
   logger.info("Mosca Published :", 'Topic:', packet.topic,',', 'Payload:', packet.payload.toString());
   }
+}
 });
 server.on('error', (err) => {
   logger.error('Mosca error:', err);
