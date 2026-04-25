@@ -21,7 +21,7 @@ server.on('ready', () => {
 });
 server.on('published', (packet, client) => {
   if (!packet.topic.startsWith('$SYS')) {
-  logger.info("Mosca Published :");
+  logger.info("Mosca Published :", 'Topic:', packet.topic,',', 'Payload:', packet.payload.toString());
   }
 });
 server.on('error', (err) => {
