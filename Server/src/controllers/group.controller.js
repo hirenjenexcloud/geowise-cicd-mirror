@@ -248,8 +248,8 @@ exports.importDevices = async (req, res) => {
 
     // Ensure group exists
     const group = await Group.findById(grpId);
-    // const swVersion = group.swVersion;
-    // const hwVersion = group.hwVersion;
+    const swVersion = group.swVersion;
+    const hwVersion = group.hwVersion;
 
     if (!group) {
       return fail(res, "NOTFOUND", "Group not found");
