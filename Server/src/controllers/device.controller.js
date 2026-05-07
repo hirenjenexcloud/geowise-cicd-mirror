@@ -17,8 +17,8 @@ exports.addDevice = async (req, res) => {
   if (!group) return fail(res, "NOTFOUND", "Group not found with this Name");
   if (!group.swVersion) return fail(res, "NOTFOUND", "Group has no Firmware assigned");
 
-  payload.swVersion = group.swVersion;
-  payload.hwVersion = group.hwVersion;
+  // payload.swVersion = group.swVersion;
+  // payload.hwVersion = group.hwVersion;
   payload.userId = 1;
   try {
     let device = new Device(payload);

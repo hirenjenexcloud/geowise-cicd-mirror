@@ -47,6 +47,7 @@ function deviceCommutionHandler(client) {
   parsePacket(client);
   group.setmqttClient(client);
   canPacketParseing(client);
+  updateSwHwVersion(client);
 }
 
 function DeviceInitReq(client) {
@@ -391,6 +392,27 @@ function buildCanDevicePacket(parsed, packetHex) {
 
   return packet;
 
+}
+
+function updateSwHwVersion(client) {
+  client.on('message', async (topic, message) => {
+    if (topic !== 'set_fw') return;
+    console.log("Received message for firmware update:", topic, message.toString());
+    const { imei, fw, hw } = JSON.parse(message.toString());
+
+    // Validate and update the device information
+    if (!imei || !fw || !hw) {
+      logger.warn("Invalid firmware update message:", message);
+      return;
+    }
+
+    try {
+      await Device.updateOne({ imei }, { swVersion: fw, hwVersion: hw });
+      logger.info("Firmware update successful:", { imei, hwVersion: hw, swVersion: fw });
+    } catch (err) {
+      logger.error("Error updating firmware version:", err);
+    }
+  });
 }
 
 module.exports = deviceCommutionHandler;

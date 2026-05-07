@@ -188,10 +188,10 @@ exports.updateGroup = async (req, res) => {
       sendReboot(mqttClient,req.params.id)
  
     }
-    const device_update = await Device.findOneAndUpdate(
-      { grpId: req.params.id },
-      { $set: { swVersion: updateData.swVersion } }
-    );
+    // const device_update = await Device.findOneAndUpdate(
+    //   { grpId: req.params.id },
+    //   { $set: { swVersion: updateData.swVersion } }
+    // );
 
     return success(res, "OK", "Group updated successfully");
 
@@ -248,8 +248,8 @@ exports.importDevices = async (req, res) => {
 
     // Ensure group exists
     const group = await Group.findById(grpId);
-    const swVersion = group.swVersion;
-    const hwVersion = group.hwVersion;
+    // const swVersion = group.swVersion;
+    // const hwVersion = group.hwVersion;
 
     if (!group) {
       return fail(res, "NOTFOUND", "Group not found");
@@ -268,10 +268,10 @@ exports.importDevices = async (req, res) => {
     }
 
     // Update matched devices to set grpId
-    const updateResult = await Device.updateMany(
-      { imei: { $in: imeis } },
-      { $set: { grpId ,hwVersion,swVersion} }
-    );
+    // const updateResult = await Device.updateMany(
+    //   { imei: { $in: imeis } },
+    //   { $set: { grpId ,hwVersion,swVersion} }
+    // );
 
     for (const device of foundDevices) {
       const oldSw = device.swVersion;
