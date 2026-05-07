@@ -250,6 +250,7 @@ exports.importDevices = async (req, res) => {
     const group = await Group.findById(grpId);
     const swVersion = group.swVersion;
     const hwVersion = group.hwVersion;
+    console.log("Group firmware:", swVersion, "Group hardware:", hwVersion);
 
     if (!group) {
       return fail(res, "NOTFOUND", "Group not found");
@@ -268,10 +269,10 @@ exports.importDevices = async (req, res) => {
     }
 
     // Update matched devices to set grpId
-    // const updateResult = await Device.updateMany(
-    //   { imei: { $in: imeis } },
-    //   { $set: { grpId ,hwVersion,swVersion} }
-    // );
+    const updateResult = await Device.updateMany(
+      { imei: { $in: imeis } },
+      { $set: { grpId } }
+    );
 
     for (const device of foundDevices) {
       const oldSw = device.swVersion;
@@ -300,7 +301,7 @@ exports.importDevices = async (req, res) => {
 
     // Respond with summary
     return success(res, "OK", "Devices imported to group", {
-      matchedCount: updateResult.matchedCount ?? foundDevices.length,
+      matchedCount: foundDevices.length,
       modifiedCount: updateResult.modifiedCount ?? 0,
       notFoundImeis,
     });
