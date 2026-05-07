@@ -53,9 +53,10 @@ const topics = {
                 'tracking': {qos:2},
                 'carcan': {qos:2},
                 'deviceboot': {qos:2},
-                'otaupdate': {qos:2}
-              } 
-                
+                'otaupdate': {qos:2},
+                'set_fw': {qos:2}
+              }
+
 client.on('connect', () => {
   logger.info('MQTT connected');
 
