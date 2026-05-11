@@ -34,7 +34,7 @@ limit = 10;
 
    ngOnInit(): void {
 
-    this.getAllFirmwares();
+    this.getAllFirmwares(1);
     this.firmwareForm = this.fb.group({
       swVersion: ['', Validators.required],
       firmName: ['', Validators.required],
@@ -74,7 +74,7 @@ limit = 10;
           // if (index !== -1) {
           //   this.firmwares[index] = { ...this.editFirmwareForm.value };
           // }
-          this.getAllFirmwares();
+          this.getAllFirmwares(1);
           this.modalService.dismissAll();
         } else {
           this.notification.error(res.message);
@@ -106,7 +106,7 @@ deleteFirmware(model:any)
                 this.notification.success(res.message);
                 // this.firmwares = this.firmwares.filter(fw => fw._id !== this.selectedFirmwareId);
                 this.modalService.dismissAll();
-                this.getAllFirmwares();
+                this.getAllFirmwares(1);
               } else {
                 console.error('Error deleting firmware:', res.message);
                 this.modalService.dismissAll();
@@ -196,7 +196,8 @@ AddFirmware() {
       this.firmwareForm.reset();
       this.selectedFile = null;
       this.displayfile = '';
-      this.getAllFirmwares();
+      this.getAllFirmwares(1);
+      // console.log('Firmware added successfully:', this.getAllFirmwares(1));
 
     } else {
       
