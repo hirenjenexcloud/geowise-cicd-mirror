@@ -11,7 +11,7 @@ const { getDeviceConfig } = require('../config/deviceCache');
 const handlers = require('../middlewares/eventsHandlers');
 const dtcCodes = require('../utils/dtcCode');
 const socket = require('../config/websocket.config');
-let socketInstance = socket.getSocket();
+// let socketInstance = socket.getSocket();
 //Fuel Types
  const fuelTypeMap = {
   0: "Not available",
@@ -172,6 +172,8 @@ function parsePacket(client) {
 
       // socketInstance.emit("geowise", deviceData);
       // socketInstance.send(JSON.stringify(deviceData));
+      const socketInstance = socket.getSocket();
+
       if (socketInstance && socketInstance.readyState === 1) {
         const payload = JSON.stringify(deviceData);
         logger.info("Sending telemetry data:", payload);
@@ -380,7 +382,7 @@ function buildCanDevicePacket(parsed, packetHex) {
     // socketInstance.emit("geowise", socketData);
     // socketInstance.send(JSON.stringify(socketData));
     // console.log("Sent over socket:", socketData);
-
+    const socketInstance = socket.getSocket();
     if (socketInstance && socketInstance.readyState === 1) {
       const payload = JSON.stringify(socketData);
       logger.info("Sending telemetry data:", payload);
